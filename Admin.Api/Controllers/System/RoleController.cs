@@ -1,0 +1,147 @@
+using Admin.Api.Common.Security.Policies;
+using Core.Application.Abstractions.Localization;
+using Core.Application.Abstractions.Services.System;
+using Core.Application.Contracts.Base;
+using Core.Application.Contracts.System.Role;
+using Core.Application.Contracts.System.User;
+using Core.Domain.Constants;
+using Core.Domain.Entities.System;
+using Core.Domain.Security;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Admin.Api.Controllers.System;
+
+[Route("api/roles")]
+[ApiController]
+[Authorize]
+public class RoleController : ControllerBase
+{
+    private readonly IRoleService _roleService;
+    private readonly ISysMessageService _sysMsg;
+
+    public RoleController(IRoleService roleService, ISysMessageService sysMsg)
+    {
+        _roleService = roleService;
+        _sysMsg = sysMsg;
+    }
+
+    [HttpGet]
+    [Policy(ESysModule.Roles, EPermission.View)]
+    public async Task<IActionResult> GetAllRoles()
+    {
+        var roles = await _roleService.FindAsync<RoleViewDto>(r => r.IsDeleted == false);
+        return Ok(ApiResponse<IEnumerable<RoleViewDto>>.Succeed(roles, _sysMsg.Get(EMessage.SuccessMsg)));
+    }
+
+    [HttpGet("{id}")]
+    [Policy(ESysModule.Roles, EPermission.View)]
+    public async Task<IActionResult> GetRoleById(int id)
+    {
+        var role = await _roleService.GetByIdAsync<RoleViewDto>(id);
+        if (role == null)
+            return Ok(ApiResponse<object>.Fail(_sysMsg.Get(EMessage.Error404Msg)));
+
+        return Ok(ApiResponse<RoleViewDto>.Succeed(role, _sysMsg.Get(EMessage.SuccessMsg)));
+    }
+
+    [HttpGet("get-members")]
+    [Policy(ESysModule.Roles, EPermission.View)]
+    public async Task<IActionResult> GetRoleMembers([FromQuery] GetRoleMembersDto request)
+    {
+        var result = await _roleService.GetRoleMembers(request);
+        if (result == null)
+            return Ok(ApiResponse<object>.Fail(_sysMsg.Get(EMessage.FailureMsg)));
+
+        return Ok(ApiResponse<PaginatedResultDto<RoleMembersDto>>.Succeed(result, _sysMsg.Get(EMessage.SuccessMsg)));
+    }
+
+    [HttpGet("users-not-in-role")]
+    [Policy(ESysModule.Roles, EPermission.View)]
+    public async Task<IActionResult> GetUserNotInRole([FromQuery] UserRoleCursorFilterDto filter)
+    {
+        var users = await _roleService.GetUserNotInRole(filter);
+        return Ok(ApiResponse<CursorPaginatedResultDto<UserSelectDto, DateTime>>.Succeed(users,
+            _sysMsg.Get(EMessage.SuccessMsg)));
+    }
+
+    [HttpGet("{roleId}/permissions")]
+    [Policy(ESysModule.Roles, EPermission.View)]
+    public async Task<IActionResult> GetRolePermissions(int roleId)
+    {
+        var permissions = await _roleService.GetRolePermissionExplodedAsync(roleId);
+        return Ok(ApiResponse<List<RolePermission>>.Succeed(permissions, _sysMsg.Get(EMessage.SuccessMsg)));
+    }
+
+    [HttpPost]
+    [Policy(ESysModule.Roles, EPermission.Create)]
+    public async Task<IActionResult> CreateRole([FromBody] RoleDto roleDto)
+    {
+        var createdRole = await _roleService.CreateRoleAsync(roleDto);
+        if (createdRole == null)
+            return Ok(ApiResponse<object>.Fail(_sysMsg.Get(EMessage.FailureMsg)));
+
+        return Ok(ApiResponse<RoleDto>.Succeed(createdRole, _sysMsg.Get(EMessage.SuccessMsg)));
+    }
+
+    [HttpPost("{roleId}/permissions")]
+    [Policy(ESysModule.Roles, EPermission.View)]
+    public async Task<IActionResult> AssignRolePermissions(int roleId, [FromBody] List<RolePermission> permissionsDto)
+    {
+        var success = await _roleService.AssignPermissionsToRoleAsync(roleId, permissionsDto);
+        if (!success)
+            return Ok(ApiResponse<object>.Fail(_sysMsg.Get(EMessage.FailureMsg)));
+
+        return Ok(ApiResponse<object>.Succeed(null, _sysMsg.Get(EMessage.SuccessMsg)));
+    }
+
+    [HttpPost("add-members")]
+    [Policy(ESysModule.Roles, EPermission.Edit)]
+    public async Task<IActionResult> AddRoleMembers([FromBody] AddMemberRoleDto dto)
+    {
+        if (dto.RoleId <= 0) 
+            return BadRequest(ApiResponse<object>.Fail(_sysMsg.Get(EMessage.Error400Msg)));
+            
+        var success = await _roleService.AddMemberToRole(dto);
+        if (!success)
+            return Ok(ApiResponse<object>.Fail(_sysMsg.Get(EMessage.FailureMsg)));
+
+        return Ok(ApiResponse<bool>.Succeed(success, _sysMsg.Get(EMessage.SuccessMsg)));
+    }
+
+    [HttpPut]
+    [Policy(ESysModule.Roles, EPermission.Edit)]
+    public async Task<IActionResult> UpdateRole([FromBody] RoleDto roleDto)
+    {
+        var success = await _roleService.UpdateRoleAsync(roleDto);
+        if (!success)
+            return Ok(ApiResponse<object>.Fail(_sysMsg.Get(EMessage.FailureMsg)));
+
+        return Ok(ApiResponse<object>.Succeed(null,_sysMsg.Get(EMessage.SuccessMsg)));
+    }
+
+    [HttpDelete("{id}")]
+    [Policy(ESysModule.Roles, EPermission.Delete)]
+    public async Task<IActionResult> DeleteRole(int id)
+    {
+        var success = await _roleService.DeleteRoleAsync(id);
+        if (!success)
+            return Ok(ApiResponse<object>.Fail(_sysMsg.Get(EMessage.FailureMsg)));
+
+        return Ok(ApiResponse<object>.Succeed(null,_sysMsg.Get(EMessage.SuccessMsg)));
+    }
+    
+    [HttpDelete("{roleId}/remove-members")]
+    [Policy(ESysModule.Roles, EPermission.Edit)]
+    public async Task<IActionResult> RemoveRoleMembers(int roleId, [FromBody] List<string> userIds)
+    {
+        if (roleId <= 0 || !userIds.Any())
+            return BadRequest(ApiResponse<object>.Fail(_sysMsg.Get(EMessage.Error400Msg)));
+            
+        var success = await _roleService.RemoveRoleMembers(roleId, userIds);
+        if (!success)
+            return Ok(ApiResponse<object>.Fail(_sysMsg.Get(EMessage.FailureMsg)));
+
+        return Ok(ApiResponse<bool>.Succeed(success, _sysMsg.Get(EMessage.SuccessMsg)));
+    }
+}

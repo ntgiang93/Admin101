@@ -1,0 +1,102 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using Core.Application.Abstractions.Persistence;
+using Core.Application.Abstractions.Services.System;
+using Core.Application.Configuration;
+using Core.Application.Services.Common;
+using Core.Domain.Constants;
+using Core.Domain.Entities.System;
+using Microsoft.IdentityModel.Tokens;
+
+namespace Core.Application.Services.System;
+
+public class UserTokenService : GenericService<UserToken, long>, IUserTokenService
+{
+    private readonly AppSettings _appSettings;
+    private readonly IUserService _userService;
+
+    public UserTokenService(IUserService userService,
+        AppSettings appSettings,
+        IGenericRepository<UserToken, long> repository,
+        IServiceProvider serviceProvider) : base(repository, serviceProvider)
+    {
+        _userService = userService;
+        _appSettings = appSettings;
+    }
+
+    public async Task<KeyValuePair<string, string>> GenerateToken(User user)
+    {
+        var roles = await _userService.GetUserRoleAsync(user.Id);
+        var tokenId = Guid.NewGuid().ToString();
+        var claims = new List<Claim>
+        {
+            new(JwtRegisteredClaimNames.Jti, tokenId),
+            new(ClaimTypes.Name, user.UserName),
+            new(ClaimTypes.NameIdentifier, user.Id),
+            new("RoleCode", string.Join(";", roles.Select(r => r.Code)))
+        };
+        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role.Id.ToString())));
+        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.Jwt.SingingKey));
+        var token = new JwtSecurityToken(
+            _appSettings.Jwt.Issuer,
+            _appSettings.Jwt.Audience,
+            expires: DateTime.Now.AddMinutes(_appSettings.Jwt.TokenExpiresIn),
+            claims: claims,
+            signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+        );
+        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+        if (string.IsNullOrEmpty(tokenString)) throw new Exception(SysMsg.Get(EMessage.Error500Msg));
+        return new KeyValuePair<string, string>(tokenId, tokenString);
+    }
+
+    public async Task<bool> RevokeTokenAsync(string refreshToken)
+    {
+        var session = await GetSingleAsync<UserToken>(x => x.RefreshToken == refreshToken);
+        if (session == null) return true;
+        session.Expires = DateTime.Now.AddYears(-1);
+        session.RefreshToken = string.Empty;
+        return await _repository.UpdateAsync(session);
+    }
+
+    public async Task<KeyValuePair<string, DateTime>> GenerateRefreshToken(User user, string deviceId, string ipAddress,
+        string accessTokenId, string? device, string? deviceToken)
+    {
+        var success = false;
+        var randomNumber = new byte[64];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomNumber);
+        var refreshToken = Convert.ToBase64String(randomNumber);
+        var userToken =
+            await GetSingleAsync<UserToken>(x =>
+                x.DeviceId == deviceId && x.UserId == user.Id && x.IsDeleted == false);
+        if (userToken != null)
+        {
+            userToken.RefreshToken = refreshToken;
+            userToken.Expires = DateTime.Now.AddDays(_appSettings.Jwt.RefreshTokenExpiresIn);
+            userToken.AccessTokenId = accessTokenId;
+            userToken.IpAddress = ipAddress;
+            success = await UpdateAsync(userToken);
+        }
+        else
+        {
+            userToken = new UserToken
+            {
+                UserId = user.Id,
+                DeviceId = deviceId,
+                Device = device,
+                DeviceToken = deviceToken,
+                IpAddress = ipAddress,
+                AccessTokenId = accessTokenId,
+                RefreshToken = refreshToken,
+                Expires = DateTime.Now.AddDays(_appSettings.Jwt.RefreshTokenExpiresIn)
+            };
+            var id = await CreateAsync(userToken, user.UserName);
+            success = id > 0;
+        }
+
+        if (!success) throw new Exception(SysMsg.Get(EMessage.Error500Msg));
+        return new KeyValuePair<string, DateTime>(userToken.RefreshToken, userToken.Expires);
+    }
+}

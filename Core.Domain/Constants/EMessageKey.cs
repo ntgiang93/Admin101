@@ -1,0 +1,38 @@
+namespace Core.Domain.Constants;
+
+public enum EMessage
+{
+    AuthenticationFailed,
+    CannotModifyProtectedRole,
+    ChangeEmailSubject,
+    CodeIsInUse,
+    EmailExisted,
+    Error400Msg,
+    Error403Msg,
+    Error404Msg,
+    Error409Msg,
+    Error415Msg,
+    Error422Msg,
+    Error429Msg,
+    Error500Msg,
+    FailureMsg,
+    IncorrectPassword,
+    MenuLinkAlreadyExists,
+    PhoneExisted,
+    RoleAlreadyExists,
+    RoleNotFound,
+    SuccessMsg,
+    TokenInvalid,
+    UserNameExisted,
+    UserNotFound,
+    WarningChangeEmailSubject,
+    DeviceIsRequired,
+    FileTypeNotAllowed,
+    LimitFileSize,
+    FileRequired,
+    FileDeleteError,
+    CodeIsExist,
+    VerifyEmailSubject,
+    NotPermissionModifyRole,
+    LanguageNotSupported
+}

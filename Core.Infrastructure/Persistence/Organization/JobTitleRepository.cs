@@ -1,0 +1,49 @@
+using System.Text;
+using Core.Application.Abstractions.Persistence;
+using Core.Application.Abstractions.Persistence.Organization;
+using Core.Domain.Entities.Organization;
+using Dapper;
+using SqlKata;
+
+namespace Core.Infrastructure.Persistence.Organization;
+
+public class JobTitleRepository : GenericRepository<JobTitle, int>, IJobTitleRepository
+{
+    private readonly StringBuilder _sqlBuilder;
+
+    public JobTitleRepository(IDbConnectionFactory factory) : base(factory)
+    {
+        _sqlBuilder = new StringBuilder();
+    }
+
+    public async Task<List<JobTitle>> GetActiveJobTitlesAsync()
+    {
+        var query = new Query("JobTitle")
+            .Where("IsDeleted", false)
+            .Where("IsActive", true)
+            .OrderBy("Name");
+
+        var compiledQuery = _compiler.Compile(query);
+        
+        var connection = _dbFactory.Connection;
+        var result = await connection.QueryAsync<JobTitle>(compiledQuery.Sql, compiledQuery.NamedBindings);
+        
+        return result.ToList();
+    }
+
+    public async Task<List<JobTitle>> GetByLevelAsync(int level)
+    {
+        var query = new Query("JobTitle")
+            .Where("Level", level)
+            .Where("IsDeleted", false)
+            .Where("IsActive", true)
+            .OrderBy("Name");
+
+        var compiledQuery = _compiler.Compile(query);
+        
+        var connection = _dbFactory.Connection;
+        var result = await connection.QueryAsync<JobTitle>(compiledQuery.Sql, compiledQuery.NamedBindings);
+        
+        return result.ToList();
+    }
+}

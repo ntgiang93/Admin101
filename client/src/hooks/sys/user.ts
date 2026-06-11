@@ -1,0 +1,165 @@
+import { StringHelper } from '@/libs/StringHelper'
+import { useAuthStore } from '@/store/auth-store'
+import { type ApiResponse } from '@/types/base/ApiResponse'
+import {
+  defualtPaginatedResult,
+  type PaginatedResultDto,
+} from '@/types/base/PaginatedResultDto'
+import { type PaginationFilter } from '@/types/base/PaginationFilter'
+import { defaultUserClaim, type UserClaim } from '@/types/base/UserClaim'
+import { type MenuItem } from '@/types/sys/Menu'
+import { type RolePermissionDto } from '@/types/sys/Role'
+import {
+  defaultUserDto,
+  type SaveUserDto,
+  type UserDto,
+  type UserSelectDto,
+  type UserTableDto,
+  type UserTableRequestDto,
+} from '@/types/sys/User'
+import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query'
+import { apiService } from '@/services/api'
+
+const endpoint = 'user'
+
+export const useGetPagination = (params: UserTableRequestDto) => {
+  return useQuery<PaginatedResultDto<UserTableDto>, Error>({
+    queryKey: [endpoint, 'useGetPagination', params],
+    queryFn: async () => {
+      const response = await apiService.get<
+        ApiResponse<PaginatedResultDto<UserTableDto>>
+      >(`${endpoint}/pagination?${StringHelper.objectToUrlParams(params)}`)
+      if (response.success && response.data) {
+        return response.data
+      }
+      return defualtPaginatedResult
+    },
+    placeholderData: keepPreviousData || defualtPaginatedResult,
+  })
+}
+
+export const useGetPaginationToSelect = (params: PaginationFilter) => {
+  return useQuery<PaginatedResultDto<UserSelectDto>, Error>({
+    queryKey: [endpoint, 'useGetPaginationToSelect', params],
+    queryFn: async () => {
+      const response = await apiService.get<
+        ApiResponse<PaginatedResultDto<UserSelectDto>>
+      >(
+        `${endpoint}/pagination-to-select?${StringHelper.objectToUrlParams(params)}`,
+      )
+      if (response.success && response.data) {
+        return response.data
+      }
+      return defualtPaginatedResult
+    },
+    placeholderData: keepPreviousData || defualtPaginatedResult,
+  })
+}
+
+export const useGet = (id: string) => {
+  return useQuery<any, Error>({
+    queryKey: [endpoint, 'get', id],
+    queryFn: async () => {
+      const response = await apiService.get<ApiResponse<UserDto>>(
+        `${endpoint}/${id}`,
+      )
+      if (response.success && response.data) {
+        return response.data
+      }
+      return { ...defaultUserDto }
+    },
+    enabled: id != undefined && id !== '',
+  })
+}
+
+export const useGetMe = (enabled: boolean) => {
+  const { user, setUser } = useAuthStore((state) => state)
+  return useQuery<UserClaim, Error>({
+    queryKey: [endpoint, 'getme'],
+    queryFn: async () => {
+      const response = await apiService.get<ApiResponse<UserDto>>(
+        `${endpoint}/me`,
+      )
+      if (response.success && response.data) {
+        const data = response.data
+        let me: UserClaim = { ...(user || defaultUserClaim) }
+        if (me) {
+          me.avatar = data.avatar
+          me.email = data.email
+          me.fullName = data.fullName
+          me.phone = data.phone
+          me.lockExprires = data.lockExprires
+          me.twoFa = data.twoFa
+          me.isActive = data.isActive
+          me.isLocked = data.isLocked
+          setUser(me)
+        }
+      }
+      return { ...defaultUserClaim }
+    },
+    enabled: enabled,
+  })
+}
+
+export const useGetPermissions = () => {
+  return useQuery<RolePermissionDto[], Error>({
+    queryKey: [endpoint, 'get'],
+    queryFn: async () => {
+      const response = await apiService.get<ApiResponse<RolePermissionDto[]>>(
+        `${endpoint}/current/permissions`,
+      )
+      if (response.success && response.data) {
+        return response.data
+      }
+      return []
+    },
+    placeholderData: keepPreviousData || [],
+  })
+}
+
+export const useSaveUser = () => {
+  return useMutation({
+    mutationFn: async (user: SaveUserDto) => {
+      if (user.id && user.id.length > 0) {
+        return await apiService.put<ApiResponse<MenuItem>>(`${endpoint}`, user)
+      } else {
+        return await apiService.post<ApiResponse<MenuItem>>(`${endpoint}`, user)
+      }
+    },
+  })
+}
+
+export const useChangeActive = (id: string) => {
+  return useMutation({
+    mutationFn: async () => {
+      const response = await apiService.put<ApiResponse<boolean>>(
+        `${endpoint}/${id}/change-active-status`,
+      )
+      return response.success
+    },
+  })
+}
+
+export const useUpdateAvatar = () => {
+  return useMutation({
+    mutationFn: async ({ userId, file }: { userId: string; file: File }) => {
+      const formData = new FormData()
+      formData.append('file', file)
+      return await apiService.put<ApiResponse<string>>(
+        `${endpoint}/${userId}/avatar`,
+        formData,
+      )
+    },
+  })
+}
+
+export const UserHook = {
+  useGetPagination,
+  useGetPaginationToSelect,
+  useGet,
+  useSaveUser,
+  useChangeActive,
+  useGetPermissions,
+  useUpdateAvatar,
+  useGetMe,
+}

@@ -1,0 +1,20 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+// ...existing using statements...
+
+namespace Core.Domain.Entities.System;
+
+[Table("user_profiles")]
+public class UserProfile : BaseEntity<string>
+{
+    [Dapper.Contrib.Extensions.ExplicitKey]
+    public override string Id { get; set; } = string.Empty;
+
+    [StringLength(500)] public string? Address { get; set; }
+
+    public DateTime? DateOfBirth { get; set; }
+
+    [StringLength(50)] public string? Gender { get; set; }
+    public int? JobTitleId { get; set; }
+}
