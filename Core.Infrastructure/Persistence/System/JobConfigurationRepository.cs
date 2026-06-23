@@ -9,7 +9,7 @@ namespace Core.Infrastructure.Persistence.System;
 
 public class JobConfigurationRepository : GenericRepository<JobConfiguration, int>, IJobConfigurationRepository
 {
-    private readonly string _tableName = StringHelper.GetTableName<JobConfiguration>();
+    private readonly Alias<JobConfiguration> _jc = new ("jc");
     
     public JobConfigurationRepository(IDbConnectionFactory dbConnectionFactory) 
         : base(dbConnectionFactory)
@@ -24,9 +24,9 @@ public class JobConfigurationRepository : GenericRepository<JobConfiguration, in
 
     public async Task<JobConfiguration?> GetByJobNameAndGroupAsync(string jobName, string jobGroup)
     {
-        var query = new Query(_tableName)
-            .Where(nameof(JobConfiguration.JobName), jobName)
-            .Where(nameof(JobConfiguration.JobGroup), jobGroup);
+        var query = new Query(_jc.Table)
+            .Where(_jc.Col(c => c.JobName), jobName)
+            .Where(_jc.Col(c => c.JobGroup), jobGroup);
         
         var compiledQuery = _compiler.Compile(query);
         var connection = _dbFactory.Connection;
@@ -38,10 +38,10 @@ public class JobConfigurationRepository : GenericRepository<JobConfiguration, in
 
     public async Task<bool> ExistsAsync(string jobName, string jobGroup)
     {
-        var query = new Query(_tableName)
-            .Where(nameof(JobConfiguration.JobName), jobName)
-            .Where(nameof(JobConfiguration.JobGroup), jobGroup)
-            .AsCount();
+        var query = new Query(_jc.Table)
+                .Where(_jc.Col(c => c.JobName), jobName)
+                .Where(_jc.Col(c => c.JobGroup), jobGroup)
+                .AsCount();
         
         var compiledQuery = _compiler.Compile(query);
         var connection = _dbFactory.Connection;

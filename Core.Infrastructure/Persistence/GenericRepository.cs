@@ -84,7 +84,7 @@ public class GenericRepository<TEntity, TKey> : IGenericRepository<TEntity, TKey
             return id;
         }
     }
-
+    
     public virtual async Task<bool> UpdateAsync(TEntity entity)
     {
         var db = new QueryFactory(_dbFactory.Connection, _compiler);
@@ -92,9 +92,8 @@ public class GenericRepository<TEntity, TKey> : IGenericRepository<TEntity, TKey
         var data = entity.ToDictionary([
             nameof(BaseEntity<TKey>.Id),
             nameof(BaseEntity<TKey>.CreatedAt),
-            nameof(BaseEntity<TKey>.CreatedBy),
-            nameof(BaseEntity<TKey>.IsDeleted)]);
-        var result = await db.Query(_alias.RawTable).UpdateAsync(data);
+            nameof(BaseEntity<TKey>.CreatedBy)]);
+        var result = await db.Query(_alias.Table).Where(_alias.Col(a => a.Id), entity.Id).UpdateAsync(data);
         return result > 0;
     }
 

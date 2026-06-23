@@ -1,14 +1,13 @@
 using Autofac;
 using Core.Application;
 using Core.Application.Abstractions.Common;
+using Core.Application.Abstractions.Localizer;
+using Core.Application.Abstractions.Message;
 using Core.Application.Abstractions.Persistence;
-using Core.Application.Abstractions.Persistence.System;
 using Core.Application.Services.Common;
-using Core.Application.Services.System;
 using Core.Infrastructure;
+using Core.Infrastructure.Localizer;
 using Core.Infrastructure.Persistence;
-using Core.Infrastructure.Persistence.System;
-using System.Reflection;
 
 namespace Admin.Api.DependencyInjection;
 
@@ -16,6 +15,14 @@ public class AutofacModule : Autofac.Module
 {
     protected override void Load(ContainerBuilder builder)
     {
+        builder.RegisterType<SysCategoryLocalizer>()
+            .As<ISysCategoryLocalizer>()
+            .AsSelf()
+            .InstancePerLifetimeScope();
+        builder.RegisterType<MessageLocalizer>()
+            .As<IMessageLocalizer>()
+            .AsSelf()
+            .InstancePerLifetimeScope();
         // Register generic repository and service types
         builder.RegisterGeneric(typeof(GenericRepository<,>))
             .As(typeof(IGenericRepository<,>))
@@ -39,13 +46,13 @@ public class AutofacModule : Autofac.Module
                 .AsImplementedInterfaces()
                 .InstancePerLifetimeScope();
             builder.RegisterAssemblyTypes(infrastructureAssembly)
-            .Where(t =>
-                t.Name.EndsWith("Service") &&
-                !t.IsGenericType && !t.IsAbstract)
-            .AsImplementedInterfaces()
-            .InstancePerLifetimeScope();
-
+                .Where(t =>
+                    t.Name.EndsWith("Service") &&
+                    !t.IsGenericType && !t.IsAbstract)
+                .AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
         }
+
         if (applicationAssembly != null)
         {
             builder.RegisterAssemblyTypes(applicationAssembly)

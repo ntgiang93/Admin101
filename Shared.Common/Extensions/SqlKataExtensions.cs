@@ -141,7 +141,7 @@ namespace Shared.Common.Extensions
                 .GetProperties()
                 .Where(p => !ignoredSet.Contains(p.Name))
                 .ToDictionary(
-                    p => alias._useSnakeCase ? p.Name.ToSnakeCase() : p.Name,
+                    p => alias.UseSnakeCase ? p.Name.ToSnakeCase() : p.Name,
                     p => p.GetValue(entity)
                 );
             return query.AsInsert(data, true);
@@ -157,7 +157,7 @@ namespace Shared.Common.Extensions
                 .GetProperties()
                 .Where(p => !ignoredSet.Contains(p.Name))
                 .ToDictionary(
-                    p => alias._useSnakeCase ? p.Name.ToSnakeCase() : p.Name,
+                    p => alias.UseSnakeCase ? p.Name.ToSnakeCase() : p.Name,
                     p => p.GetValue(entity)
                 );
             return data;

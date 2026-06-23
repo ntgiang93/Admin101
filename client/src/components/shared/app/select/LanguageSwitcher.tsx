@@ -1,18 +1,16 @@
-import { useTranslation } from '@/components/ui/layout/LanguageProvider'
-import { LANGUAGES, isLanguage } from '@/libs/languageHelper'
 import { Label, ListBox, Select } from '@heroui/react'
+import {useTranslation} from "react-i18next";
+import {supportedLngs} from "@/i18n/config.ts";
 
 export default function LanguageSwitcher() {
-  const { language, setLanguage, t } = useTranslation()
+  const { i18n} = useTranslation();
 
   return (
     <Select
-      aria-label={t('common.language')}
-      className="w-20"
-      value={language}
-      onChange={(value) => {
-        const nextLanguage = value?.toString()
-        if (isLanguage(nextLanguage)) setLanguage(nextLanguage)
+      aria-label={'languageSwitcher'}
+      className="w-32"
+      value={i18n.resolvedLanguage}
+      onChange={(value) => {i18n.changeLanguage(value as string)
       }}
       variant="secondary"
     >
@@ -22,16 +20,16 @@ export default function LanguageSwitcher() {
       </Select.Trigger>
       <Select.Popover>
         <ListBox>
-          {LANGUAGES.map((lang) => (
-            <ListBox.Item
-              key={lang.key}
-              id={lang.key}
-              textValue={lang.name}
-              aria-label={lang.name}
-            >
-              <Label>{lang.label}</Label>
-              <ListBox.ItemIndicator />
-            </ListBox.Item>
+          {Object.entries(supportedLngs).map(([code, name]) => (
+              <ListBox.Item
+                  key={code}
+                  id={code}
+                  textValue={code}
+                  aria-label={code}
+              >
+                <Label>{name}</Label>
+                <ListBox.ItemIndicator />
+              </ListBox.Item>
           ))}
         </ListBox>
       </Select.Popover>

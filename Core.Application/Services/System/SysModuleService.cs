@@ -1,3 +1,5 @@
+using System.Globalization;
+using Core.Application.Abstractions.Localizer;
 using Core.Application.Abstractions.Security;
 using Core.Application.Abstractions.Services.System;
 using Core.Application.Contracts.Base;
@@ -7,28 +9,27 @@ namespace Core.Application.Services.System;
 
 public class SysModuleService : ISysModuleService
 {
-    private readonly ICurrentUser? _currentUser;
+    private readonly ISysCategoryLocalizer _localizer;
 
-    public SysModuleService(ICurrentUser? currentUser = null)
+    public SysModuleService(  ISysCategoryLocalizer localizer)
     {
-        _currentUser = currentUser;
+        _localizer = localizer;
     }
 
-    public Task<List<SelectOption<string>>> GetModuleOptionsAsync(string? languageCode = null)
+    public async Task<List<SelectOption<string>>> GetModuleOptionsAsync(string? languageCode = null)
     {
-        var lang = languageCode ?? _currentUser?.Language ?? "vi";
-
-        var options = SysModule.Modules.Select(x => new SelectOption<string>
+        List<SelectOption<string>> options = new List<SelectOption<string>>();
+        var modules = Enum.GetValues<ESysModule>().ToList();
+        foreach (var module in modules)
         {
-            Value = x.Key,
-            Label = lang switch
+            var option = new SelectOption<string>
             {
-                "en" => x.Value.English,
-                _ => x.Value.Vietnamese
-            }
-        }).ToList();
-
-        return Task.FromResult(options);
+                Value = module.ToString(),
+                Label = _localizer.Get($"Module.{module.ToString()}")
+            };
+            options.Add(option);
+        }
+        return options;
     }
 }
 

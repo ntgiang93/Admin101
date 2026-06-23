@@ -34,7 +34,7 @@ public class RoleService : GenericService<Role, int>, IRoleService
     public async Task<RoleDto?> CreateRoleAsync(RoleDto model)
     {
         // Validate role name is unique
-        var existingRole = await GetRoleByCodeAsync(model.Name);
+        var existingRole = await GetRoleByCodeAsync(model.Code);
         if (existingRole != null)
             throw new BusinessException(SysMsg.Get(EMessage.RoleAlreadyExists), "ROLE_EXISTS");
         var role = model.Adapt<Role>();
@@ -108,7 +108,7 @@ public class RoleService : GenericService<Role, int>, IRoleService
     public async Task<bool> AssignPermissionsToRoleAsync(int roleId, List<RolePermission> permissions)
     {
         var role = await GetByIdAsync<Role>(roleId);
-        if (role == null) throw new NotFoundException(SysMsg.Get(EMessage.RoleNotFound), "ROLE_NOT_FOUND");
+        if (role == null) throw new NotFoundException(Localizer.Get(MsgKey.Error.NotFound), "ROLE_NOT_FOUND");
         if (role.IsProtected)
             throw new BusinessException(SysMsg.Get(EMessage.CannotModifyProtectedRole), "CANNOT_MODIFY_PROTECTED_ROLE");
 

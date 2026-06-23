@@ -9,4 +9,5 @@ public class UserDepartment : BaseEntity<int>
     [Required] public required string UserId { get; set; }
 
     [Required] public int DepartmentId { get; set; }
+    public bool IsPrimary { get; set; } = false;
 }

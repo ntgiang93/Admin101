@@ -1,5 +1,5 @@
 using System.Net;
-using Core.Application.Abstractions.Localization;
+using Core.Application.Abstractions.Message;
 using Core.Application.Exceptions;
 using Core.Domain.Constants;
 using Microsoft.AspNetCore.Mvc;

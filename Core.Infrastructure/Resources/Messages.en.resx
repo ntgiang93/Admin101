@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<root>
+    <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+        <xsd:element name="root" msdata:IsDataSet="true">
+            
+        </xsd:element>
+    </xsd:schema>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="Auth.Account.Locked" xml:space="preserve">
+        <value>Your account has been locked. Please contact the administrator.</value>
+    </data>
+    <data name="Auth.Login.Failed" xml:space="preserve">
+        <value>Invalid username or password.</value>
+    </data>
+    <data name="Auth.Login.Success" xml:space="preserve">
+        <value>Logged in successfully.</value>
+    </data>
+    <data name="Auth.Logout.Success" xml:space="preserve">
+        <value>Logged out successfully.</value>
+    </data>
+    <data name="Auth.Password.Changed" xml:space="preserve">
+        <value>Password changed successfully.</value>
+    </data>
+    <data name="Auth.Password.Mismatch" xml:space="preserve">
+        <value>Password confirmation does not match.</value>
+    </data>
+    <data name="Auth.Session.Expired" xml:space="preserve">
+        <value>Your session has expired. Please log in again.</value>
+    </data>
+    <data name="Auth.Token.Invalid" xml:space="preserve">
+        <value>Invalid or expired token.</value>
+    </data>
+    <data name="Common.Create.Failed" xml:space="preserve">
+        <value>Failed to create record.</value>
+    </data>
+    <data name="Common.Create.Success" xml:space="preserve">
+        <value>Record created successfully.</value>
+    </data>
+    <data name="Common.Delete.Failed" xml:space="preserve">
+        <value>Failed to delete record.</value>
+    </data>
+    <data name="Common.Delete.Success" xml:space="preserve">
+        <value>Record deleted successfully.</value>
+    </data>
+    <data name="Common.Save.Failed" xml:space="preserve">
+        <value>Failed to save record.</value>
+    </data>
+    <data name="Common.Save.Success" xml:space="preserve">
+        <value>Record saved successfully.</value>
+    </data>
+    <data name="Common.Update.Failed" xml:space="preserve">
+        <value>Failed to update record.</value>
+    </data>
+    <data name="Common.Update.Success" xml:space="preserve">
+        <value>Record updated successfully.</value>
+    </data>
+    <data name="Error.BadRequest" xml:space="preserve">
+        <value>Invalid request. Please check your input.</value>
+    </data>
+    <data name="Error.CannotDelete" xml:space="preserve">
+        <value>{0} cannot be deleted in its current state.</value>
+    </data>
+    <data name="Error.Conflict" xml:space="preserve">
+        <value>{0} is already in use or has a conflict.</value>
+    </data>
+    <data name="Error.Forbidden" xml:space="preserve">
+        <value>You do not have permission to perform this action.</value>
+    </data>
+    <data name="Error.InternalServer" xml:space="preserve">
+        <value>An unexpected error occurred. Please try again later.</value>
+    </data>
+    <data name="Error.InUse" xml:space="preserve">
+        <value>{0} cannot be deleted because it is being used by other records.</value>
+    </data>
+    <data name="Error.NotFound" xml:space="preserve">
+        <value>{0} not found.</value>
+    </data>
+    <data name="Error.ServiceUnavailable" xml:space="preserve">
+        <value>Service is temporarily unavailable. Please try again later.</value>
+    </data>
+    <data name="Error.Timeout" xml:space="preserve">
+        <value>The request timed out. Please try again.</value>
+    </data>
+    <data name="Error.Unauthorized" xml:space="preserve">
+        <value>You are not authorized. Please log in again.</value>
+    </data>
+    <data name="Export.Failed" xml:space="preserve">
+        <value>Export failed. Please try again.</value>
+    </data>
+    <data name="Export.NoData" xml:space="preserve">
+        <value>No data available to export.</value>
+    </data>
+    <data name="Export.Success" xml:space="preserve">
+        <value>Data exported successfully.</value>
+    </data>
+    <data name="Import.Failed" xml:space="preserve">
+        <value>Import failed. Please check the file and try again.</value>
+    </data>
+    <data name="Import.FileTooLarge" xml:space="preserve">
+        <value>File size exceeds the allowed limit of {0} MB.</value>
+    </data>
+    <data name="Import.InvalidFileFormat" xml:space="preserve">
+        <value>Invalid file format. Please use the provided template.</value>
+    </data>
+    <data name="Import.Partial" xml:space="preserve">
+        <value>Imported {0} records. {1} records failed.</value>
+    </data>
+    <data name="Import.Success" xml:space="preserve">
+        <value>Imported {0} records successfully.</value>
+    </data>
+    <data name="Search.NoResult" xml:space="preserve">
+        <value>No records found matching your search criteria.</value>
+    </data>
+    <data name="Search.Result" xml:space="preserve">
+        <value>Found {0} records.</value>
+    </data>
+    <data name="Status.Active" xml:space="preserve">
+        <value>Active</value>
+    </data>
+    <data name="Status.Approved" xml:space="preserve">
+        <value>Approved</value>
+    </data>
+    <data name="Status.Cancelled" xml:space="preserve">
+        <value>Cancelled</value>
+    </data>
+    <data name="Status.Closed" xml:space="preserve">
+        <value>Closed</value>
+    </data>
+    <data name="Status.Completed" xml:space="preserve">
+        <value>Completed</value>
+    </data>
+    <data name="Status.Draft" xml:space="preserve">
+        <value>Draft</value>
+    </data>
+    <data name="Status.Inactive" xml:space="preserve">
+        <value>Inactive</value>
+    </data>
+    <data name="Status.InProgress" xml:space="preserve">
+        <value>In Progress</value>
+    </data>
+    <data name="Status.Locked" xml:space="preserve">
+        <value>Locked</value>
+    </data>
+    <data name="Status.Pending" xml:space="preserve">
+        <value>Pending Approval</value>
+    </data>
+    <data name="Status.Rejected" xml:space="preserve">
+        <value>Rejected</value>
+    </data>
+    <data name="Upload.Failed" xml:space="preserve">
+        <value>File upload failed. Please try again.</value>
+    </data>
+    <data name="Upload.InvalidType" xml:space="preserve">
+        <value>File type is not allowed. Accepted types: {0}.</value>
+    </data>
+    <data name="Upload.Success" xml:space="preserve">
+        <value>File uploaded successfully.</value>
+    </data>
+    <data name="Upload.TooLarge" xml:space="preserve">
+        <value>File size exceeds the allowed limit of {0} MB.</value>
+    </data>
+    <data name="Validation.DateRange" xml:space="preserve">
+        <value>{0} must be between {1} and {2}.</value>
+    </data>
+    <data name="Validation.Duplicate" xml:space="preserve">
+        <value>{0} already exists in the system.</value>
+    </data>
+    <data name="Validation.InvalidDate" xml:space="preserve">
+        <value>{0} is not a valid date.</value>
+    </data>
+    <data name="Validation.InvalidEmail" xml:space="preserve">
+        <value>{0} is not a valid email address.</value>
+    </data>
+    <data name="Validation.InvalidFormat" xml:space="preserve">
+        <value>{0} has an invalid format.</value>
+    </data>
+    <data name="Validation.InvalidPhone" xml:space="preserve">
+        <value>{0} is not a valid phone number.</value>
+    </data>
+    <data name="Validation.InvalidReference" xml:space="preserve">
+        <value>{0} references a record that does not exist.</value>
+    </data>
+    <data name="Validation.Max" xml:space="preserve">
+        <value>{0} must be less than or equal to {1}.</value>
+    </data>
+    <data name="Validation.MaxLength" xml:space="preserve">
+        <value>{0} must not exceed {1} characters.</value>
+    </data>
+    <data name="Validation.Min" xml:space="preserve">
+        <value>{0} must be greater than or equal to {1}.</value>
+    </data>
+    <data name="Validation.MinLength" xml:space="preserve">
+        <value>{0} must be at least {1} characters.</value>
+    </data>
+    <data name="Validation.MustBeInteger" xml:space="preserve">
+        <value>{0} must be a whole number.</value>
+    </data>
+    <data name="Validation.MustBePositive" xml:space="preserve">
+        <value>{0} must be a positive number.</value>
+    </data>
+    <data name="Validation.Range" xml:space="preserve">
+        <value>{0} must be between {1} and {2}.</value>
+    </data>
+    <data name="Validation.RangeLength" xml:space="preserve">
+        <value>{0} must be between {1} and {2} characters.</value>
+    </data>
+    <data name="Validation.Required" xml:space="preserve">
+        <value>{0} is required.</value>
+    </data>
+    <data name="Validation.StartDateGreaterThanEndDate" xml:space="preserve">
+        <value>Start date must be before end date.</value>
+    </data>
+    <data name="Workflow.Approve.Success" xml:space="preserve">
+        <value>{0} approved successfully.</value>
+    </data>
+    <data name="Workflow.Cancel.Success" xml:space="preserve">
+        <value>{0} cancelled successfully.</value>
+    </data>
+    <data name="Workflow.Close.Success" xml:space="preserve">
+        <value>{0} closed successfully.</value>
+    </data>
+    <data name="Workflow.InvalidTransition" xml:space="preserve">
+        <value>Cannot change status from {0} to {1}.</value>
+    </data>
+    <data name="Workflow.Reject.Success" xml:space="preserve">
+        <value>{0} rejected successfully.</value>
+    </data>
+    <data name="Workflow.Reopen.Success" xml:space="preserve">
+        <value>{0} reopened successfully.</value>
+    </data>
+    <data name="Workflow.Submit.Success" xml:space="preserve">
+        <value>{0} submitted for approval successfully.</value>
+    </data>
+    <data name="Common.Success" xml:space="preserve">
+        <value>Operation completed successfully.</value>
+    </data>
+    <data name="Common.Failed" xml:space="preserve">
+        <value>Operation failed.</value>
+    </data>
+    <data name="Auth.Password.Reseted" xml:space="preserve">
+        <value>Password reset successfully.</value>
+    </data>
+    <data name="Permission.View" xml:space="preserve">
+        <value>View</value>
+    </data>
+    <data name="Permission.Edit" xml:space="preserve">
+        <value>Edit</value>
+    </data>
+    <data name="Permission.Create" xml:space="preserve">
+        <value>Create</value>
+    </data>
+    <data name="Permission.Delete" xml:space="preserve">
+        <value>Delete</value>
+    </data>
+    <data name="Permission.Approve" xml:space="preserve">
+        <value>Approve</value>
+    </data>
+    <data name="Permission.All" xml:space="preserve">
+        <value>All</value>
+    </data>
+</root>

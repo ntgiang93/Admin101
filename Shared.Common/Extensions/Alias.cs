@@ -1,46 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq.Expressions;
 using System.Reflection;
-using SqlKata;
 
 namespace Shared.Common.Extensions
 {
     public class Alias<TEntity>
     {
         private readonly string _alias;
-        public readonly bool _useSnakeCase = true;
+        public readonly bool UseSnakeCase = true;
 
         public Alias(string alias)
         {
             _alias = alias;
         }
-        public string RawTable => GetTableName<TEntity>();
-        public string Table => $"{GetTableName<TEntity>()} as {_alias}";
+        public string RawTable => GetTableName();
+        public string Table => $"{GetTableName()} as {_alias}";
         /// <summary>
         /// Gets the column name with alias for the specified property expression.
         /// For example, if the alias is "u" and the expression is x => x.UserName, it will return "u.user_name".
         /// </summary>
         /// <typeparam name="TProperty"></typeparam>
         /// <param name="expression"></param>
+        /// <param name="withoutAlias"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentException"></exception>
         // get column name with alias
 
-        public string Col<TProperty>(Expression<Func<TEntity, TProperty>> expression)
-            => ColFromExpression(expression.Body);
+        public string Col<TProperty>(Expression<Func<TEntity, TProperty>> expression, bool withoutAlias = false)
+            => ColFromExpression(expression.Body, withoutAlias);
         /// <summary>
         /// Gets the column name with alias for the specified expression.
         /// The expression can be a MemberExpression or a UnaryExpression (for value types).
         /// </summary>
         /// <param name="expression"></param>
+        /// <param name="withoutAlias"></param>
         /// <returns></returns>
-        public string Col(Expression expression)
-            => ColFromExpression(expression);
+        public string Col(Expression expression, bool withoutAlias = false)
+            => ColFromExpression(expression, withoutAlias);
 
         // Hàm private dùng chung
-        private string ColFromExpression(Expression expression)
+        private string ColFromExpression(Expression expression, bool withoutAlias = false)
         {
             // Unwrap Convert
             if (expression is UnaryExpression { NodeType: ExpressionType.Convert } unary)
@@ -49,8 +48,8 @@ namespace Shared.Common.Extensions
             if (expression is not MemberExpression member)
                 throw new ArgumentException(
                     $"Expected MemberExpression, got '{expression.NodeType}': {expression}");
-
-            return $"{_alias}.{(_useSnakeCase ? member.Member.Name.ToSnakeCase() : member.Member.Name)}";
+            if (withoutAlias) return $"{(UseSnakeCase ? member.Member.Name.ToSnakeCase() : member.Member.Name)}";
+            return $"{_alias}.{(UseSnakeCase ? member.Member.Name.ToSnakeCase() : member.Member.Name)}";
         }
 
         /// <summary>
@@ -72,7 +71,7 @@ namespace Shared.Common.Extensions
         /// string tableName = StringHelper.GetTableName&lt;Product&gt;(); // Returns "Product"
         /// </code>
         /// </example>
-        private string GetTableName<TEntity>()
+        private string GetTableName()
         {
             // Get Type of TEntity
             Type entityType = typeof(TEntity);
@@ -87,7 +86,7 @@ namespace Shared.Common.Extensions
             }
             else
             {
-                return _useSnakeCase ? entityType.Name.ToSnakeCase() : entityType.Name;
+                return UseSnakeCase ? entityType.Name.ToSnakeCase() : entityType.Name;
             }
         }
     }

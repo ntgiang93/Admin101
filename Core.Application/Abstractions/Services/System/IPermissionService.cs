@@ -1,3 +1,4 @@
+using Core.Application.Abstractions.Common;
 using Core.Application.Contracts.Base;
 using Core.Domain.Entities.System;
 using Core.Domain.Security;

@@ -2,7 +2,7 @@ using System.Net;
 using Admin.Api.Common.Security.Policies;
 using Admin.Api.Common.Security.User;
 using Common.Security.User;
-using Core.Application.Abstractions.Localization;
+using Core.Application.Abstractions.Message;
 using Core.Application.Abstractions.Services.System;
 using Core.Application.Common;
 using Core.Application.Contracts.Base;
@@ -50,9 +50,9 @@ public class UserController : ControllerBase
         return Ok(ApiResponse<UserDto>.Succeed(user, _sysMsg.Get(EMessage.SuccessMsg)));
     }
 
-    [HttpGet("pagination")]
+    [HttpPost("pagination")]
     [Policy(ESysModule.Users, EPermission.View)]
-    public async Task<IActionResult> GetPagination([FromQuery] UserTableRequestDto filter)
+    public async Task<IActionResult> GetPagination([FromBody] UserTableRequestDto filter)
     {
         var paginatedResult = await _userService.GetPaginationAsync(filter);
         return Ok(ApiResponse<PaginatedResultDto<UserTableDto>>.Succeed(paginatedResult,

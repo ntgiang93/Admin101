@@ -1,238 +1,230 @@
-import IconButton from '@/components/ui/button/IconButton.tsx'
-import ClientTable from '@/components/ui/data-table/DataTable'
-import { SearchInput } from '@/components/ui/input/SearchInput'
-import { useAuth } from '@/components/ui/layout/AuthProvider.tsx'
-import { RoleHook } from '@/hooks/sys/role'
-import { StringHelper } from '@/libs/StringHelper.ts'
-import RoleDetailModal from '@/routes/(app)/sys/role/components/RoleDetailModal.tsx'
-import { EPermission } from '@/types/base/Permission'
-import { ESysModule } from '@/types/constant/SysModule'
-import { defaultRoleDto, type RoleDto } from '@/types/sys/Role'
-import { Button, Card, Tooltip } from '@heroui/react'
-import {
-    Delete02Icon,
-    Edit01Icon,
-    Plus,
-    Refresh,
-    SecurityLockIcon,
-    ShieldCheck,
-    UserMultiple02Icon,
-} from '@hugeicons/core-free-icons'
-import { HugeiconsIcon } from '@hugeicons/react'
-import { createFileRoute } from '@tanstack/react-router'
-import { type ColumnDef } from '@tanstack/react-table'
-import { useCallback, useEffect, useState } from 'react'
-import AssignRoleUserModal from './components/AssignRoleUserModal'
-import DeleteRoleAlert from './components/DeleteRoleAlert'
-import RolePermissonModal from './components/RolePermissonModal'
+import {SearchInput} from '@/components/ui/input/SearchInput'
+import {useAuth} from '@/components/ui/layout/AuthProvider.tsx'
+import {RoleHook} from '@/hooks/sys/role'
+import {StringHelper} from '@/libs/StringHelper.ts'
+import {EPermission} from '@/types/base/Permission'
+import {ESysModule} from '@/types/constant/SysModule'
+import {defaultRoleDto, type RoleDto} from '@/types/sys/Role'
+import {Button, Card, ListBox, Separator, Spinner, Tabs, Tooltip} from '@heroui/react'
+import {Add01Icon, Cancel01Icon, Delete02Icon, Refresh, SaveIcon, ShieldCheck,} from '@hugeicons/core-free-icons'
+import {HugeiconsIcon} from '@hugeicons/react'
+import {createFileRoute} from '@tanstack/react-router'
+import {useEffect, useState} from 'react'
+import EmptyState from "@/assets/empty-state.png";
+import ConfirmDeleteDialog from "@/components/ui/dialog/ConfirmDeleteDialog.tsx";
+import {useTranslation} from "react-i18next";
+import RoleForm from "@/routes/(app)/sys/role/components/RoleForm.tsx";
+import RolePermisson from "@/routes/(app)/sys/role/components/RolePermisson.tsx";
+import {useMutationState} from "@tanstack/react-query";
 
 export const Route = createFileRoute('/(app)/sys/role/')({
-  component: Roles,
+    component: Roles,
 })
 
 function Roles() {
-  const { data: roles, refetch, isFetching } = RoleHook.useGetAll()
-  const [selectedRole, setSelectedRole] = useState<RoleDto | undefined>(
-    undefined,
-  )
-  const [searchValue, setSearchValue] = useState<string>('')
-  const [detailOpen, setDetailOpen] = useState(false)
-  const [confirmOpen, setConfirmOpen] = useState(false)
-  const [assignUserOpen, setAssignUserOpen] = useState(false)
-  const [permissionOpen, setPermissionOpen] = useState(false)
-  const { hasPermission } = useAuth()
-  const canCreate = hasPermission(ESysModule.Roles, EPermission.Create)
-  const canEdit = hasPermission(ESysModule.Roles, EPermission.Edit)
-  const canDelete = hasPermission(ESysModule.Roles, EPermission.Delete)
-  const handelEditRow = useCallback((row: RoleDto) => {
-    setSelectedRole(row)
-    setDetailOpen(true)
-  }, [])
+    const {data: roles, refetch, isFetching} = RoleHook.useGetAll()
+    const [selectedRole, setSelectedRole] = useState<RoleDto | undefined>(
+        undefined,
+    )
+    const [searchValue, setSearchValue] = useState<string>('')
+    const [confirmOpen, setConfirmOpen] = useState(false)
+    const [assignUserOpen, setAssignUserOpen] = useState(false)
+    const [permissionOpen, setPermissionOpen] = useState(false)
+    const {hasPermission} = useAuth()
+    const canCreate = hasPermission(ESysModule.Roles, EPermission.Create)
+    const canEdit = hasPermission(ESysModule.Roles, EPermission.Edit)
+    const canDelete = hasPermission(ESysModule.Roles, EPermission.Delete)
+    const {mutateAsync: del, isPending} = RoleHook.useDelete(
+        selectedRole?.id || 0,
+    )
+    const {t} = useTranslation()
+    const isSaving =
+        useMutationState({
+            filters: {
+                mutationKey: ['role', 'useSave'],
+                status: 'pending',
+            },
+        }).length > 0;
 
-  const columns: ColumnDef<RoleDto>[] = [
-    {
-      id: 'code',
-      accessorKey: 'code',
-      header: () => 'Mã',
-      footer: (props) => props.column.id,
-      minSize: 150,
-      meta: {
-        pinned: 'left',
-      },
-    },
-    {
-      id: 'name',
-      accessorKey: 'name',
-      header: () => 'Tên',
-      footer: (props) => props.column.id,
-    },
-    {
-      id: 'description',
-      accessorKey: 'description',
-      header: () => 'Mô tả',
-      footer: (props) => props.column.id,
-    },
-    {
-      id: 'isProtected',
-      accessorKey: 'isProtected',
-      header: () => 'Bảo vệ',
-      footer: (props) => props.column.id,
-      cell: ({ cell }) => {
-        if (cell.getValue() === true)
-          return <HugeiconsIcon icon={ShieldCheck} size={16} />
-        return null
-      },
-      meta: {
-        align: 'center',
-        width: 150,
-      },
-    },
-    {
-      id: 'actions',
-      accessorKey: 'actions',
-      header: 'Thao tác',
-      footer: (props) => props.column.id,
-      cell: ({ row }) => {
-        return (
-          <div className="relative flex items-center gap-2">
-            <IconButton
-              disabled={!canEdit}
-              onPress={() => {
-                setSelectedRole(row.original)
-                setAssignUserOpen(true)
-              }}
-              icon={UserMultiple02Icon}
-              tooltip={'Gán người dùng'}
-              color="accent"
-            />
-            <IconButton
-              disabled={!canEdit || row.original.isProtected}
-              onPress={() => {
-                setSelectedRole(row.original)
-                setPermissionOpen(true)
-              }}
-              icon={SecurityLockIcon}
-              tooltip={'Phân quyền'}
-              color="accent"
-            />
-            <IconButton
-              disabled={!canEdit || row.original.isProtected}
-              onPress={() => handelEditRow(row.original)}
-              icon={Edit01Icon}
-              tooltip={'Sửa'}
-              color={'accent'}
-            />
-            <IconButton
-              disabled={!canDelete || row.original.isProtected}
-              onPress={() => {
-                setSelectedRole(row.original)
-                setConfirmOpen(true)
-              }}
-              icon={Delete02Icon}
-              tooltip={'Xóa'}
-              color={'danger'}
-            />
-          </div>
-        )
-      },
-      meta: {
-        align: 'center',
-        width: 150,
-      },
-    },
-  ]
-
-  const handleFilter = (value: string) => {
-    if (!roles) return []
-    else if (StringHelper.IsNullOrEmpty(value)) {
-      return roles
-    } else {
-      const searchValueLower = value.toLocaleLowerCase()
-      return (
-        roles.filter(
-          (r) =>
-            r.name.toLocaleLowerCase().includes(searchValueLower) ||
-            r.description?.toLocaleLowerCase().includes(searchValueLower),
-        ) || []
-      )
+    const handleFilter = (value: string) => {
+        if (!roles) return []
+        else if (StringHelper.IsNullOrEmpty(value)) {
+            return roles
+        } else {
+            const searchValueLower = value.toLocaleLowerCase()
+            return (
+                roles.filter(
+                    (r) =>
+                        r.name.toLocaleLowerCase().includes(searchValueLower) ||
+                        r.description?.toLocaleLowerCase().includes(searchValueLower),
+                ) || []
+            )
+        }
     }
-  }
 
-  const tableData = handleFilter(searchValue)
+    const data = handleFilter(searchValue)
 
-  useEffect(() => {
-    if (!detailOpen && !confirmOpen && !assignUserOpen && !permissionOpen) {
-      setSelectedRole(undefined)
+    const handleDelete = async () => {
+        const success = await del()
+        if (success) {
+            await refetch()
+            setSelectedRole(undefined)
+        }
+        setConfirmOpen(false)
     }
-  }, [detailOpen, confirmOpen, assignUserOpen, permissionOpen])
 
-  return (
-    <Card className="h-full">
-      <Card.Header>
-        <Card.Title>Quản lý vai trò</Card.Title>
-        <div className="flex justify-between items-center my-1">
-          <SearchInput
-            value={searchValue}
-            onValueChange={(value) => setSearchValue(value)}
-          />
-          <div className="flex gap-2">
-            <Tooltip delay={0}>
-              <Button
-                hidden={!canCreate}
-                isIconOnly
-                onPress={() => {
-                  setSelectedRole(undefined)
-                  setDetailOpen(true)
-                }}
-              >
-                <HugeiconsIcon icon={Plus}></HugeiconsIcon>
-              </Button>
-              <Tooltip.Content>
-                <p>Thêm mới</p>
-              </Tooltip.Content>
-            </Tooltip>
-            <Tooltip delay={0}>
-              <Button isIconOnly variant="secondary" onPress={() => refetch()}>
-                <HugeiconsIcon icon={Refresh}></HugeiconsIcon>
-              </Button>
-              <Tooltip.Content>
-                <p>Tải lại dữ liệu</p>
-              </Tooltip.Content>
-            </Tooltip>
-          </div>
-        </div>
-      </Card.Header>
-      <Card.Content>
-        <ClientTable
-          columns={columns}
-          data={tableData}
-          isLoading={isFetching}
-        />
-        <RoleDetailModal
-          isOpen={detailOpen}
-          onOpenChange={setDetailOpen}
-          id={selectedRole?.id || 0}
-          onRefresh={refetch}
-        />
-        <DeleteRoleAlert
-          isOpen={confirmOpen}
-          onOpenChange={setConfirmOpen}
-          refetch={refetch}
-          selectedRole={selectedRole}
-        />
-        <AssignRoleUserModal
-          isOpen={assignUserOpen}
-          onOpenChange={setAssignUserOpen}
-          role={selectedRole || { ...defaultRoleDto }}
-          onRefresh={refetch}
-        />
-        <RolePermissonModal
-          isOpen={permissionOpen}
-          onOpenChange={setPermissionOpen}
-          role={selectedRole || { ...defaultRoleDto }}
-        />
-      </Card.Content>
-      <Card.Footer />
-    </Card>
-  )
+/*    useEffect(() => {
+        if (!detailOpen && !assignUserOpen && !permissionOpen) {
+            setSelectedRole(undefined)
+        }
+    }, [detailOpen, assignUserOpen, permissionOpen])*/
+
+    return (
+        <Card variant="transparent" className="h-full">
+            <Card.Header className="flex-row justify-between w-full">
+                <Card.Title className="text-2xl text-accent w-fit">{t('role_page_title')}</Card.Title>
+                <div className="flex">
+                    <Button hidden={!canCreate} onPress={() => setSelectedRole({...defaultRoleDto})}>
+                        <HugeiconsIcon icon={Add01Icon} stroke={'3'}/>
+                        {t('create')}
+                    </Button>
+                </div>
+            </Card.Header>
+            <Card.Content className="grid grid-cols-3 gap-4 h-full">
+                <Card className="col-span-1 h-full flex flex-col">
+                    <Card.Header>
+                        <div className="flex justify-between items-center my-1">
+                            <SearchInput
+                                value={searchValue}
+                                onValueChange={(value) =>
+                                    setSearchValue(value)
+                                }
+                            />
+                            <div className="flex gap-2">
+                                <Tooltip delay={0}>
+                                    <Button isIconOnly variant="secondary" onPress={() => refetch()}>
+                                        <HugeiconsIcon icon={Refresh}/>
+                                    </Button>
+                                    <Tooltip.Content>
+                                        <p>{t('refetch')}</p>
+                                    </Tooltip.Content>
+                                </Tooltip>
+                            </div>
+                        </div>
+                    </Card.Header>
+                    <Card.Content className="flex-1 min-h-0">
+                        <ListBox aria-label="roles" className="w-full" selectionMode="single">
+                            {data.map((role) => (
+                                <ListBox.Item
+                                    key={role.id}
+                                    textValue={role.id.toString()}
+                                    onPress={() => setSelectedRole(role)}
+                                    className="flex items-center justify-between w-full gap-4 px-4"
+                                >
+                                    <div className="flex flex-col items-start gap-1">
+                                        <h2 className="text-lg font-semibold">{role.name}</h2>
+                                        <p className="text-sm text-muted-foreground">{role.description}</p>
+                                    </div>
+                                    {role.isProtected && (
+                                        <HugeiconsIcon className="text-accent" icon={ShieldCheck} size={24}/>)}
+                                </ListBox.Item>
+                            ))}
+                        </ListBox>
+                    </Card.Content>
+                    <Card.Footer/>
+                </Card>
+                {(!selectedRole) && (
+                    <Card className="col-span-2">
+                        <Card.Content>
+                            <div className="flex items-center justify-center h-full w-full">
+                                <div className="flex flex-col items-center gap-4 text-center p-8">
+                                    <img src={EmptyState} alt={'empty'}/>
+                                    <h2 className='text-xl font-semibold'>{t('empty_card_title')}</h2>
+                                    <p>{t('empty_card_desc')}</p>
+                                </div>
+                            </div>
+                        </Card.Content>
+                    </Card>
+                )}
+                {selectedRole && (
+                    <Card className={"col-span-2 h-full"}>
+                        <Card.Header className="flex flex-row w-full justify-between">
+                            <div>
+                                <Card.Title
+                                    className="text-xl font-semibold">{(selectedRole.id > 0 ? t('edit') : t('create')) + ' ' + t('role')}</Card.Title>
+                                <p className="text-sm text-muted">{t('protected_role_msg')}</p>
+                            </div>
+                            <div className="flex gap-2">
+                                {selectedRole.id > 0 && canDelete && (
+                                    <Tooltip delay={0}>
+                                        <Button variant="danger-soft" isIconOnly size={'sm'}
+                                                onPress={() => setConfirmOpen(true)} isDisabled={selectedRole.isProtected || isSaving}>
+                                            <HugeiconsIcon icon={Delete02Icon}/>
+                                        </Button>
+                                        <Tooltip.Content>
+                                            <p>{t('delete')}</p>
+                                        </Tooltip.Content>
+                                    </Tooltip>
+                                )}
+                                <Tooltip delay={0}>
+                                    <Button hidden={!canCreate && !canEdit} variant="primary" type={'submit'} form="roleForm" isIconOnly size={'sm'}
+                                            isDisabled={selectedRole.isProtected || isSaving} isPending={isSaving}>
+                                        {({isPending}) => {
+                                            if (isPending)
+                                                return (
+                                                    <>
+                                                        <Spinner/>
+                                                    </>
+                                                )
+                                            else return <HugeiconsIcon icon={SaveIcon}/>
+                                        }}
+                                    </Button>
+                                    <Tooltip.Content>
+                                        <p>{t('save')}</p>
+                                    </Tooltip.Content>
+                                </Tooltip>
+                                <Tooltip delay={0}>
+                                    <Button variant="ghost" isIconOnly size={'sm'}
+                                            onPress={() => setSelectedRole(undefined)}>
+                                        <HugeiconsIcon icon={Cancel01Icon}/>
+                                    </Button>
+                                    <Tooltip.Content>
+                                        <p>{t('cancel')}</p>
+                                    </Tooltip.Content>
+                                </Tooltip>
+                            </div>
+                        </Card.Header>
+                        <Card.Content>
+                            <RoleForm id={selectedRole?.id || 0} readonly={selectedRole.isProtected} onRefresh={refetch}
+                                      onResetSelected={() => setSelectedRole(undefined)}/>
+                            <Separator className="my-4"/>
+                            <Tabs className="w-full h-full">
+                                <Tabs.ListContainer>
+                                    <Tabs.List aria-label="Options" className="max-w-md">
+                                        <Tabs.Tab id="permission">
+                                            {t('permission_page_title')}
+                                            <Tabs.Indicator/>
+                                        </Tabs.Tab>
+                                        <Tabs.Tab id="member">
+                                            {t('member_manage')}
+                                            <Tabs.Indicator/>
+                                        </Tabs.Tab>
+                                    </Tabs.List>
+                                </Tabs.ListContainer>
+                                <Tabs.Panel className="w-full h-full" id="permission">
+                                    <RolePermisson role={selectedRole} isOpen={true} onOpenChange={() => {
+                                    }}/>
+                                </Tabs.Panel>
+                                <Tabs.Panel className="pt-4" id="member">
+                                    <p>Track your metrics and analyze performance data.</p>
+                                </Tabs.Panel>
+                            </Tabs>
+                        </Card.Content>
+                    </Card>
+                )}
+            </Card.Content>
+            <ConfirmDeleteDialog isOpen={confirmOpen} onOpenChange={setConfirmOpen} isPending={isPending}
+                                 onDelete={handleDelete} itemName={selectedRole?.name}/>
+        </Card>
+    )
 }

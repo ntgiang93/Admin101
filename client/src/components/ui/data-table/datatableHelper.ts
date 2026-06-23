@@ -108,7 +108,7 @@ export const getCommonPinningStyles = <TData>(
   const isPinned = column.getIsPinned()
 
   if (!isPinned) {
-    return { position: 'relative', zIndex: 0 }
+    return {  }
   }
 
   const isLastLeft  = isPinned === 'left'  && column.getIsLastColumn('left')
@@ -126,6 +126,7 @@ export const getCommonPinningStyles = <TData>(
         : undefined,
   }
 }
+
 
 // ─────────────────────────────────────────────
 // Checkbox class config

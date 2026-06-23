@@ -40,6 +40,9 @@ export default function MenuForm(props: MenuFromProps) {
         e.preventDefault()
         const response = await save(form)
         if (response && response.success) {
+            if(form.id == 0) {
+                onResetSelected()
+            }
             onRefresh()
         }
     }
@@ -93,6 +96,7 @@ export default function MenuForm(props: MenuFromProps) {
                             className="w-full"
                             name="name"
                             isRequired
+                            variant={'secondary'}
                             value={form.name}
                             onChange={(value) => {
                                 setForm((prev) => ({...prev, name: value}))
@@ -104,13 +108,14 @@ export default function MenuForm(props: MenuFromProps) {
                             }}
                         >
                             <Label>{t('name')}</Label>
-                            <Input autoFocus tabIndex={1}/>
+                            <Input autoFocus placeholder={t('placeholder_input',{field: t('name')})} tabIndex={1}/>
                             <FieldError/>
                         </TextField>
                         <TextField
                             className="w-full"
                             name="url"
                             isRequired
+                            variant={'secondary'}
                             value={form.url}
                             onChange={(value) => {
                                 setForm((prev) => ({...prev, url: value}))
@@ -122,7 +127,7 @@ export default function MenuForm(props: MenuFromProps) {
                             }}
                         >
                             <Label>{t('path')}</Label>
-                            <Input placeholder="Nhập đường dẫn" tabIndex={2}/>
+                            <Input placeholder={t('placeholder_input',{field: t('path')})} tabIndex={2}/>
                             <FieldError/>
                         </TextField>
                         <IconSelect
@@ -140,13 +145,14 @@ export default function MenuForm(props: MenuFromProps) {
                             }
                             validate={(value) => {
                                 return value === '' || !value
-                                    ? MSG_LIST.REQUIRED_FIELD
+                                    ? t('msg.required_field')
                                     : null
                             }}
                         />
                         <NumberField
                             minValue={0}
                             step={1}
+                            variant={'secondary'}
                             value={form.displayOrder}
                             onChange={(value) =>
                                 setForm((prev) => ({...prev, displayOrder: value}))
@@ -164,7 +170,7 @@ export default function MenuForm(props: MenuFromProps) {
                 )}
             </Card.Content>
             <Card.Footer className="flex justify-end gap-2">
-                <Button variant="tertiary" slot="close">
+                <Button variant="tertiary" slot="close" isDisabled={isPending || isFetching} onPress={onResetSelected}>
                     Hủy bỏ
                 </Button>
                 <Button type="submit" form="menuForm" isPending={isPending} isDisabled={isFetching}>

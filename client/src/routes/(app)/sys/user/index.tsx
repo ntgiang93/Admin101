@@ -5,6 +5,7 @@ import { UserHook } from '@/hooks/sys/user'
 import { EPermission } from '@/types/base/Permission'
 import { ESysModule } from '@/types/constant/SysModule'
 import {
+  defaultUserDto,
   defaultUserTableRequest,
   type UserTableDto,
   type UserTableRequestDto,
@@ -12,7 +13,7 @@ import {
 import { AlertDialog, Avatar, Button, Card, Chip, Tooltip } from '@heroui/react'
 import {
   Add01Icon,
-  Edit01Icon,
+  Edit01Icon, Refresh,
   UserAccountIcon,
   UserCheck01Icon,
   UserRemove01Icon,
@@ -22,7 +23,17 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { type ColumnDef } from '@tanstack/react-table'
 import { useEffect, useState } from 'react'
 import UserDetailModal from './components/UserDetailModal'
-import AsyncDataTable from '@/components/ui/data-table/AsyncDataTable'
+import ClientTable from "@/components/ui/data-table/DataTable.tsx";
+import {useTranslation} from "react-i18next";
+import {defaultMenuItem} from "@/types/sys/Menu.ts";
+import EmptyState from "@/assets/empty-state.png";
+import MenuForm from "@/routes/(app)/sys/menu/components/MenuForm.tsx";
+import ConfirmDeleteDialog from "@/components/ui/dialog/ConfirmDeleteDialog.tsx";
+import type {DateValue} from "@internationalized/date";
+import i18n from 'i18next'
+import dayjs from "dayjs";
+
+
 
 export const Route = createFileRoute('/(app)/sys/user/')({
   component: Users,
@@ -31,9 +42,9 @@ export const Route = createFileRoute('/(app)/sys/user/')({
 function Users() {
   const [filter, setFilter] = useState<UserTableRequestDto>({
     ...defaultUserTableRequest,
-    pageSize: 10,
+    pageSize: 20,
   })
-  const { data, refetch } = UserHook.useGetPagination(filter)
+  const { data, refetch, isFetching } = UserHook.useGetPagination(filter)
   const [selectedUser, setSelectedUser] = useState<UserTableDto | undefined>(
     undefined,
   )
@@ -43,16 +54,17 @@ function Users() {
     selectedUser?.id || '',
   )
   const { hasPermission } = useAuth()
-  const canCreateUser = hasPermission(ESysModule.Users, EPermission.Create)
-  const canEditUser = hasPermission(ESysModule.Users, EPermission.Edit)
-  const canViewUser = hasPermission(ESysModule.Users, EPermission.View)
+  const canCreate = hasPermission(ESysModule.Users, EPermission.Create)
+  const canEdit = hasPermission(ESysModule.Users, EPermission.Edit)
+  const canView = hasPermission(ESysModule.Users, EPermission.View)
   const navigate = useNavigate()
+  const {t} = useTranslation()
 
   const columns: ColumnDef<UserTableDto>[] = [
     {
       id: 'fullName',
       accessorKey: 'fullName',
-      header: () => 'Họ và tên',
+      header: () => t('full_name'),
       footer: (props) => props.column.id,
       cell: ({ row }) => {
         return (
@@ -69,11 +81,14 @@ function Users() {
                 {row.original.fullName.charAt(0)}
               </Avatar.Fallback>
             </Avatar>
-            <span>{row.original.fullName}</span>
+            <div className="felx flex-col">
+              <p>{row.original.fullName}</p>
+              <p className="text-sm text-muted">{row.original.email}</p>
+            </div>
           </div>
         )
       },
-      size: 250,
+      size: 320,
       meta: {
         pinned: 'left',
       },
@@ -81,53 +96,68 @@ function Users() {
     {
       id: 'userName',
       accessorKey: 'userName',
-      header: () => 'Tài khoản',
+      header: () => t('account'),
       footer: (props) => props.column.id,
+      size: 160,
       meta: {
         pinned: 'left',
       },
     },
     {
-      id: 'email',
-      accessorKey: 'email',
-      header: () => 'Email',
+      id: 'roles',
+      accessorKey: 'roles',
+      header: () => t('role'),
+      footer: (props) => props.column.id,
+      cell: ({ row }) => {
+        return <span>{row.original.roles.join(' - ')}</span>
+      },
+      meta: {
+        align: 'start',
+      },
+    },
+    {
+      id: 'department',
+      accessorKey: 'department',
+      header: () => t('department'),
       footer: (props) => props.column.id,
       meta: {
         align: 'start',
       },
     },
     {
-      id: 'roles',
-      accessorKey: 'roles',
-      header: () => 'Vai trò',
+      id: 'lastAccess',
+      accessorKey: 'lastAccess',
+      header: () => t('last_access'),
       footer: (props) => props.column.id,
       cell: ({ row }) => {
-        return <span>{row.original.roles.join(' - ')}</span>
+        return <span>{dayjs(row.original.lastAccess).format('DD/MM/YYYY HH:mm:ss')}</span>
       },
+      size: 120,
       meta: {
-        align: 'center',
+        align: 'start',
       },
     },
     {
       id: 'isActive',
       accessorKey: 'isActive',
-      header: 'Trạng thái',
+      header: t('status'),
       footer: (props) => props.column.id,
       cell: ({ row }) => {
         return row.original.isLocked ? (
           <Chip color="danger" variant={'soft'}>
-            Khóa
+            {t('block')}
           </Chip>
         ) : row.original.isActive ? (
           <Chip color="success" variant={'soft'}>
-            Hoạt động
+            {t('active')}
           </Chip>
         ) : (
           <Chip color="danger" variant={'soft'}>
-            Không hoạt động
+            {t('inactive')}
           </Chip>
         )
       },
+      size: 160,
       meta: {
         align: 'center',
       },
@@ -135,13 +165,13 @@ function Users() {
     {
       id: 'actions',
       accessorKey: 'actions',
-      header: 'Thao tác',
+      header: t('action'),
       footer: (props) => props.column.id,
       cell: ({ row }) => {
         return (
           <div className="relative flex items-center gap-2">
             <IconButton
-              hidden={!canViewUser}
+              hidden={!canView}
               icon={UserAccountIcon}
               onPress={() => {
                 navigate({
@@ -152,40 +182,40 @@ function Users() {
               tooltip={'Xem chi tiết'}
             />
             <IconButton
-              hidden={!canEditUser}
+              hidden={!canEdit}
               onPress={() => {
                 setSelectedUser(row.original)
                 setDetailOpen(true)
               }}
               icon={Edit01Icon}
-              tooltip={'Sửa'}
+              tooltip={t('edit')}
             />
             <IconButton
-              hidden={!canEditUser || !row.original.isActive}
+              hidden={!canEdit || !row.original.isActive}
               onPress={() => {
                 setSelectedUser(row.original)
                 setConfirmOpen(true)
               }}
               icon={UserRemove01Icon}
-              tooltip={'Vô hiệu hóa'}
+              tooltip={t('deactivate_user')}
               color={'danger'}
             />
             <IconButton
-              hidden={!canEditUser || row.original.isActive}
+              hidden={!canEdit || row.original.isActive}
               onPress={() => {
                 setSelectedUser(row.original)
                 setConfirmOpen(true)
               }}
               icon={UserCheck01Icon}
-              tooltip={'Kích hoạt'}
+              tooltip={t('activate_user')}
               color={'success'}
             />
           </div>
         )
       },
+      size: 120,
       meta: {
         align: 'center',
-        width: 150,
       },
     },
   ]
@@ -204,108 +234,59 @@ function Users() {
   }, [detailOpen, confirmOpen])
 
   return (
-    <div className={'h-full w-full flex flex-col gap-2'}>
-      <Card className="h-full">
-        <Card.Header>
-          <Card.Title>Quản lý người dùng</Card.Title>
-          <div className="flex justify-between items-center w-full gap-2">
-            <SearchInput
-              className="w-64"
-              value={''}
-              onValueChange={(value) => {
-                setFilter((prev) => ({
-                  ...prev,
-                  setSearchValue: value,
-                  page: 1,
-                }))
-              }}
-            />
-            <Tooltip delay={0}>
-              <Button
-                isIconOnly
-                size={'sm'}
-                onPress={() => {
-                  setSelectedUser(undefined)
-                  setDetailOpen(true)
-                }}
-                hidden={!canCreateUser}
-              >
-                <HugeiconsIcon icon={Add01Icon} stroke={'3'} />
-              </Button>
-              <Tooltip.Content>Thêm mới</Tooltip.Content>
-            </Tooltip>
+      <Card variant="transparent" className="h-full">
+        <Card.Header className="flex-row justify-between w-full">
+          <Card.Title className="text-2xl text-accent w-fit">{t('user_page_title')}</Card.Title>
+          <div className="flex">
+            <Button hidden={!canCreate} onPress={() => setSelectedUser(undefined)}>
+              <HugeiconsIcon icon={Add01Icon} stroke={'3'}/>
+              {t('create')}
+            </Button>
           </div>
         </Card.Header>
-        <Card.Content>
-          <AsyncDataTable
-            data={data?.items || []}
-            columns={columns}
-            pagination={{
-              page: filter.page,
-              pageSize: data?.pageSize ?? filter.pageSize,
-              totalPages: data?.totalPages ?? 0,
-              totalCount: data?.totalCount ?? 0,
-              onPageChange: (page) => {
-                setFilter((prev) => ({
-                  ...prev,
-                  page: page + 1,
-                }))
-              },
-              onPageSizeChange: (pageSize) => {
-                setFilter((prev) => ({
-                  ...prev,
-                  pageSize,
-                  page: 1,
-                }))
-              },
-            }}
-          />
+        <Card.Content className="w-full gap-4 h-full">
+          <Card className="w-full h-full flex flex-col">
+            <Card.Header>
+              <div className="flex justify-between items-center my-1">
+                <SearchInput
+                    value={filter.searchValue}
+                    onValueChange={(value) =>
+                        setFilter((prev) => ({...prev, searchValue: value, page: 1}))
+                    }
+                />
+                <div className="flex gap-2">
+                  <Tooltip delay={0}>
+                    <Button isIconOnly variant="secondary" onPress={() => refetch()}>
+                      <HugeiconsIcon icon={Refresh}/>
+                    </Button>
+                    <Tooltip.Content>
+                      <p>{t('refetch')}</p>
+                    </Tooltip.Content>
+                  </Tooltip>
+                </div>
+              </div>
+            </Card.Header>
+            <Card.Content className="flex-1 min-h-0">
+              <ClientTable
+                  columns={columns}
+                  data={data?.items || []}
+                  isLoading={isFetching}
+                  pagination={{
+                    page: filter.page,
+                    pageSize: filter.pageSize,
+                    totalCount: data?.totalCount || 0,
+                    onPageChange: (val: number) => {
+                      setFilter((prev) => ({...prev, page: val}));
+                    },
+                    onPageSizeChange: (val: number) => {
+                      setFilter((prev) => ({...prev, page: 1, pageSize: val}));
+                    },
+                  }}
+              />
+            </Card.Content>
+            <Card.Footer/>
+          </Card>
         </Card.Content>
       </Card>
-      <UserDetailModal
-        isOpen={detailOpen}
-        onOpenChange={() => setDetailOpen(!detailOpen)}
-        onRefresh={refetch}
-        id={selectedUser?.id || ''}
-      />
-      <AlertDialog
-        isOpen={confirmOpen}
-        onOpenChange={() => setConfirmOpen(!confirmOpen)}
-      >
-        <AlertDialog.Backdrop>
-          <AlertDialog.Container>
-            <AlertDialog.Dialog className={'w-120'}>
-              <AlertDialog.Header>
-                <AlertDialog.Heading>
-                  {selectedUser?.isActive
-                    ? 'Vô hiệu hóa người dùng'
-                    : 'Kích hoạt người dùng'}
-                </AlertDialog.Heading>
-              </AlertDialog.Header>
-              <AlertDialog.Body>
-                Bạn có chắc chắn muốn{' '}
-                {selectedUser?.isActive ? 'vô hiệu hóa' : 'kích hoạt'} người
-                dùng <strong>{selectedUser?.fullName}</strong> (
-                {selectedUser?.userName})?
-              </AlertDialog.Body>
-              <AlertDialog.Footer>
-                <Button
-                  variant="tertiary"
-                  onPress={() => setConfirmOpen(false)}
-                >
-                  Hủy
-                </Button>
-                <Button
-                  variant={selectedUser?.isActive ? 'danger' : 'primary'}
-                  onPress={handleChangeActive}
-                >
-                  Xác nhận
-                </Button>
-              </AlertDialog.Footer>
-            </AlertDialog.Dialog>
-          </AlertDialog.Container>
-        </AlertDialog.Backdrop>
-      </AlertDialog>
-    </div>
   )
 }

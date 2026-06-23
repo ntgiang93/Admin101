@@ -1,3 +1,5 @@
+using System.Globalization;
+using Core.Application.Abstractions.Localizer;
 using Core.Application.Abstractions.Persistence.System;
 using Core.Application.Abstractions.Services.System;
 using Core.Application.Contracts.Base;
@@ -11,19 +13,22 @@ namespace Core.Application.Services.System
     {
         private readonly IRoleRepository _roleRepository;
         private readonly IMemoryCache _memoryCache;
-        private readonly string CACHE_KEY_PREFIX = "Permission_";
+        private readonly string _cacheKeyPrefix = "Permission_";
+        private readonly ISysCategoryLocalizer _localizer;
 
         public PermissionService(
             IRoleRepository roleRepository,
-            IMemoryCache memoryCache)
+            IMemoryCache memoryCache,
+            ISysCategoryLocalizer localizer)
         {
             _roleRepository = roleRepository;
             _memoryCache = memoryCache;
+            _localizer = localizer;
         }
 
         public async Task<List<RolePermission>> GetRolePermissionAsync(int roleId)
         {
-            string cacheKey = $"{CACHE_KEY_PREFIX}{roleId}";
+            string cacheKey = $"{_cacheKeyPrefix}{roleId}";
             
             // Try to get from cache first
             if (_memoryCache.TryGetValue(cacheKey, out List<RolePermission>? permissions) && permissions != null)
@@ -42,7 +47,7 @@ namespace Core.Application.Services.System
 
         public void InvalidateRolePermissionCache(int roleId)
         {
-            string cacheKey = $"{CACHE_KEY_PREFIX}{roleId}";
+            string cacheKey = $"{_cacheKeyPrefix}{roleId}";
             _memoryCache.Remove(cacheKey);
         }
 
@@ -51,7 +56,7 @@ namespace Core.Application.Services.System
             return Permission.Permissions.Select(x => new SelectOption<EPermission>
             {
                 Value = x.Key,
-                Label = x.Value
+                Label = _localizer.Get(x.Value)
             }).ToList();
         }
     }

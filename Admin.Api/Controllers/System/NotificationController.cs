@@ -1,7 +1,7 @@
 using Admin.Api.Common.Security.User;
 using Common.Security;
 using Common.Security.User;
-using Core.Application.Abstractions.Localization;
+using Core.Application.Abstractions.Message;
 using Core.Application.Abstractions.Services.System;
 using Core.Application.Contracts.Base;
 using Core.Application.Contracts.System;

@@ -1,4 +1,4 @@
-using Core.Application.Abstractions.Localization;
+using Core.Application.Abstractions.Message;
 using Core.Application.Abstractions.Security;
 using Core.Domain.Constants;
 

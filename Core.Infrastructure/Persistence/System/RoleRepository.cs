@@ -70,24 +70,22 @@ public class RoleRepository : GenericRepository<Role, int>, IRoleRepository
 
     public async Task<bool> AddRolePermissionAsync(IEnumerable<RolePermission> rolePermissions)
     {
+        var cols = new [] {_rp.Col(x => x.RoleId, true), _rp.Col(x => x.SysModule, true), _rp.Col(x => x.Permission, true)};
         var aggregated = rolePermissions
         .GroupBy(x => new { x.RoleId, x.SysModule })
-        .Select(g => new RolePermission
+        .Select(g => new object[]
         {
-            RoleId = g.Key.RoleId,
-            SysModule = g.Key.SysModule,
-            Permission = g.Select(x => x.Permission)
+            g.Key.RoleId,
+            g.Key.SysModule,
+            g.Select(x => x.Permission)
                           .Aggregate(EPermission.None, (acc, cur) => acc | cur)
         })
         .ToList();
-        return await ExecuteInTransactionAsync(async (connection, transaction) =>
-        {
-            foreach (var rolePermission in aggregated)
-            {
-                await connection.InsertAsync(rolePermission, transaction);
-            }
-            return true;
-        });
+        var query = new Query(_rp.RawTable)
+            .AsInsert(cols, aggregated);
+        var compiledQuery = _compiler.Compile(query);
+        var result = _dbFactory.Connection.Execute(compiledQuery.Sql, compiledQuery.NamedBindings);
+        return result > 0;
     }
 
     public async Task<bool> DeleteRolePermissionAsync(int roleId)

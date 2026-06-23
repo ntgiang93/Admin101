@@ -1,5 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
-using Core.Application.Abstractions.Localization;
+using Core.Application.Abstractions.Message;
 using Core.Application.Abstractions.Notifications;
 using Core.Application.Abstractions.Security;
 using Core.Application.Abstractions.Services.System;

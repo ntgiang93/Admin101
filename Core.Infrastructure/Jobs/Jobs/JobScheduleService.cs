@@ -1,4 +1,4 @@
-using Core.Application.Abstractions.Localization;
+using Core.Application.Abstractions.Message;
 using Core.Application.Abstractions.Persistence.System;
 using Core.Application.Abstractions.Services.Job;
 using Core.Application.Contracts.System;

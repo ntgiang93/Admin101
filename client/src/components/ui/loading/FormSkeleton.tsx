@@ -12,7 +12,7 @@ export const FormSkeleton = (props :FormSkeletonProps ) => {
     ))
     
     const form_cols = Array.from({length: col}, (_, i) => i).map((index) => (
-        <div key={index} className="flex flex-col items-start w-full">
+        <div key={index} className="flex flex-col gap-3 items-start w-full">
             {form_fields}
         </div>
     ))
@@ -26,9 +26,9 @@ export const FormSkeleton = (props :FormSkeletonProps ) => {
 
 const FormFieldSkeleton = () => {
     return (
-        <div className="shadow-panel space-y-3 rounded-lg bg-transparent p-4 w-full">
-            <Skeleton animationType="pulse" className="h-4 w-2/5 rounded-lg" />
-            <Skeleton animationType="pulse" className="h-8 rounded-lg" />
+        <div className="shadow-panel space-y-1.5 rounded-lg bg-transparent h-15 w-full">
+            <Skeleton animationType="pulse" className="h-5 w-2/5 rounded-lg" />
+            <Skeleton animationType="pulse" className="h-9 rounded-lg" />
         </div>
     )
 } 

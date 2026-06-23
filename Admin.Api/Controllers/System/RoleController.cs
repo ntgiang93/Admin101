@@ -1,5 +1,5 @@
 using Admin.Api.Common.Security.Policies;
-using Core.Application.Abstractions.Localization;
+using Core.Application.Abstractions.Message;
 using Core.Application.Abstractions.Services.System;
 using Core.Application.Contracts.Base;
 using Core.Application.Contracts.System.Role;
@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Admin.Api.Controllers.System;
 
-[Route("api/roles")]
+[Route("api/role")]
 [ApiController]
 [Authorize]
 public class RoleController : ControllerBase

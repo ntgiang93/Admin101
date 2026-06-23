@@ -55,7 +55,7 @@ export function TablePagination(props: PaginationControlledProps) {
   return (
     <Pagination>
       <Pagination.Summary>
-        {startItem}-{endItem} / {pageCount}
+        {startItem}-{endItem} / {totalCount}
       </Pagination.Summary>
       <Pagination.Content>
         <Select

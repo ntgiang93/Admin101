@@ -1,4 +1,6 @@
-﻿namespace Core.Domain.Security;
+﻿using Core.Domain.Constants;
+
+namespace Core.Domain.Security;
 
 [Flags]
 public enum EPermission
@@ -16,14 +18,14 @@ public enum EPermission
 public static class Permission
 {
     public static readonly string PermissionCacheKeyPrefix = "RolePermission_";
-
+    
     public static readonly Dictionary<EPermission, string> Permissions = new()
     {
-        { EPermission.View, "View" },
-        { EPermission.Create, "Create" },
-        { EPermission.Edit, "Edit" },
-        { EPermission.Delete, "Delete" },
-        { EPermission.Approve, "Approve" },
-        { EPermission.All, "All" },
+        { EPermission.View, SysCategoryKey.PermissionKey.View},
+        { EPermission.Create, SysCategoryKey.PermissionKey.Create},
+        { EPermission.Edit, SysCategoryKey.PermissionKey.Edit},
+        { EPermission.Delete, SysCategoryKey.PermissionKey.Delete},
+        { EPermission.Approve, SysCategoryKey.PermissionKey.Approve},
+        { EPermission.All, SysCategoryKey.PermissionKey.All},
     };
 }

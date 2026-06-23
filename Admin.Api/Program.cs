@@ -10,6 +10,7 @@ using Admin.Api.Common.Security.Policies;
 using Admin.Api.Common.Security.User;
 using Admin.Api.DependencyInjection;
 using Admin.Api.Filters;
+using Admin.Api.Middleware;
 using Common.Security.User;
 using Core.Application.Abstractions.Caching;
 using Core.Application.Abstractions.Persistence;
@@ -112,6 +113,8 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 // Configure Dapper to match column names with underscores to C# properties with PascalCase
 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+// localization setup
+builder.Services.AddLocalization();
 
 var app = builder.Build();
 
@@ -123,6 +126,9 @@ app.UseHttpsRedirection();
 
 // Enable CORS
 app.UseCors("CorsPolicy");
+// middleware setup
+app.UseMiddleware<LanguageMiddleware>();
+
 app.UseStaticFiles();
 app.UseStaticFiles(new StaticFileOptions
 {

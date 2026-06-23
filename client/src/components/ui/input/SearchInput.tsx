@@ -1,6 +1,6 @@
-import { useTranslation } from '@/components/ui/layout/LanguageProvider'
 import { Label, SearchField } from '@heroui/react'
 import { useEffect, useState } from 'react'
+import {useTranslation} from "react-i18next";
 
 interface ISearchInputProps {
   placeholder?: string
@@ -49,7 +49,7 @@ export const SearchInput = (props: ISearchInputProps) => {
       <Label hidden={!label}>{label}</Label>
       <SearchField.Group>
         <SearchField.SearchIcon />
-        <SearchField.Input placeholder={placeholder || t('common.search')} />
+        <SearchField.Input placeholder={placeholder || t('search')} />
         <SearchField.ClearButton />
       </SearchField.Group>
     </SearchField>

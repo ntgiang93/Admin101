@@ -6,11 +6,10 @@ namespace Core.Domain.Entities.System;
 [Table("user_tokens")]
 public class UserToken : BaseEntity<long>
 {
-    [Required] public string UserId { get; set; }
+    [Required] public required string UserId { get; set; }
 
-    [Required][StringLength(200)] public string AccessTokenId { get; set; }
-
-    [Required][StringLength(100)] public string DeviceId { get; set; }
+    [Required][StringLength(200)] public required string AccessTokenId { get; set; }
+    [Required][StringLength(100)] public required string DeviceId { get; set; }
 
     [StringLength(100)] public string? Device { get; set; }
 
@@ -26,5 +25,5 @@ public class UserToken : BaseEntity<long>
     [Column(TypeName = "datetime2")]
     public DateTime Expires { get; set; }
 
-    [Required][StringLength(200)] public string RefreshToken { get; set; }
+    [Required][StringLength(200)] public required string RefreshToken { get; set; }
 }

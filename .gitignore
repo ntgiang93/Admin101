@@ -1,2 +1,35 @@
+## Thư mục build và run code (Quan trọng nhất)
+[Bb]in/
+[Oo]bj/
+
+## Thư mục xuất bản mã nguồn (Publish)
+[Log]/
+[Pp]ublish/
+
+## File cấu hình cá nhân (Tránh đè cấu hình kết nối DB, API key của máy bạn lên git)
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
 /.idea
 /.vs
+
+## File cấu hình môi trường chạy local (Chứa secret key, appsettings cá nhân)
+appsettings.Development.json
+appsettings.Local.json
+*.local.json
+
+## Thư mục chứa các gói thư viện tải về (NuGet)
+*.nuget.props
+*.nuget.targets
+packages/
+
+## Thư mục sinh ra bởi công cụ kiểm tra hiệu năng hoặc test
+TestResults/
+Artifacts/
+
+## Hệ điều hành tự sinh (OS generated files)
+.DS_Store
+Thumbs.db

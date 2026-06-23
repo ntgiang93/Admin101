@@ -32,4 +32,46 @@
       <PackageReference Include="Ulid" Version="1.4.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <EmbeddedResource Update="Resources\Messages.en.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Messages.en.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\Messages.vi.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Messages.vi.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\SysCategory.en.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>SysCategory.en.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\SysCategory.vi.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>SysCategory.vi.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Resources\Messages.en.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Messages.en.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Resources\Messages.vi.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Messages.vi.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Resources\SysCategory.en.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>SysCategory.en.resx</DependentUpon>
+      </Compile>
+      <Compile Update="Resources\SysCategory.vi.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>SysCategory.vi.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
 </Project>

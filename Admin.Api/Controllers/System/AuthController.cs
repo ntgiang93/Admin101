@@ -1,6 +1,7 @@
 using Admin.Api.Common.Extensions;
 using Admin.Api.Common.Security.Policies;
-using Core.Application.Abstractions.Localization;
+using Core.Application.Abstractions.Localizer;
+using Core.Application.Abstractions.Message;
 using Core.Application.Abstractions.Services.System;
 using Core.Application.Contracts.Base;
 using Core.Application.Contracts.System.Auth;
@@ -18,24 +19,23 @@ namespace Admin.Api.Controllers.System;
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
-    private readonly ISysMessageService _sysMsg;
+    private readonly IMessageLocalizer _localizer;
     private readonly IUserService _userService;
 
-    public AuthController(IUserService userService, ISysMessageService sysMsg,
-        IAuthService authService)
+    public AuthController(IUserService userService, IAuthService authService, IMessageLocalizer  localizer)
     {
         _userService = userService;
-        _sysMsg = sysMsg;
         _authService = authService;
+        _localizer = localizer;
     }
     
     [HttpPost("login-proxy")]
     public async Task<IActionResult> LoginProxy([FromBody] LoginDto loginDto)
     {
         var token = await _authService.LoginProxyAsync(loginDto);
-        if (token == null) return Ok(ApiResponse<TokenDto>.Fail(_sysMsg.Get(EMessage.AuthenticationFailed)));;
-        setRefreshTokenCookie(token);
-        return Ok(ApiResponse<TokenDto>.Succeed(token, _sysMsg.Get(EMessage.SuccessMsg)));
+        if (token == null) return Ok(ApiResponse<TokenDto>.Fail(_localizer.Get(MsgKey.Auth.LoginFailed)));
+        SetRefreshTokenCookie(token);
+        return Ok(ApiResponse<TokenDto>.Succeed(token, _localizer.Get(MsgKey.Auth.LoginSuccess)));
     }
 
     [HttpPost("login")]
@@ -43,34 +43,34 @@ public class AuthController : ControllerBase
     {
         var user = await _userService.GetSingleAsync<User>(u => u.UserName == loginDto.UserName);
         if (user == null)
-            return Ok(ApiResponse<TokenDto>.Fail(_sysMsg.Get(EMessage.AuthenticationFailed)));
+            return Ok(ApiResponse<TokenDto>.Fail(_localizer.Get(MsgKey.Auth.LoginFailed)));
 
         var passwordIsCorrect = PasswordHelper.VerifyPassword(loginDto.Password, user.PasswordHash);
         if (!passwordIsCorrect)
-            return Ok(ApiResponse<TokenDto>.Fail(_sysMsg.Get(EMessage.AuthenticationFailed)));
+            return Ok(ApiResponse<TokenDto>.Fail(_localizer.Get(MsgKey.Auth.LoginFailed)));
         loginDto.IpAddress = HttpContext.GetClientIpAddress();
         var token = await _authService.LoginAsync(user, loginDto);
-        if (token == null) return Ok(ApiResponse<TokenDto>.Fail(_sysMsg.Get(EMessage.AuthenticationFailed)));
-        setRefreshTokenCookie(token);
-        return Ok(ApiResponse<TokenDto>.Succeed(token, _sysMsg.Get(EMessage.SuccessMsg)));
+        if (string.IsNullOrEmpty(token.RefreshToken)) return Ok(ApiResponse<TokenDto>.Fail(_localizer.Get(MsgKey.Auth.LoginFailed)));
+        SetRefreshTokenCookie(token);
+        return Ok(ApiResponse<TokenDto>.Succeed(token, _localizer.Get(MsgKey.Auth.LoginSuccess)));
     }
 
     [HttpPost("refresh")]
     public async Task<IActionResult> Refresh()
     {
         if (!Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
-            return BadRequest(_sysMsg.Get(EMessage.TokenInvalid));
+            return BadRequest(_localizer.Get(MsgKey.Auth.TokenInvalid));
         var dto = new RefreshTokenDto();
         dto.RefreshToken = refreshToken;
         dto.IpAddress = HttpContext.GetClientIpAddress();
         var token = await _authService.RefreshTokenAsync(dto);
         if (token == null)
             return Unauthorized();
-        setRefreshTokenCookie(token);
-        return Ok(ApiResponse<TokenDto>.Succeed(token, _sysMsg.Get(EMessage.SuccessMsg)));
+        SetRefreshTokenCookie(token);
+        return Ok(ApiResponse<TokenDto>.Succeed(token, _localizer.Get(MsgKey.Common.Success)));
     }
 
-    private void setRefreshTokenCookie(TokenDto token)
+    private void SetRefreshTokenCookie(TokenDto token)
     {
         HttpContext.Response.Cookies.Append(
             "refreshToken",
@@ -92,7 +92,7 @@ public class AuthController : ControllerBase
         var tokenDto = new TokenDto();
 
         if (!Request.Cookies.TryGetValue("refreshToken", out var refreshToken))
-            return BadRequest(_sysMsg.Get(EMessage.TokenInvalid));
+            return BadRequest(_localizer.Get(MsgKey.Auth.TokenInvalid));
 
         // Get the access token from the Authorization header
         if (Request.Headers.TryGetValue("Authorization", out var authHeader) &&
@@ -104,19 +104,19 @@ public class AuthController : ControllerBase
         }
 
         var result = await _authService.LogoutAsync(tokenDto);
-        if (result) return Ok(ApiResponse<bool>.Succeed(result, _sysMsg.Get(EMessage.SuccessMsg)));
-        return Ok(ApiResponse<bool>.Fail(_sysMsg.Get(EMessage.FailureMsg)));
+        if (result) return Ok(ApiResponse<bool>.Succeed(result, _localizer.Get(MsgKey.Auth.LogoutSuccess)));
+        return Ok(ApiResponse<bool>.Fail(_localizer.Get(MsgKey.Common.Failed)));
     }
 
     [HttpPost("revoke-token")]
     [Authorize]
     public async Task<IActionResult> RevokeToken([FromBody] RevokeTokenDto dto)
     {
-        if (dto.DeviceIds == null || dto.DeviceIds.Count == 0)
-            return BadRequest(_sysMsg.Get(EMessage.DeviceIsRequired));
+        if (dto.DeviceIds.Count == 0)
+            return BadRequest(_localizer.Get(MsgKey.Error.BadRequest));
         var result = await _authService.RevokeTokenAssync(dto.DeviceIds);
-        if (result) return Ok(ApiResponse<bool>.Succeed(result, _sysMsg.Get(EMessage.SuccessMsg)));
-        return Ok(ApiResponse<bool>.Fail(_sysMsg.Get(EMessage.FailureMsg)));
+        if (result) return Ok(ApiResponse<bool>.Succeed(result, _localizer.Get(MsgKey.Common.Success)));
+        return Ok(ApiResponse<bool>.Fail(_localizer.Get(MsgKey.Common.Failed)));
     }
 
     [HttpPost("reset-password")]
@@ -124,8 +124,8 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> ResetPassword([FromBody] string userId)
     {
         var result = await _authService.ResetPasswordAsync(userId);
-        if (result) return Ok(ApiResponse<bool>.Succeed(result, _sysMsg.Get(EMessage.SuccessMsg)));
-        return Ok(ApiResponse<bool>.Fail(_sysMsg.Get(EMessage.FailureMsg)));
+        if (result) return Ok(ApiResponse<bool>.Succeed(result, _localizer.Get(MsgKey.Auth.PasswordReseted)));
+        return Ok(ApiResponse<bool>.Fail(_localizer.Get(MsgKey.Common.Failed)));
     }
 
     [HttpPost("change-password")]
@@ -134,15 +134,15 @@ public class AuthController : ControllerBase
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         var result = await _authService.ChangePasswordAsync(dto.OldPassword, dto.NewPassword);
-        if (result) return Ok(ApiResponse<bool>.Succeed(result, _sysMsg.Get(EMessage.SuccessMsg)));
-        return Ok(ApiResponse<bool>.Fail(_sysMsg.Get(EMessage.FailureMsg)));
+        if (result) return Ok(ApiResponse<bool>.Succeed(result, _localizer.Get(MsgKey.Auth.PasswordChanged)));
+        return Ok(ApiResponse<bool>.Fail(_localizer.Get(MsgKey.Common.Failed)));
     }
     
     [HttpPost("forgot-password")]
     public async Task<IActionResult> ResetPassword([FromBody] ForgotPasswordDto dto)
     {
         var result = await _authService.ForgotPasswordAsync(dto);
-        if (result) return Ok(ApiResponse<bool>.Succeed(result, _sysMsg.Get(EMessage.SuccessMsg)));
-        return Ok(ApiResponse<bool>.Fail(_sysMsg.Get(EMessage.FailureMsg)));
+        if (result) return Ok(ApiResponse<bool>.Succeed(result, _localizer.Get(MsgKey.Auth.PasswordReseted)));
+        return Ok(ApiResponse<bool>.Fail(_localizer.Get(MsgKey.Common.Failed)));
     }
 }

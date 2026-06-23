@@ -1,7 +1,8 @@
 ﻿using System.Linq.Expressions;
 using Core.Application.Abstractions.Caching;
 using Core.Application.Abstractions.Common;
-using Core.Application.Abstractions.Localization;
+using Core.Application.Abstractions.Localizer;
+using Core.Application.Abstractions.Message;
 using Core.Application.Abstractions.Persistence;
 using Core.Application.Abstractions.Security;
 using Core.Application.Exceptions;
@@ -9,6 +10,7 @@ using Core.Domain.Constants;
 using Core.Domain.Entities;
 using Dapper;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Localization;
 
 namespace Core.Application.Services.Common;
 
@@ -29,6 +31,7 @@ public class GenericService<TEntity, TKey> : IGenericService<TEntity, TKey>
     protected ISysMessageService SysMsg => _serviceProvider.GetRequiredService<ISysMessageService>();
     protected ICacheService CacheService => _serviceProvider.GetRequiredService<ICacheService>();
     protected ICurrentUser? CurrentUser => _serviceProvider.GetService<ICurrentUser>();
+    protected IMessageLocalizer Localizer => _serviceProvider.GetRequiredService<IMessageLocalizer>();
 
     public virtual async Task<TDto> GetByIdAsync<TDto>(TKey id)
     {
@@ -58,9 +61,8 @@ public class GenericService<TEntity, TKey> : IGenericService<TEntity, TKey>
     {
         // We need to get the entity by ID first to verify it exists
         var existingEntity = await _repository.GetByIdAsync<TEntity>(entity.Id);
-
         if (existingEntity == null)
-            throw new NotFoundException(SysMsg.Get(EMessage.Error404Msg));
+            throw new NotFoundException(Localizer.Get("Error404"));
         entity.CreatedBy = existingEntity.CreatedBy;
         entity.CreatedAt = existingEntity.CreatedAt;
         entity.IsDeleted = existingEntity.IsDeleted;

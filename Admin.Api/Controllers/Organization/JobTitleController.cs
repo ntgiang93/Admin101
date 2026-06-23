@@ -1,5 +1,5 @@
 using Admin.Api.Common.Security.Policies;
-using Core.Application.Abstractions.Localization;
+using Core.Application.Abstractions.Message;
 using Core.Application.Abstractions.Services.Organization;
 using Core.Application.Contracts.Base;
 using Core.Application.Contracts.Organization;

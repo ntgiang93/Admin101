@@ -2,6 +2,6 @@
 {
     public class RevokeTokenDto
     {
-        public List<string> DeviceIds { get; set; }
+        public required List<string> DeviceIds { get; set; }
     }
 }

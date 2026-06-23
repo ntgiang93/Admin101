@@ -65,6 +65,8 @@ export type UserTableDto = {
   avatar: string
   email: string
   phone: string
+  department: string
+  lastAccess?: Date | string
   fullName: string
   isActive: boolean
   isLocked: boolean
@@ -82,6 +84,7 @@ export type UserSelectDto = {
 // Based on UserTableRequestDto
 export type UserTableRequestDto = PaginationFilter & {
   roles: string[]
+  departments: number[]
   isActive?: boolean
   isLocked?: boolean
 }
@@ -91,6 +94,7 @@ export const defaultUserTableRequest: UserTableRequestDto = {
   page: 1,
   pageSize: 20,
   roles: [],
+  departments: [],
   isActive: undefined,
   isLocked: undefined,
 }

@@ -2,6 +2,7 @@ import { TreeSelect } from '@/components/ui/tree/TreeSelect'
 import { MenuHook } from '@/hooks/sys/menu'
 import { type MenuItem } from '@/types/sys/Menu'
 import type { SelectOptionType } from '@/types/base/SelectOption.ts'
+import {useTranslation} from "react-i18next";
 
 interface IMenuSelectProps {
   values: number[] | number
@@ -19,6 +20,7 @@ export default function MenuSelect({
   isRequired,
 }: IMenuSelectProps) {
   const { data } = MenuHook.useGetMenuTree()
+  const { t } = useTranslation()
   // Flatten menu tree để hiển thị trong select
 
   const convertToTreeItem = (menus: MenuItem[]): SelectOptionType[] => {
@@ -40,7 +42,7 @@ export default function MenuSelect({
       data={options}
       label={label}
       values={values}
-      placeholder={`Chọn menu`}
+      placeholder={t('placeholder_select', { field: t('menu') })}
       isRequired={isRequired}
       selectionMode={selectionMode}
       selectionStrategy="all"

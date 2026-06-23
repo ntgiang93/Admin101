@@ -4,6 +4,14 @@ import HttpApi from "i18next-http-backend";
 // re-render when language changes.
 import { initReactI18next } from "react-i18next";
 
+    // Add names for each locale to
+    // show the user in our locale
+        // switcher.
+export const supportedLngs = {
+    en: "English",
+    vi: "Vietnamese",
+};
+
 i18n
     //user backend detected language
     .use(HttpApi)
@@ -20,6 +28,10 @@ i18n
     // Fallback locale used when a translation is
     // missing in the active locale.
     fallbackLng: "vi",
+
+    //Explicitly tell i18next our
+    //supported locales.
+    supportedLngs: Object.keys(supportedLngs),
 
     // Enables useful output in the browser’s
     // dev console.

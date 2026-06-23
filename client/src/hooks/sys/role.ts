@@ -52,6 +52,9 @@ export const useGet = (id: number) => {
   return useQuery<RoleDto, Error>({
     queryKey: [endpoint, 'get', id],
     queryFn: async () => {
+      if(id === 0) {
+        return {...defaultRoleDto}
+      }
       const response = await apiService.get<ApiResponse<RoleDto>>(
         `${endpoint}/${id}`,
       )
@@ -61,7 +64,7 @@ export const useGet = (id: number) => {
       return { ...defaultRoleDto }
     },
     placeholderData: keepPreviousData || { ...defaultRoleDto },
-    enabled: id > 0,
+    enabled: id >= 0,
   })
 }
 
@@ -101,6 +104,7 @@ export const useGetPermission = (roleId: number) => {
 
 export const useSave = () => {
   return useMutation({
+    mutationKey: [endpoint, 'useSave'],
     mutationFn: async (role: RoleDto) => {
       if (role.id > 0) {
         return await apiService.put<ApiResponse<any>>(`${endpoint}`, role)

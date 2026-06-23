@@ -26,9 +26,9 @@ export const useGetPagination = (params: UserTableRequestDto) => {
   return useQuery<PaginatedResultDto<UserTableDto>, Error>({
     queryKey: [endpoint, 'useGetPagination', params],
     queryFn: async () => {
-      const response = await apiService.get<
+      const response = await apiService.post<
         ApiResponse<PaginatedResultDto<UserTableDto>>
-      >(`${endpoint}/pagination?${StringHelper.objectToUrlParams(params)}`)
+      >(`${endpoint}/pagination`, params)
       if (response.success && response.data) {
         return response.data
       }

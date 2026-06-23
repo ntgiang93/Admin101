@@ -14,21 +14,23 @@ import { SearchInput } from '@/components/ui/input/SearchInput.tsx'
 import { ArrowDown01Icon } from '@hugeicons/core-free-icons'
 import * as icons from '@hugeicons/core-free-icons'
 import { HugeIconByName } from '@/components/ui/icon/HugeIconByName.tsx'
+import {useTranslation} from "react-i18next";
 
 interface IconSelectProps {
   value?: string
   onChange?: (iconName: string) => void
   label?: string
   placeholder?: string
+  variant?: 'primary' | 'secondary'
 }
 
 export const IconSelect = (props: IconSelectProps) => {
-  const { label, value, onChange, placeholder } = props
+  const { label, value, onChange, placeholder, variant = 'secondary' } = props
 
   const [isOpen, setIsOpen] = useState(false)
   const inputRef = React.useRef<HTMLInputElement>(null)
   const [searchValue, setSearchValue] = useState('')
-
+  const {t} = useTranslation()
   // Container ref for virtualization
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -82,11 +84,12 @@ export const IconSelect = (props: IconSelectProps) => {
           className={'group cursor-pointer relative'}
           name="select search"
           type="text"
+          variant={variant}
         >
           <Label>{label}</Label>
           <Input
             className="w-full cursor-pointer truncate"
-            placeholder={placeholder}
+            placeholder={placeholder || t('placeholder_select', { field: 'icon' })}
             readOnly
             value={value}
             ref={inputRef}
