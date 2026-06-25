@@ -30,7 +30,7 @@ public class AddMemberRoleDto
 
 public class UserRoleCursorFilterDto
 {
-    public string SearchTerm { get; set; } = string.Empty;
+    public string SearchValue { get; set; } = string.Empty;
     public int RoleId { get; set; }
     public int Limit { get; set; } = 50;
     /// <summary>

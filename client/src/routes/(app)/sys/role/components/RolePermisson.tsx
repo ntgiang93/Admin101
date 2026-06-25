@@ -2,14 +2,14 @@ import {RoleHook} from '@/hooks/sys/role'
 import {SysCategoryHook} from '@/hooks/sys/sysCategories'
 import {EPermission} from '@/types/base/Permission'
 import {type RoleDto, type RolePermissionDto} from '@/types/sys/Role'
-import {Button, Card, Label, Spinner} from '@heroui/react'
+import {Button, Card, Label, ScrollShadow, Spinner} from '@heroui/react'
 import {useEffect, useRef, useState} from 'react'
 import {SearchInput} from "@/components/ui/input/SearchInput.tsx";
 import PermissionCheckbox from "@/routes/(app)/sys/role/components/PermissionCheckBox.tsx";
 import {useVirtualizer} from "@tanstack/react-virtual";
 import {useTranslation} from "react-i18next";
 
-interface IRoleUserProps {
+interface IRolePermisionProps {
     role: RoleDto
     isOpen: boolean
     onOpenChange: (open: boolean) => void
@@ -20,7 +20,7 @@ interface PermissionTable {
     moduleName: string
 }
 
-export default function RolePermisson(props: IRoleUserProps) {
+export default function RolePermisson(props: IRolePermisionProps) {
     const {role, isOpen, onOpenChange} = props
     const [searchValue, setSearchValue] = useState<string>('')
     const [tableData, setTableData] = useState<PermissionTable[]>([])
@@ -84,7 +84,7 @@ export default function RolePermisson(props: IRoleUserProps) {
     const rowVirtualizer = useVirtualizer({
         count: tableData.length,
         getScrollElement: () => parentRef.current,
-        estimateSize: () => 64,
+        estimateSize: () => 60,
         
     })
     
@@ -92,7 +92,7 @@ export default function RolePermisson(props: IRoleUserProps) {
         let height = 276
         if (cardRef.current) {
             const cardHeight = cardRef.current.clientHeight
-            height = cardHeight - 138;
+            height = cardHeight - 96;
         }
         return height
     }
@@ -121,16 +121,17 @@ export default function RolePermisson(props: IRoleUserProps) {
     }, [role, rolePermissions])
 
     return (
-        <Card variant={'transparent'} ref={cardRef} className="h-full">
+        <Card variant={'transparent'} ref={cardRef} className="h-full p-0">
             <Card.Header>
                 <SearchInput onValueChange={setSearchValue} value={searchValue} className="w-64"/>
             </Card.Header>
             <Card.Content className="h-full flex flex-col">
-                <div
+                <ScrollShadow
                     ref={parentRef}
                     aria-label="Virtualized list"
                     className="w-full overflow-auto"
                     style={{maxHeight: boxHeight}}
+                    size={20}
                 >
                     {loadingModule || loadingPermssion || isLoading ? (
                         <Spinner className="m-auto" size="lg"/>
@@ -155,7 +156,7 @@ export default function RolePermisson(props: IRoleUserProps) {
                                                 transform: `translateY(${virtualItem.start}px)`,
                                             }}
                                         >
-                                            <Label>{row.moduleName}</Label>
+                                            <Label className="text-lg my-2">{row.moduleName}</Label>
                                             <div className="flex gap-8 w-full">
                                                 {permissions?.map((p => {
                                                     return (
@@ -177,7 +178,7 @@ export default function RolePermisson(props: IRoleUserProps) {
                             </div>
                         )
                     }
-                </div>
+                </ScrollShadow>
             </Card.Content>
             <Card.Footer className="w-full flex justify-end gap-2">
                 <Button variant="tertiary" slot="close">

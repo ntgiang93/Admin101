@@ -52,7 +52,7 @@ export default function MenuForm(props: MenuFromProps) {
             setForm({
                 ...defaultSaveMenuDto,
                 parentId: parent?.id || 0,
-                url: parent ? parent.url + '/' : '/',
+                path: parent ? parent.url + '/' : '/',
             })
         }
     }, [parent?.id])
@@ -97,7 +97,7 @@ export default function MenuForm(props: MenuFromProps) {
                             name="name"
                             isRequired
                             variant={'secondary'}
-                            value={form.name}
+                            value={form.viName}
                             onChange={(value) => {
                                 setForm((prev) => ({...prev, name: value}))
                             }}
@@ -107,8 +107,27 @@ export default function MenuForm(props: MenuFromProps) {
                                     : null
                             }}
                         >
-                            <Label>{t('name')}</Label>
-                            <Input autoFocus placeholder={t('placeholder_input',{field: t('name')})} tabIndex={1}/>
+                            <Label>{t('vi_name')}</Label>
+                            <Input autoFocus placeholder={t('placeholder_input',{field: t('vi_name')})} tabIndex={1}/>
+                            <FieldError/>
+                        </TextField>
+                        <TextField
+                            className="w-full"
+                            name="name"
+                            isRequired
+                            variant={'secondary'}
+                            value={form.enName}
+                            onChange={(value) => {
+                                setForm((prev) => ({...prev, name: value}))
+                            }}
+                            validate={(value) => {
+                                return value === '' || !value
+                                    ? MSG_LIST.REQUIRED_FIELD
+                                    : null
+                            }}
+                        >
+                            <Label>{t('en_name')}</Label>
+                            <Input autoFocus placeholder={t('placeholder_input',{field: t('en_name')})} tabIndex={1}/>
                             <FieldError/>
                         </TextField>
                         <TextField
@@ -116,7 +135,7 @@ export default function MenuForm(props: MenuFromProps) {
                             name="url"
                             isRequired
                             variant={'secondary'}
-                            value={form.url}
+                            value={form.path}
                             onChange={(value) => {
                                 setForm((prev) => ({...prev, url: value}))
                             }}

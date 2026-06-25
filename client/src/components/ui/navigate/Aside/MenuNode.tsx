@@ -1,28 +1,54 @@
 import { Disclosure } from '@heroui/react'
-import { useCallback, useMemo } from 'react'
+import {useCallback, useMemo} from 'react'
 import { type MenuNodeType } from './SideMenu.tsx'
 import { HugeIconByName } from '@/components/ui/icon/HugeIconByName.tsx'
-import { Link } from '@tanstack/react-router'
+import {Link, useRouterState} from '@tanstack/react-router'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'motion/react'
+import {useTranslation} from "react-i18next";
 
 interface SidebarNodeProps {
   node: MenuNodeType
   expandedIds: Set<string | number>
   onToggle: (id: string | number) => void
   selectionStrategy?: 'all' | 'leaf'
-  isCompact?: boolean
+  isCompact?: boolean,
 }
 
 const MenuNode = (props: SidebarNodeProps) => {
   const { node, expandedIds, onToggle, isCompact } = props
+  const {i18n} = useTranslation()
+  const  locale = i18n.language
 
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  })
+
+  const checkIsExpanded = (path: string, menus: MenuNodeType[]) => {
+    for (const node of menus) {
+      if (node.path === path) {
+        return true;
+      }
+
+      if (node.children && node.children.length > 0) {
+        const isChildExpanded = checkIsExpanded(path, node.children);
+        if (isChildExpanded) {
+          return true; 
+        }
+      }
+    }
+
+    return false;
+  }
+  
+  const isExpanded = checkIsExpanded(pathname, node.children || [])
+  
   const renderNode = useCallback(
     (node: MenuNodeType) => {
       if (node.children && node.children.length > 0) {
         return (
           <Disclosure
-            isExpanded={expandedIds.has(node.id) && !isCompact}
+            isExpanded={(expandedIds.has(node.id) || isExpanded) && !isCompact}
             onExpandedChange={() => onToggle(node.id)}
             key={node.id}
           >
@@ -53,7 +79,7 @@ const MenuNode = (props: SidebarNodeProps) => {
                       name={node.icon || 'CommandIcon'}
                       size={18}
                     />
-                    <span className={'mx-2 text-sm truncate'}>{node.name}</span>
+                    <span className={'mx-2 text-sm truncate'}>{node[`${locale}Name`]}</span>
                   </div>
                   <Disclosure.Indicator />
                 </Disclosure.Trigger>
@@ -89,7 +115,7 @@ const MenuNode = (props: SidebarNodeProps) => {
             }}
           >
             <Link
-              to={node.url}
+              to={node.path}
               className={clsx(
                 'flex w-full justify-between items-center p-2 rounded-xl cursor-pointer text-sm',
               )}
@@ -105,19 +131,19 @@ const MenuNode = (props: SidebarNodeProps) => {
             >
               <div className={'flex items-center'}>
                 <HugeIconByName name={node.icon || ''} size={18} />
-                <span className={'mx-2 truncate'}>{node.name}</span>
+                <span className={'mx-2 truncate'}>{node[`${locale}Name`]}</span>
               </div>
             </Link>
           </motion.div>
         )
       }
     },
-    [node, expandedIds, onToggle, isCompact],
+    [node, expandedIds, onToggle, isCompact, locale],
   )
 
   const menuNode = useMemo(() => {
     return renderNode(node)
-  }, [node, expandedIds, onToggle, isCompact])
+  }, [node, expandedIds, onToggle, isCompact, locale])
 
   return menuNode
 }

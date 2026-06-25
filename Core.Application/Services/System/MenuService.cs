@@ -58,7 +58,7 @@ public class MenuService : GenericService<Menu, int>, IMenuService
 
     public async Task<MenuDto> CreateMenuAsync(CreateMenuDto dto)
     {
-        var existUrl = await GetSingleAsync<Menu>(m => m.Url == dto.Url && m.IsDeleted == false && m.IsActive == true);
+        var existUrl = await GetSingleAsync<Menu>(m => m.Path == dto.Path && m.IsDeleted == false && m.IsActive == true);
         if (existUrl != null)
             throw new BusinessException(SysMsg.Get(EMessage.MenuLinkAlreadyExists), "MENU_URL_EXISTS");
 
@@ -69,7 +69,7 @@ public class MenuService : GenericService<Menu, int>, IMenuService
     public async Task<bool> UpdateMenuAsync(UpdateMenuDto dto)
     {
         var existUrl = await GetSingleAsync<Menu>(m =>
-            m.Url == dto.Url && m.Id != dto.Id && m.IsDeleted == false && m.IsActive == true);
+            m.Path == dto.Path && m.Id != dto.Id && m.IsDeleted == false && m.IsActive == true);
         if (existUrl != null)
             throw new BusinessException(SysMsg.Get(EMessage.MenuLinkAlreadyExists), "MENU_URL_EXISTS");
 

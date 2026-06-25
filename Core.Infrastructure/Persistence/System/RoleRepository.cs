@@ -13,53 +13,17 @@ namespace Core.Infrastructure.Persistence.System;
 
 public class RoleRepository : GenericRepository<Role, int>, IRoleRepository
 {
-    private readonly Alias<RolePermission> _rp = new Alias<RolePermission>("rp");
-    private readonly Alias<User> _u = new Alias<User>("u");
-    private readonly Alias<UserRole> _ur = new Alias<UserRole>("ur");
+    private static readonly Alias<RolePermission> Rp = new ("rp");
 
     public RoleRepository(IDbConnectionFactory factory) : base(factory)
     {
 
     }
-
-    public async Task<PaginatedResultDto<RoleMembersDto>> GetRoleMembersAsync(GetRoleMembersDto filter)
-    {
-        var query = new Query(_ur.Table)
-            .Join(_u.Table, _ur.Col(x => x.UserId), _u.Col(x => x.Id))
-            .Where(_ur.Col(x => x.RoleId), filter.RoleId)
-            .Where(_u.Col(x => x.IsDeleted), false)
-            .Where(_u.Col(x => x.IsActive), true)
-            .Select(_u.Col(x => x.Id), _u.Col(x => x.UserName), _u.Col(x => x.FullName), _u.Col(x => x.Avatar));
-
-        if (!string.IsNullOrEmpty(filter.SearchValue))
-        {
-            query.Where(q => q.WhereContains($"{_u.Col(x => x.UserName)}", filter.SearchValue)
-                .OrWhereContains($"{_u.Col(x => x.FullName)}", filter.SearchValue));
-        }
-
-        var connection = _dbFactory.Connection;
-        var countQuery = query.Clone().AsCount();
-        var compileCountQuery = _compiler.Compile(countQuery);
-        var totalCount = await connection.QuerySingleAsync<int>(compileCountQuery.Sql, compileCountQuery.NamedBindings);
-        query.OrderByDesc(_u.Col(x => x.CreatedAt))
-            .Offset((filter.Page - 1) * filter.PageSize)
-            .Limit(filter.PageSize);
-        var compileQuery = _compiler.Compile(query);
-        var data = await connection.QueryAsync<RoleMembersDto>(compileQuery.Sql, compileQuery.NamedBindings);
-
-        return new PaginatedResultDto<RoleMembersDto>
-        {
-            Items = data.ToList(),
-            TotalCount = totalCount,
-            PageIndex = filter.Page,
-            PageSize = filter.PageSize
-        };
-    }
-
+    
     public async Task<List<RolePermission>> GetRolePermission(int roleId)
     {
-        var query = new Query(_rp.Table);
-        query = query.Where(_rp.Col(x => x.RoleId), roleId);
+        var query = new Query(Rp.Table);
+        query = query.Where(Rp.Col(x => x.RoleId), roleId);
 
         var compiledQuery = _compiler.Compile(query);
 
@@ -70,7 +34,7 @@ public class RoleRepository : GenericRepository<Role, int>, IRoleRepository
 
     public async Task<bool> AddRolePermissionAsync(IEnumerable<RolePermission> rolePermissions)
     {
-        var cols = new [] {_rp.Col(x => x.RoleId, true), _rp.Col(x => x.SysModule, true), _rp.Col(x => x.Permission, true)};
+        var cols = new [] {Rp.Col(x => x.RoleId, true), Rp.Col(x => x.SysModule, true), Rp.Col(x => x.Permission, true)};
         var aggregated = rolePermissions
         .GroupBy(x => new { x.RoleId, x.SysModule })
         .Select(g => new object[]
@@ -81,7 +45,7 @@ public class RoleRepository : GenericRepository<Role, int>, IRoleRepository
                           .Aggregate(EPermission.None, (acc, cur) => acc | cur)
         })
         .ToList();
-        var query = new Query(_rp.RawTable)
+        var query = new Query(Rp.RawTable)
             .AsInsert(cols, aggregated);
         var compiledQuery = _compiler.Compile(query);
         var result = _dbFactory.Connection.Execute(compiledQuery.Sql, compiledQuery.NamedBindings);
@@ -90,8 +54,8 @@ public class RoleRepository : GenericRepository<Role, int>, IRoleRepository
 
     public async Task<bool> DeleteRolePermissionAsync(int roleId)
     {
-        var deleteQuery = new Query(_rp.Table)
-            .Where(_rp.Col(x => x.RoleId), roleId)
+        var deleteQuery = new Query(Rp.Table)
+            .Where(Rp.Col(x => x.RoleId), roleId)
             .AsDelete();
 
         var compiled = _compiler.Compile(deleteQuery);

@@ -42,11 +42,14 @@
   "inactive": "Inactive",
   "status": "Status",
   "block": "Block", 
+  "phone": "Phone number",
 
   "_menu_region": "Menu region",
   "menu": "Menu",
   "menu_page_title": "Menu Manage",
   "menu_page_desc": "",
+  "en_name": "English Name",
+  "vi_name": "Vietnamese Name",
   
   "_role_region": "Role region",
   "role": "Role",
@@ -64,12 +67,17 @@
   "activate_user": "Activate User",
   "deactivate_user": "Deactivate User",
   "last_access": "Last Access",
-  
+  "not_in_roles": "Users Not Assigned to Role",
+  "in_roles": "Current Role Members",
+  "assign_user_to_role": "Assign User to Role",
+  "remove_user_from_role": "Remove User from Role",
   "organization_region": "Organization region",
   "organization": "Organization",
   "organization_page_title": "Organization Manage",
   "department": "Department",
   "position": "Position",
+  "no_member": "No members yet. Add someone from the right.",
+  "everyone_is_member": "Everyone is already a member.",
   
   
   "msg": {

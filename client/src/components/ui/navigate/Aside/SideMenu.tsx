@@ -1,17 +1,19 @@
 import { ScrollShadow } from '@heroui/react'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'motion/react'
-import { useMemo, useState } from 'react'
+import {useEffect, useMemo, useState} from 'react'
 import MenuNode from '@/components/ui/navigate/Aside/MenuNode.tsx'
 import CompactMenuNode from '@/components/ui/navigate/Aside/CompactMenuNode.tsx'
+import {useRouterState} from "@tanstack/react-router";
 
 export type MenuNodeType = {
   id: number
-  name: string
-  engName?: string
-  url: string
+  viName: string
+  enName?: string
+  path: string
   icon?: string
   children?: MenuNodeType[]
+  [key: string]: any
 }
 
 export interface SidebarBodyProps {
@@ -36,7 +38,7 @@ export const SideMenu = (props: SidebarBodyProps) => {
       return next
     })
   }
-
+  
   const content = useMemo(() => {
     if (!items.length) {
       return null
@@ -77,7 +79,7 @@ export const SideMenu = (props: SidebarBodyProps) => {
       </ScrollShadow>
     )
   }, [items, expandedIds, isCompact])
-
+  
   return (
     <div className={clsx('flex flex-col gap-3')}>
       <motion.div

@@ -13,9 +13,11 @@ import {useEffect, useState} from 'react'
 import EmptyState from "@/assets/empty-state.png";
 import ConfirmDeleteDialog from "@/components/ui/dialog/ConfirmDeleteDialog.tsx";
 import {useTranslation} from "react-i18next";
-import RoleForm from "@/routes/(app)/sys/role/components/RoleForm.tsx";
 import RolePermisson from "@/routes/(app)/sys/role/components/RolePermisson.tsx";
 import {useMutationState} from "@tanstack/react-query";
+import RoleMember from "@/routes/(app)/sys/role/components/RoleMember.tsx";
+import RoleForm from "@/routes/(app)/sys/role/components/RoleForm.tsx";
+import clsx from "clsx";
 
 export const Route = createFileRoute('/(app)/sys/role/')({
     component: Roles,
@@ -28,8 +30,6 @@ function Roles() {
     )
     const [searchValue, setSearchValue] = useState<string>('')
     const [confirmOpen, setConfirmOpen] = useState(false)
-    const [assignUserOpen, setAssignUserOpen] = useState(false)
-    const [permissionOpen, setPermissionOpen] = useState(false)
     const {hasPermission} = useAuth()
     const canCreate = hasPermission(ESysModule.Roles, EPermission.Create)
     const canEdit = hasPermission(ESysModule.Roles, EPermission.Edit)
@@ -114,21 +114,23 @@ function Roles() {
                     </Card.Header>
                     <Card.Content className="flex-1 min-h-0">
                         <ListBox aria-label="roles" className="w-full" selectionMode="single">
-                            {data.map((role) => (
+                            {data.map((role) => {
+                                const isSelected = selectedRole?.id === role.id
+                                return (
                                 <ListBox.Item
                                     key={role.id}
                                     textValue={role.id.toString()}
                                     onPress={() => setSelectedRole(role)}
-                                    className="flex items-center justify-between w-full gap-4 px-4"
+                                    className={clsx("flex items-center justify-between w-full gap-4 px-4", isSelected ? "bg-accent" : "")}
                                 >
                                     <div className="flex flex-col items-start gap-1">
-                                        <h2 className="text-lg font-semibold">{role.name}</h2>
-                                        <p className="text-sm text-muted-foreground">{role.description}</p>
+                                        <h2 className={clsx("text-lg font-semibold", isSelected ? "text-accent-foreground": "")}>{role.name}</h2>
+                                        <p className={clsx("text-sm", isSelected ? "text-accent-foreground" : "text-muted-foreground")}>{role.description}</p>
                                     </div>
                                     {role.isProtected && (
-                                        <HugeiconsIcon className="text-accent" icon={ShieldCheck} size={24}/>)}
+                                        <HugeiconsIcon className={clsx(isSelected ? "text-accent-foreground" : "text-accent")} icon={ShieldCheck} size={24}/>)}
                                 </ListBox.Item>
-                            ))}
+                            )})}
                         </ListBox>
                     </Card.Content>
                     <Card.Footer/>
@@ -212,11 +214,10 @@ function Roles() {
                                     </Tabs.List>
                                 </Tabs.ListContainer>
                                 <Tabs.Panel className="w-full h-full" id="permission">
-                                    <RolePermisson role={selectedRole} isOpen={true} onOpenChange={() => {
-                                    }}/>
+                                    <RolePermisson role={selectedRole} isOpen={true} onOpenChange={() => {}}/>
                                 </Tabs.Panel>
-                                <Tabs.Panel className="pt-4" id="member">
-                                    <p>Track your metrics and analyze performance data.</p>
+                                <Tabs.Panel className="w-full h-full" id="member">
+                                    <RoleMember role={selectedRole} isOpen={true} onOpenChange={() => {}}/>
                                 </Tabs.Panel>
                             </Tabs>
                         </Card.Content>

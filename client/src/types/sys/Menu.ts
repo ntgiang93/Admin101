@@ -1,19 +1,22 @@
 export type MenuItem = {
   id: number
-  name: string
-  url: string
+  viName: string
+  enName: string
+  path: string
   icon?: string
   displayOrder: number
   isActive: boolean
   parentId?: number
   sysmodule?: string
   children?: MenuItem[]
+  [key: string]: any
 }
 
 export const defaultMenuItem: MenuItem = {
   id: 0,
-  name: '',
-  url: '',
+  viName: '',
+  enName: '',
+  path: '',
   icon: '',
   displayOrder: 0,
   isActive: true,
@@ -24,8 +27,9 @@ export const defaultMenuItem: MenuItem = {
 
 export type SaveMenuDto = {
   id: number
-  name: string
-  url: string
+  viName: string,
+  enName: string,
+  path: string
   icon?: string
   displayOrder: number
   isActive: boolean
@@ -35,8 +39,9 @@ export type SaveMenuDto = {
 
 export const defaultSaveMenuDto: SaveMenuDto = {
   id: 0,
-  name: '',
-  url: '',
+  viName: '',
+  enName: '',
+  path: '',
   icon: '',
   displayOrder: 0,
   isActive: true,

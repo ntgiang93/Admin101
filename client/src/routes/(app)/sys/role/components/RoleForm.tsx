@@ -1,24 +1,6 @@
-import {MenuHook} from '@/hooks/sys/menu'
-import {
-    defaultSaveMenuDto,
-    type MenuItem,
-    type SaveMenuDto,
-} from '@/types/sys/Menu'
-import {
-    Button, Card,
-    FieldError,
-    Form,
-    Input,
-    Label,
-    NumberField,
-    Spinner,
-    TextField,
-} from '@heroui/react'
+import {FieldError, Form, Input, Label, TextField,} from '@heroui/react'
 import {useEffect, useState} from 'react'
 import {MSG_LIST} from '@/types/constant/MessageList.ts'
-import SysModuleSelect from '@/components/shared/app/select/SysModuleSelect.tsx'
-import MenuSelect from '@/components/shared/app/select/MenuSelect.tsx'
-import {IconSelect} from '@/components/ui/icon/IconSelect.tsx'
 import {useTranslation} from "react-i18next";
 import {FormSkeleton} from "@/components/ui/loading/FormSkeleton.tsx";
 import {defaultRoleDto, type RoleDto} from "@/types/sys/Role.ts";

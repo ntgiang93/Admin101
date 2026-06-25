@@ -5,17 +5,11 @@ import {
   type CursorPaginatedResultDto,
   defaultCursorPaginatedResult,
 } from '@/types/base/CursorPaginatedResultDto'
-import {
-  defualtPaginatedResult,
-  type PaginatedResultDto,
-} from '@/types/base/PaginatedResultDto'
 import { type MenuItem } from '@/types/sys/Menu'
 import {
   type AddRoleMemberDto,
   defaultRoleDto,
   type RoleDto,
-  type RoleMemberFilter,
-  type RoleMembersDto,
   type RolePermissionDto,
   type UserRoleCursorFilterDto,
 } from '@/types/sys/Role'
@@ -68,19 +62,25 @@ export const useGet = (id: number) => {
   })
 }
 
-export const useGetMembers = (filter: RoleMemberFilter, enabled: boolean) => {
-  return useQuery<PaginatedResultDto<RoleMembersDto>, Error>({
+export const useGetMembers = (filter: UserRoleCursorFilterDto) => {
+  return useQuery<CursorPaginatedResultDto<UserSelectDto, string>, Error>({
     queryKey: [endpoint, 'getMembers', filter],
     queryFn: async () => {
+      const query = StringHelper.objectToUrlParams(
+          filter as Record<string, unknown>,
+      )
+      const url = query
+          ? `${endpoint}/get-members?${query}`
+          : `${endpoint}/get-members`
       const response = await apiService.get<
-        ApiResponse<PaginatedResultDto<RoleMembersDto>>
-      >(`${endpoint}/get-members?${StringHelper.objectToUrlParams(filter)}`)
+          ApiResponse<CursorPaginatedResultDto<UserSelectDto, string>>
+      >(url)
       if (response.success && response.data) {
         return response.data
       }
-      return { ...defualtPaginatedResult }
+      return { ...defaultCursorPaginatedResult }
     },
-    enabled: filter.roleId > 0 && enabled,
+    enabled: filter.roleId > 0 ,
     placeholderData: keepPreviousData,
   })
 }

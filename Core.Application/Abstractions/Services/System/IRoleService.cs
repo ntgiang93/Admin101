@@ -77,9 +77,9 @@ public interface IRoleService : IGenericService<Role, int>
     /// <summary>
     ///     Gets all users assigned to a specific role
     /// </summary>
-    /// <param name="roleId">ID of the role</param>
+    /// <param name="filter">Filter containing roleId, search term, cursor and limit</param>
     /// <returns>List of role members with their details</returns>
-    Task<PaginatedResultDto<RoleMembersDto>> GetRoleMembers(GetRoleMembersDto filter);
+    Task<CursorPaginatedResultDto<UserSelectDto, DateTime>> GetRoleMembers(UserRoleCursorFilterDto filter);
     
     /// <summary>
     ///     Removes multiple users from a specific role

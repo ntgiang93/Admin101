@@ -34,8 +34,10 @@ function Menu() {
     const canCreate = hasPermission(ESysModule.Menu, EPermission.Create);
     const canEdit = hasPermission(ESysModule.Menu, EPermission.Edit);
     const canDelete = hasPermission(ESysModule.Menu, EPermission.Delete);
-    const {t} = useTranslation();
+    const {t, i18n} = useTranslation();
     const {mutateAsync: del, isPending} = MenuHook.useDelete()
+    
+    const lang = i18n.language;
 
     const columns: ColumnDef<MenuItem>[] = [
         {
@@ -46,14 +48,14 @@ function Menu() {
                 return (
                     <div className="flex gap-2 items-center">
                         <HugeIconByName name={row.original.icon || ''} size={20}/>
-                        <span>{row.original.name}</span>
+                        <span>{row.original[`${lang}Name`]}</span>
                     </div>
                 );
             },
         },
         {
-            id: 'url',
-            accessorKey: 'url',
+            id: 'path',
+            accessorKey: 'path',
             header: () => t('path'),
         },
         {
@@ -115,7 +117,7 @@ function Menu() {
     const filterNodes = (nodes: MenuItem[], keyword: string): MenuItem[] => {
         return nodes.reduce<MenuItem[]>((acc, node) => {
             const filteredChildren = node.children ? filterNodes(node.children, keyword) : [];
-            const nodeMatches = [node.name, node.url, node.sysmodule].some((field) =>
+            const nodeMatches = [node[`${lang}Name`],node.path, node.sysmodule].some((field) =>
                 field ? field.toLowerCase().includes(keyword) : false,
             );
 

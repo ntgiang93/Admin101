@@ -8,9 +8,9 @@ namespace Core.Domain.Entities.System;
 [Table("menus")]
 public class Menu : BaseEntity<int>
 {
-    [Required][StringLength(100)] public string Name { get; set; } = string.Empty;
-    [Required][StringLength(100)] public string EngName { get; set; } = string.Empty;
-    [Required][StringLength(200)] public string Url { get; set; } = string.Empty;
+    [Required][StringLength(100)] public string ViName { get; set; } = string.Empty;
+    [Required][StringLength(100)] public string EnName { get; set; } = string.Empty;
+    [Required][StringLength(200)] public string Path { get; set; } = string.Empty;
 
     [Required][StringLength(100)] public string? Icon { get; set; }
 

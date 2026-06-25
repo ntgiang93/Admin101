@@ -47,13 +47,13 @@ public class RoleController : ControllerBase
 
     [HttpGet("get-members")]
     [Policy(ESysModule.Roles, EPermission.View)]
-    public async Task<IActionResult> GetRoleMembers([FromQuery] GetRoleMembersDto request)
+    public async Task<IActionResult> GetRoleMembers([FromQuery] UserRoleCursorFilterDto request)
     {
         var result = await _roleService.GetRoleMembers(request);
         if (result == null)
             return Ok(ApiResponse<object>.Fail(_sysMsg.Get(EMessage.FailureMsg)));
 
-        return Ok(ApiResponse<PaginatedResultDto<RoleMembersDto>>.Succeed(result, _sysMsg.Get(EMessage.SuccessMsg)));
+        return Ok(ApiResponse<CursorPaginatedResultDto<UserSelectDto, DateTime>>.Succeed(result, _sysMsg.Get(EMessage.SuccessMsg)));
     }
 
     [HttpGet("users-not-in-role")]

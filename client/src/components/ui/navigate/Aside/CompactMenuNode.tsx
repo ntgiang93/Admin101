@@ -5,6 +5,7 @@ import { HugeIconByName } from '@/components/ui/icon/HugeIconByName.tsx'
 import { Link } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'motion/react'
+import {useTranslation} from "react-i18next";
 
 interface SidebarNodeProps {
   node: MenuNodeType
@@ -16,7 +17,9 @@ interface SidebarNodeProps {
 
 const CompactMenuNode = (props: SidebarNodeProps) => {
   const { node, expandedIds, onToggle, isCompact } = props
-
+  const {i18n} = useTranslation()
+  const  locale = i18n.language
+    
   const renderNode = useCallback(
     (node: MenuNodeType) => {
       if (node.children && node.children.length > 0) {
@@ -66,7 +69,7 @@ const CompactMenuNode = (props: SidebarNodeProps) => {
             <Tooltip delay={0}>
               <Tooltip.Trigger>
                 <Link
-                  to={node.url}
+                  to={node.path}
                   className={clsx(
                     'flex w-full justify-between items-center p-2 rounded-lg cursor-pointer text-sm',
                   )}
@@ -84,19 +87,19 @@ const CompactMenuNode = (props: SidebarNodeProps) => {
               </Tooltip.Trigger>
               <Tooltip.Content showArrow placement={'right'}>
                 <Tooltip.Arrow />
-                {node.name}
+                  {node[`${locale}Name`]}
               </Tooltip.Content>
             </Tooltip>
           </motion.div>
         )
       }
     },
-    [node, expandedIds, onToggle, isCompact],
+    [node, expandedIds, onToggle, isCompact, locale],
   )
 
   const menuNode = useMemo(() => {
     return renderNode(node)
-  }, [node, expandedIds, onToggle, isCompact])
+  }, [node, expandedIds, onToggle, isCompact, locale])
 
   return menuNode
 }

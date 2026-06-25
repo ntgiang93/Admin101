@@ -54,14 +54,14 @@ export type RemoveRoleMemberDto = {
 }
 
 export type UserRoleCursorFilterDto = {
-  setSearchValue: string
+  searchValue: string
   roleId: number
   limit: number
   cursor: string | null
 }
 
 export const defaultUserRoleCursorFilterDto: UserRoleCursorFilterDto = {
-  setSearchValue: '',
+  searchValue: '',
   roleId: 0,
   limit: 50,
   cursor: null,

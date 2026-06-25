@@ -120,12 +120,12 @@ public class RoleService : GenericService<Role, int>, IRoleService
         return result;
     }
 
-    public async Task<PaginatedResultDto<RoleMembersDto>> GetRoleMembers(GetRoleMembersDto filter)
+    public async Task<CursorPaginatedResultDto<UserSelectDto, DateTime>> GetRoleMembers(UserRoleCursorFilterDto filter)
     {
         var cacheKey = CacheKeyHelper.Generate($"{_cachePrefix}GetRoleMembers", filter);
         return await CacheService.GetOrCreateAsync(cacheKey, async () =>
         {
-            var result = await _roleRepository.GetRoleMembersAsync(filter);
+            var result = await _userRoleRepository.GetRoleMembersAsync(filter);
 
             return result;
         });

@@ -9,7 +9,7 @@ import {
 } from '@heroui/react'
 import {useMemo} from 'react'
 import {MSG_LIST} from '@/types/constant/MessageList.ts'
-import {t} from "i18next";
+import {useTranslation} from "react-i18next";
 
 interface ISysModuleSelectProps {
     value: string
@@ -23,7 +23,7 @@ interface ISysModuleSelectProps {
 export default function SysModuleSelect(props : ISysModuleSelectProps) {
     const { value, onChange, isRequired, validate, variant = 'secondary',} = props
     const {data, isLoading} = SysCategoryHook.useGetSysModule()
-
+    const {t} = useTranslation()
     const options = useMemo(() => {
         if (isLoading)
             return (
@@ -56,7 +56,7 @@ export default function SysModuleSelect(props : ISysModuleSelectProps) {
             isRequired={isRequired}
             validate={(value) => validate?.(value.selectedKey as string)}
         >
-            <Label>Tính năng</Label>
+            <Label>{t('sys_module')}</Label>
             <ComboBox.InputGroup>
                 <Input variant={variant} placeholder={t('placeholder_select', {field: t('sys_module')})}/>
                 <ComboBox.Trigger/>

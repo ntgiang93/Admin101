@@ -34,7 +34,7 @@ const PermissionCheckbox = React.memo(
                     <Checkbox.Control>
                         <Checkbox.Indicator />
                     </Checkbox.Control>
-                    <span>{permission.label}</span>
+                    <span className="text-muted">{permission.label}</span>
                 </Checkbox.Content>
             </Checkbox>
         );

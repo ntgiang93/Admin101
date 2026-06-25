@@ -6,10 +6,10 @@ public class MenuDto
 {
     public int Id { get; set; }
 
-    public string Name { get; set; } = string.Empty;
-    public string EngName { get; set; } = string.Empty;
+    public string ViName { get; set; } = string.Empty;
+    public string EnName { get; set; } = string.Empty;
 
-    public string Url { get; set; } = string.Empty;
+    public string Path { get; set; } = string.Empty;
 
     public string? Icon { get; set; }
 
@@ -27,7 +27,7 @@ public class MenuDto
 public class CreateMenuDto
 {
     [Required] [StringLength(100)] public string Name { get; set; } = string.Empty;
-    [Required] [StringLength(200)] public string Url { get; set; } = string.Empty;
+    [Required] [StringLength(200)] public string Path { get; set; } = string.Empty;
 
     public string? Icon { get; set; }
 

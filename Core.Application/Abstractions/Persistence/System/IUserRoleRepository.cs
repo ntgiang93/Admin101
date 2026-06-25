@@ -27,7 +27,7 @@ public interface IUserRoleRepository : IGenericRepository<User, string>
     /// </summary>
     Task<bool> DeleteUserRoleAsync(IEnumerable<UserRole> userRoles);
 
-    Task<UserRole> GetSingleAsync(int roleId, string userId);
+    Task<UserRole?> GetSingleAsync(int roleId, string userId);
     Task<bool> DeleteAsync(int roleId, string userId);
     
     /// <summary>
@@ -44,4 +44,6 @@ public interface IUserRoleRepository : IGenericRepository<User, string>
     ///     Gets users not in the specified role with cursor pagination
     /// </summary>
     Task<CursorPaginatedResultDto<UserSelectDto, DateTime>> GetUserNotInRole(UserRoleCursorFilterDto filter);
+
+    Task<CursorPaginatedResultDto<UserSelectDto, DateTime>> GetRoleMembersAsync(UserRoleCursorFilterDto filter);
 }

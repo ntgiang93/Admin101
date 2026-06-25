@@ -17,10 +17,12 @@ import {
 } from '@heroui/react'
 import { useEffect, useMemo, useState } from 'react'
 import { MSG_LIST } from '@/types/constant/MessageList.ts'
+import {useTranslation} from "react-i18next";
+import {FormSkeleton} from "@/components/ui/loading/FormSkeleton.tsx";
 
 interface UserDetailModalProps {
   isOpen: boolean
-  onOpenChange: () => void
+  onOpenChange: (val: boolean) => void
   onRefresh: () => void
   id: string
 }
@@ -31,6 +33,7 @@ export default function UserDetailModal(props: UserDetailModalProps) {
   const { mutateAsync: save, isPending } = UserHook.useSaveUser()
   const { data: user, isFetching } = UserHook.useGet(isOpen ? id : '')
 
+  const {t} = useTranslation()
   const isEdit = useMemo(() => id !== undefined && id !== '', [id])
 
   const onSubmit = async (e: any) => {
@@ -45,7 +48,7 @@ export default function UserDetailModal(props: UserDetailModalProps) {
     }
     const response = await save(body)
     if (response && response.success) {
-      onOpenChange()
+      onOpenChange(false)
       onRefresh()
     }
   }
@@ -83,21 +86,21 @@ export default function UserDetailModal(props: UserDetailModalProps) {
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
       <Modal.Backdrop>
-        <Modal.Container>
+        <Modal.Container size={'lg'}>
           <Modal.Dialog>
             <Modal.CloseTrigger />
             <Modal.Header>
               <Modal.Heading>
-                {(isEdit ? 'Chỉnh sửa' : 'Thêm mới') + ' tài khoản người dùng'}
+                {(isEdit ? t('edit') : t('create')) + ' ' + t('user')}
               </Modal.Heading>
             </Modal.Header>
             <Modal.Body>
-              {isFetching && <Spinner />}
+              {isFetching && <FormSkeleton col={2} row={4} />}
               {!isFetching && (
                 <Form
                   id="userForm"
                   onSubmit={onSubmit}
-                  className={'flex flex-col gap-3 p-0.5'}
+                  className={'grid grid-cols-2 gap-4 p-0.5'}
                 >
                   <TextField
                     className="w-full"
@@ -114,9 +117,9 @@ export default function UserDetailModal(props: UserDetailModalProps) {
                         : null
                     }}
                   >
-                    <Label>Họ và tên</Label>
+                    <Label>{t('full_name')}</Label>
                     <Input
-                      placeholder="Nhập họ và tên"
+                      placeholder={t('placeholder_input',{field: t('full_name')})}
                       autoFocus
                       tabIndex={1}
                     />
@@ -139,8 +142,8 @@ export default function UserDetailModal(props: UserDetailModalProps) {
                       return null
                     }}
                   >
-                    <Label>Tài khoản</Label>
-                    <Input placeholder="Nhập tài khoản" tabIndex={2} />
+                    <Label>{t('account')}</Label>
+                    <Input placeholder={t('placeholder_input',{field: t('account')})} tabIndex={2} />
                   </TextField>
                   <TextField
                     className="w-full"
@@ -154,8 +157,22 @@ export default function UserDetailModal(props: UserDetailModalProps) {
                     }
                     validate={validateEmail}
                   >
-                    <Label>Email</Label>
-                    <Input placeholder="Nhập email" tabIndex={3} />
+                    <Label>{t('email')}</Label>
+                    <Input placeholder={t('placeholder_input',{field: t('email')})} tabIndex={3} />
+                  </TextField>
+                  <TextField
+                      className="w-full"
+                      name="phone"
+                      value={form.phone || ''}
+                      variant={'secondary'}
+                      onChange={(value) =>
+                          setForm((prev) => ({ ...prev, phone: value }))
+                      }
+                      validate={validatePhoneNumber}
+                  >
+                    <Label>{t('phone')}</Label>
+                    <Input placeholder={t('placeholder_input',{field: t('phone')})} tabIndex={4} />
+                    <FieldError />
                   </TextField>
                   <RoleSelect
                     value={form.roles.map(Number) || []}
@@ -165,29 +182,16 @@ export default function UserDetailModal(props: UserDetailModalProps) {
                         roles: [...(values as number[])],
                       }))
                     }}
+                    className={'col-span-2'}
                     selectionMode="multiple"
-                    label="Vai trò"
+                    label={t('role')}
                   />
-                  <TextField
-                    className="w-full"
-                    name="phone"
-                    value={form.phone || ''}
-                    variant={'secondary'}
-                    onChange={(value) =>
-                      setForm((prev) => ({ ...prev, phone: value }))
-                    }
-                    validate={validatePhoneNumber}
-                  >
-                    <Label>Số điện thoại</Label>
-                    <Input placeholder="Nhập số điện thoại" tabIndex={4} />
-                    <FieldError />
-                  </TextField>
                 </Form>
               )}
             </Modal.Body>
             <Modal.Footer>
               <Button variant="tertiary" slot="close">
-                Hủy bỏ
+                {t('cancel')}
               </Button>
               <Button type="submit" form="userForm" isPending={isPending}>
                 {({ isPending }) => {
@@ -195,10 +199,10 @@ export default function UserDetailModal(props: UserDetailModalProps) {
                     return (
                       <>
                         <Spinner />
-                        <span>Đang lưu</span>
+                        <span>{t('saving')}</span>
                       </>
                     )
-                  else return <span>Lưu</span>
+                  else return <span>{t('save')}</span>
                 }}
               </Button>
             </Modal.Footer>
