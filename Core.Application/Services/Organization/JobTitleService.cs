@@ -25,7 +25,7 @@ public class JobTitleService : GenericService<JobTitle, int>, IJobTitleService
         // Check if code exists
         var existingJobTitle = await GetSingleAsync<JobTitle>(x => x.Code == dto.Code && x.IsDeleted == false);
         if (existingJobTitle != null)
-            throw new BusinessException(SysMsg.Get(EMessage.CodeIsExist), "JOB_TITLE_CODE_EXISTS");
+            throw new BusinessException(Localizer.Get(MsgKey.Validation.CodeExisted), "JOB_TITLE_CODE_EXISTS");
 
         var jobTitle = dto.Adapt<JobTitle>();
         var id = await CreateAsync(jobTitle);
@@ -39,12 +39,12 @@ public class JobTitleService : GenericService<JobTitle, int>, IJobTitleService
         // Check if code exists for another record
         var existingCode = await GetSingleAsync<JobTitle>(x => x.Code == dto.Code && x.Id != dto.Id && x.IsDeleted == false);
         if (existingCode != null)
-            throw new BusinessException(SysMsg.Get(EMessage.CodeIsExist), "JOB_TITLE_CODE_EXISTS");
+            throw new BusinessException(Localizer.Get(MsgKey.Validation.CodeExisted), "JOB_TITLE_CODE_EXISTS");
 
         // Check if the job title exists
         var existingJobTitle = await GetSingleAsync<JobTitle>(x => x.Id == dto.Id && x.IsDeleted == false);
         if (existingJobTitle == null)
-            throw new NotFoundException(SysMsg.Get(EMessage.Error404Msg), "JOB_TITLE_NOT_FOUND");
+            throw new NotFoundException(Localizer.Get(MsgKey.Error.NotFound), "JOB_TITLE_NOT_FOUND");
 
         var jobTitle = dto.Adapt<JobTitle>();
         var result = await UpdateAsync(jobTitle);

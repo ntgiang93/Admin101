@@ -139,7 +139,7 @@ public class UserService : GenericService<User, string>, IUserService
     {
         var user = await _userRepository.GetByIdAsync<User>(model.Id);
         if (user == null)
-            throw new NotFoundException(SysMsg.Get(EMessage.UserNotFound), "USER_NOT_FOUND");
+            throw new NotFoundException(Localizer.Get(MsgKey.User.NotFound), "USER_NOT_FOUND");
 
         user.FullName = string.IsNullOrWhiteSpace(model.FullName) ? user.FullName : model.FullName;
         user.Email = model.Email ?? user.Email;
@@ -161,11 +161,11 @@ public class UserService : GenericService<User, string>, IUserService
     {
         var user = await GetByIdAsync<User>(CurrentUser.UserId);
         if (user == null)
-            throw new NotFoundException(SysMsg.Get(EMessage.UserNotFound), "USER_NOT_FOUND");
+            throw new NotFoundException(Localizer.Get(MsgKey.User.NotFound), "USER_NOT_FOUND");
 
         // Verify current password
         if (!PasswordHelper.VerifyPassword(password, user.PasswordHash))
-            throw new BusinessException(SysMsg.Get(EMessage.IncorrectPassword), "INCORRECT_PASSWORD");
+            throw new BusinessException(Localizer.Get(MsgKey.Validation.InCorrectPassword), "INCORRECT_PASSWORD");
         await ValidateUniqueUser(newEmail, null, null, CurrentUser.UserId);
 
         var verificationData = new VerificationCacheData(
@@ -186,9 +186,9 @@ public class UserService : GenericService<User, string>, IUserService
     {
         var verificationData = await CacheService.GetAsync<VerificationCacheData>(dto.VerificationId);
         if (verificationData == null)
-            throw new BusinessException(SysMsg.Get(EMessage.TokenInvalid));
+            throw new BusinessException(Localizer.Get(MsgKey.Validation.TokenInvalid));
         var user = await GetByIdAsync<User>(verificationData.UserId);
-        if (user == null) throw new NotFoundException(SysMsg.Get(EMessage.Error404Msg));
+        if (user == null) throw new NotFoundException(Localizer.Get(MsgKey.Error.NotFound));
 
         user.IsActive = true;
         user.EmailVerified = true;
@@ -201,7 +201,7 @@ public class UserService : GenericService<User, string>, IUserService
     public async Task<bool> AssignRolesAsync(string userId, List<UserRole> roles)
     {
         var user = await _userRepository.GetByIdAsync<User>(userId);
-        if (user == null) throw new NotFoundException(SysMsg.Get(EMessage.UserNotFound), "USER_NOT_FOUND");
+        if (user == null) throw new NotFoundException(Localizer.Get(MsgKey.User.NotFound), "USER_NOT_FOUND");
 
         // Clear existing roles
         var existingRoles = await _userRoleService.GetAllByUserAsync(userId);
@@ -215,7 +215,7 @@ public class UserService : GenericService<User, string>, IUserService
     {
         var user = await _userRepository.GetByIdAsync<User>(id);
         if (user == null)
-            throw new NotFoundException(SysMsg.Get(EMessage.UserNotFound), "USER_NOT_FOUND");
+            throw new NotFoundException(Localizer.Get(MsgKey.User.NotFound), "USER_NOT_FOUND");
 
         user.IsActive = !user.IsActive;
         var updatedUser = await UpdateAsync(user);
@@ -233,11 +233,11 @@ public class UserService : GenericService<User, string>, IUserService
             existingUser = await _userRepository.GetSingleAsync<User>(u =>
                 u.Email == email || u.Phone == phoneNumber || u.UserName == username);
         if (existingUser != null && existingUser.UserName == username)
-            throw new BusinessException(SysMsg.Get(EMessage.UserNameExisted), "USERNAME_EXISTS");
+            throw new BusinessException(Localizer.Get(MsgKey.User.Existed), "USERNAME_EXISTS");
         if (existingUser != null && existingUser.Email == email && !string.IsNullOrWhiteSpace(existingUser.Email))
-            throw new BusinessException(SysMsg.Get(EMessage.EmailExisted), "EMAIL_EXISTS");
+            throw new BusinessException(Localizer.Get(MsgKey.User.EmailExisted), "EMAIL_EXISTS");
         if (existingUser != null && existingUser.Phone == phoneNumber && !string.IsNullOrWhiteSpace(existingUser.Phone))
-            throw new BusinessException(SysMsg.Get(EMessage.PhoneExisted), "PHONE_EXISTS");
+            throw new BusinessException(Localizer.Get(MsgKey.User.PhoneExisted), "PHONE_EXISTS");
         return true;
     }
 
@@ -287,9 +287,9 @@ public class UserService : GenericService<User, string>, IUserService
     {
         var user = await GetByIdAsync<User>(userId);
         if (user == null)
-            throw new NotFoundException(SysMsg.Get(EMessage.UserNotFound), "USER_NOT_FOUND");
+            throw new NotFoundException(Localizer.Get(MsgKey.User.NotFound), "USER_NOT_FOUND");
         if (file == null || file.Length == 0)
-            throw new BusinessException(SysMsg.Get(EMessage.FileRequired), "FILE_REQUIRED");
+            throw new BusinessException(Localizer.Get(MsgKey.Upload.NoFileUploaded), "FILE_REQUIRED");
         FileUploadDto dto = new FileUploadDto()
         {
             ReferenceId = userId,
@@ -312,7 +312,7 @@ public class UserService : GenericService<User, string>, IUserService
                 .Replace("{ExpirationMinutes}", expirationMinutes.ToString());
             await _emailSmsService.SendSMTPEmailAsync(new EmailMessage
             {
-                Subject = SysMsg.Get(EMessage.ChangeEmailSubject),
+                Subject = Localizer.Get(MsgKey.User.ChangeEmailSubject),
                 Body = body,
                 ToEmail = newEmail,
                 IsHtml = true
@@ -329,7 +329,7 @@ public class UserService : GenericService<User, string>, IUserService
                 .Replace("{ExpirationMinutes}", expirationMinutes.ToString());
             await _emailSmsService.SendSMTPEmailAsync(new EmailMessage
             {
-                Subject = SysMsg.Get(EMessage.WarningChangeEmailSubject),
+                Subject = Localizer.Get(MsgKey.User.EmailChangedNotiSubject),
                 Body = body,
                 ToEmail = oldEmail,
                 IsHtml = true

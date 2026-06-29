@@ -37,7 +37,7 @@ public class DepartmentService : GenericService<Department, int>, IDepartmentSer
         // Check if code exists
         var existingDepartment = await GetSingleAsync<Department>(x => x.Code == dto.Code && x.IsDeleted == false);
         if (existingDepartment != null)
-            throw new BusinessException(SysMsg.Get(EMessage.CodeIsExist), "DEPARTMENT_CODE_EXISTS");
+            throw new BusinessException(Localizer.Get(MsgKey.Validation.CodeExisted), "DEPARTMENT_CODE_EXISTS");
         // Check if parent department exists
         var department = dto.Adapt<Department>();
         if (dto.ParentId > 0)
@@ -55,12 +55,12 @@ public class DepartmentService : GenericService<Department, int>, IDepartmentSer
         // Check if code exists
         var existingCode = await GetSingleAsync<Department>(x => x.Code == dto.Code && x.Id != dto.Id && x.IsDeleted == false);
         if (existingCode != null)
-            throw new BusinessException(SysMsg.Get(EMessage.CodeIsExist), "DEPARTMENT_CODE_EXISTS");
+            throw new BusinessException(Localizer.Get(MsgKey.Validation.CodeExisted), "DEPARTMENT_CODE_EXISTS");
         else
         {
             var existingDepartment = await GetSingleAsync<Department>(x => x.Id == dto.Id && x.IsDeleted == false);
             if (existingDepartment == null)
-                throw new NotFoundException(SysMsg.Get(EMessage.Error404Msg), "DEPARTMENT_NOT_FOUND");
+                throw new NotFoundException(Localizer.Get(MsgKey.Error.NotFound), "DEPARTMENT_NOT_FOUND");
         }
             var result = await UpdateAsync(dto.Adapt<Department>());
         return result;

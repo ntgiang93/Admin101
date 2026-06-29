@@ -20,15 +20,16 @@ export default function MenuSelect({
   isRequired,
 }: IMenuSelectProps) {
   const { data } = MenuHook.useGetMenuTree()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const lang = i18n.language
   // Flatten menu tree để hiển thị trong select
 
   const convertToTreeItem = (menus: MenuItem[]): SelectOptionType[] => {
     return menus.map((menu) => {
       const item: SelectOptionType = {
         value: menu.id,
-        label: menu.name,
-        description: menu.url,
+        label: menu[`${lang}Name`],
+        description: menu.path,
         children: convertToTreeItem(menu.children || []) || [],
       }
       return item
@@ -47,6 +48,7 @@ export default function MenuSelect({
       selectionMode={selectionMode}
       selectionStrategy="all"
       onChange={(values) => {
+        console.log('MenuSelect onChange values:', values)
         onChange(values as number | number[])
       }}
     />

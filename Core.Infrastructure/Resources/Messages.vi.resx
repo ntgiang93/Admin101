@@ -120,12 +120,6 @@
     <data name="Import.Success" xml:space="preserve">
         <value>Nhập dữ liệu thành công {0} bản ghi.</value>
     </data>
-    <data name="Search.NoResult" xml:space="preserve">
-        <value>Không tìm thấy bản ghi nào phù hợp với điều kiện tìm kiếm.</value>
-    </data>
-    <data name="Search.Result" xml:space="preserve">
-        <value>Tìm thấy {0} bản ghi.</value>
-    </data>
     <data name="Status.Active" xml:space="preserve">
         <value>Đang hoạt động</value>
     </data>
@@ -252,22 +246,52 @@
     <data name="Auth.Password.Reseted" xml:space="preserve">
         <value>Mật khẩu đã được khôi phục thành công.</value>
     </data>
-    <data name="Permission.All" xml:space="preserve">
-        <value>Tất cả</value>
+    <data name="Menu.PathExisted" xml:space="preserve">
+        <value>Đường dẫn này đã được sử dụng bởi một menu khác.</value>
     </data>
-    <data name="Permission.Approve" xml:space="preserve">
-        <value>Phê duyệt</value>
+    <data name="Validation.CodeExisted" xml:space="preserve">
+        <value>Mã này đã được sử dụng.</value>
     </data>
-    <data name="Permission.Create" xml:space="preserve">
-        <value>Tạo mới</value>
+    <data name="Role.Existed" xml:space="preserve">
+        <value>Vai trò này đã được sử dụng.</value>
     </data>
-    <data name="Permission.Delete" xml:space="preserve">
-        <value>Xóa</value>
+    <data name="Role.Protected" xml:space="preserve">
+        <value>Không thể chỉnh sửa vai trò được bảo vệ.</value>
     </data>
-    <data name="Permission.Edit" xml:space="preserve">
-        <value>Sửa</value>
+    <data name="Role.NotFound" xml:space="preserve">
+        <value>Không tìm thấy vai trò.</value>
     </data>
-    <data name="Permission.View" xml:space="preserve">
-        <value>Xem</value>
+    <data name="Role.NotAllowEdit" xml:space="preserve">
+        <value>Bạn không có quyền chỉnh sửa vai trò này.</value>
+    </data>
+    <data name="User.Existed" xml:space="preserve">
+        <value>Tài khoản này đã được sử dụng.</value>
+    </data>
+    <data name="User.NotFound" xml:space="preserve">
+        <value>Không tìm thấy người dùng này.</value>
+    </data>
+    <data name="User.EmailExisted" xml:space="preserve">
+        <value>Email này đã được sử dụng.</value>
+    </data>
+    <data name="User.PhoneExisted" xml:space="preserve">
+        <value>Số điện thoại này đã được sử dụng.</value>
+    </data>
+    <data name="User.NotAllowEdit" xml:space="preserve">
+        <value>Bạn không có quyền chỉnh sửa người dùng này.</value>
+    </data>
+    <data name="Upload.NoFileUploaded" xml:space="preserve">
+        <value>Không có tệp nào được tải lên.</value>
+    </data>
+    <data name="Validation.IncorrectPassword" xml:space="preserve">
+        <value>Mật khẩu không chính xác.</value>
+    </data>
+    <data name="Validation.TokkenInValid" xml:space="preserve">
+        <value>Mã xác thực không hợp lệ hoặc đã hết hạn.</value>
+    </data>
+    <data name="User.ChangeEmailSubject" xml:space="preserve">
+        <value>Xác nhận thay đổi địa chỉ email</value>
+    </data>
+    <data name="User.EmailChangedNotiSubject" xml:space="preserve">
+        <value>Cảnh báo: Địa chỉ email của tài khoản đã được thay đổi</value>
     </data>
 </root>

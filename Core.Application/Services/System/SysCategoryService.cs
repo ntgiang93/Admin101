@@ -51,7 +51,7 @@ public class SysCategoryService : GenericService<SysCategory, int>, ISysCategory
         var existingCode =
             await GetSingleAsync<SysCategory>(c => c.Code == dto.Code && c.Type == dto.Type && c.IsDeleted == false);
         if (existingCode != null)
-            throw new BusinessException(SysMsg.Get(EMessage.CodeIsExist), "CATEGORY_CODE_EXISTS");
+            throw new BusinessException(Localizer.Get(MsgKey.Validation.CodeExisted), "CATEGORY_CODE_EXISTS");
         var category = dto.Adapt<SysCategory>();
         var id = await CreateAsync(category);
         return id > 0;
@@ -62,9 +62,9 @@ public class SysCategoryService : GenericService<SysCategory, int>, ISysCategory
         var existingCode = await GetSingleAsync<SysCategory>(c =>
             c.Id != dto.Id && c.Code == dto.Code && c.Type == dto.Type && c.IsDeleted == false);
         if (existingCode != null)
-            throw new BusinessException(SysMsg.Get(EMessage.CodeIsExist), "CATEGORY_CODE_EXISTS");
+            throw new BusinessException(Localizer.Get(MsgKey.Validation.CodeExisted), "CATEGORY_CODE_EXISTS");
         var category = await GetSingleAsync<SysCategory>(c => c.Id == dto.Id && c.IsDeleted == false);
-        if (category == null) throw new NotFoundException(SysMsg.Get(EMessage.Error404Msg), "CATEGORY_NOT_FOUND");
+        if (category == null) throw new NotFoundException(Localizer.Get(MsgKey.Error.NotFound), "CATEGORY_NOT_FOUND");
         category = dto.Adapt<SysCategory>();
         return await UpdateAsync(category);
     }

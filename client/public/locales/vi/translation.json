@@ -47,6 +47,7 @@
   "menu": "Menu",
   "menu_page_title": "Quản lý Menu",
   "menu_page_desc": "",
+  "menu_group": "Nhóm Menu",
   "en_name": "Tên Tiếng Anh",
   "vi_name": "Tên Tiếng Việt",
   "_role_region": "Role region",

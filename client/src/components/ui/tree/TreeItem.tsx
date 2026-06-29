@@ -70,6 +70,7 @@ const TreeItem = (props: TreeItemProps) => {
   })()
 
   const handleSelected = (val: boolean) => {
+    console.log('TreeItem handleSelected val:', val, 'itemValue:', itemValue)
     if (val && selectionMode === 'single') {
       onChange(itemValue)
       return
@@ -119,16 +120,18 @@ const TreeItem = (props: TreeItemProps) => {
         >
           {isViewMode ? null : (
             <Checkbox
-              id="email-notifications"
+              id="id"
               isSelected={isSelected}
               onChange={(val) => handleSelected(val)}
               isIndeterminate={isIndeterminate}
               className={'cursor-pointer'}
               isReadOnly={isDisabled}
             >
-              <Checkbox.Control>
-                <Checkbox.Indicator />
-              </Checkbox.Control>
+              <Checkbox.Content>
+                <Checkbox.Control>
+                  <Checkbox.Indicator />
+                </Checkbox.Control>
+              </Checkbox.Content>
             </Checkbox>
           )}
           {content}

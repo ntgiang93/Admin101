@@ -50,7 +50,7 @@ export const TreeSelect = (props: ITreeSelectProps) => {
       <TreeItem
         id={item.value}
         key={item.value}
-        content={<Label>{item.label}</Label>}
+        content={<span>{item.label}</span>}
       >
         {hasChildren && item.children?.map((child) => renderItem(child))}
       </TreeItem>

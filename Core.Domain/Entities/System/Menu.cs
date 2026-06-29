@@ -21,4 +21,5 @@ public class Menu : BaseEntity<int>
     public int? ParentId { get; set; }
 
     [StringLength(100)] public string? Sysmodule { get; set; }
+    public bool IsGroup { get; set; }
 }

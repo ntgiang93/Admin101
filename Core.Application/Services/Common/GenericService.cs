@@ -28,7 +28,6 @@ public class GenericService<TEntity, TKey> : IGenericService<TEntity, TKey>
         _cachePrefix = typeof(TEntity).Name + "_";
     }
 
-    protected ISysMessageService SysMsg => _serviceProvider.GetRequiredService<ISysMessageService>();
     protected ICacheService CacheService => _serviceProvider.GetRequiredService<ICacheService>();
     protected ICurrentUser? CurrentUser => _serviceProvider.GetService<ICurrentUser>();
     protected IMessageLocalizer Localizer => _serviceProvider.GetRequiredService<IMessageLocalizer>();

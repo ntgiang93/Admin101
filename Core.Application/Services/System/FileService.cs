@@ -118,7 +118,7 @@ public class FileService : GenericService<FileStorage, int>, IFileService
     {
         var file = await GetByIdAsync<FileStorage>(id);
         if (file == null || file.IsDeleted)
-            throw new NotFoundException(SysMsg.Get(EMessage.Error404Msg), "FILE_NOT_FOUND");
+            throw new NotFoundException(Localizer.Get(MsgKey.Error.NotFound), "FILE_NOT_FOUND");
         try
         {
             // Delete physical file if exists
@@ -129,7 +129,7 @@ public class FileService : GenericService<FileStorage, int>, IFileService
         catch (Exception)
         {
             Log.Error($"Error deleting file {file.FileName}: {file.FilePath}");
-            throw new BusinessException(SysMsg.Get(EMessage.FileDeleteError), "FILE_DELETE_ERROR");
+            throw new BusinessException(Localizer.Get(MsgKey.Error.InternalServer), "FILE_DELETE_ERROR");
         }
     }
     
@@ -137,7 +137,7 @@ public class FileService : GenericService<FileStorage, int>, IFileService
     {
         var file = await GetSingleAsync<FileStorage>(f => f.FilePath == filePath);
         if (file == null || file.IsDeleted)
-            throw new NotFoundException(SysMsg.Get(EMessage.Error404Msg), "FILE_NOT_FOUND");
+            throw new NotFoundException(Localizer.Get(MsgKey.Error.NotFound), "FILE_NOT_FOUND");
         try
         {
             var fullPath = Path.Combine(Directory.GetCurrentDirectory(), file.FilePath);
@@ -147,7 +147,7 @@ public class FileService : GenericService<FileStorage, int>, IFileService
         catch (Exception)
         {
             Log.Error($"Error deleting file {file.FileName}: {file.FilePath}");
-            throw new BusinessException(SysMsg.Get(EMessage.FileDeleteError), "FILE_DELETE_ERROR");
+            throw new BusinessException(Localizer.Get(MsgKey.Error.InternalServer), "FILE_DELETE_ERROR");
         }
     }
 
@@ -164,7 +164,7 @@ public class FileService : GenericService<FileStorage, int>, IFileService
         catch (Exception)
         {
             Log.Error($"Error deleting file {file.FileName}: {file.FilePath}");
-            throw new BusinessException(SysMsg.Get(EMessage.FileDeleteError), "FILE_DELETE_ERROR");
+            throw new BusinessException(Localizer.Get(MsgKey.Error.InternalServer), "FILE_DELETE_ERROR");
         }
     }
 
@@ -178,10 +178,10 @@ public class FileService : GenericService<FileStorage, int>, IFileService
     {
         var file = await GetByIdAsync<FileStorage>(id);
         if (file == null || file.IsDeleted)
-            throw new NotFoundException(SysMsg.Get(EMessage.Error404Msg), "FILE_NOT_FOUND");
+            throw new NotFoundException(Localizer.Get(MsgKey.Error.NotFound), "FILE_NOT_FOUND");
 
         if (!File.Exists(file.FilePath))
-            throw new BusinessException(SysMsg.Get(EMessage.Error404Msg), "FILE_NOT_EXIST_ON_DISK");
+            throw new BusinessException(Localizer.Get(MsgKey.Error.NotFound), "FILE_NOT_EXIST_ON_DISK");
 
         var stream = new FileStream(file.FilePath, FileMode.Open, FileAccess.Read);
         return (stream, file.MimeType, file.FileName);
@@ -190,10 +190,10 @@ public class FileService : GenericService<FileStorage, int>, IFileService
     private void ValidateFile(IFormFile file)
     {
         if (file == null || file.Length == 0)
-            throw new BusinessException(SysMsg.Get(EMessage.FileRequired), "FILE_REQUIRED");
+            throw new BusinessException(Localizer.Get(MsgKey.Upload.NoFileUploaded), "FILE_REQUIRED");
 
         if (file.Length > _maxFileSize)
-            throw new BusinessException(SysMsg.Get(EMessage.LimitFileSize), "FILE_SIZE_EXCEEDED");
+            throw new BusinessException(Localizer.Get(MsgKey.Upload.TooLarge), "FILE_SIZE_EXCEEDED");
         var docInspector = new ContentInspectorBuilder
         {
             Definitions = DefaultDefinitions.FileTypes.Documents.All()
@@ -205,6 +205,6 @@ public class FileService : GenericService<FileStorage, int>, IFileService
         var results = docInspector.Inspect(file.OpenReadStream());
         var resultsByMimeType = results.ByFileExtension();
         if (!resultsByMimeType.Any(match => AllowedFileTypes.Contains(match.Extension.ToLower())))
-            throw new BusinessException(SysMsg.Get(EMessage.FileTypeNotAllowed), "FILE_TYPE_NOT_ALLOWED");
+            throw new BusinessException(Localizer.Get(MsgKey.Upload.InvalidType), "FILE_TYPE_NOT_ALLOWED");
     }
 }

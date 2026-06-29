@@ -50,6 +50,7 @@
   "menu_page_desc": "",
   "en_name": "English Name",
   "vi_name": "Vietnamese Name",
+  "menu_group": "Menu Group",
   
   "_role_region": "Role region",
   "role": "Role",

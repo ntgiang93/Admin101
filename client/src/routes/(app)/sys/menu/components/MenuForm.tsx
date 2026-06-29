@@ -5,7 +5,7 @@ import {
     type SaveMenuDto,
 } from '@/types/sys/Menu'
 import {
-    Button, Card,
+    Button, Card, Checkbox,
     FieldError,
     Form,
     Input,
@@ -15,7 +15,6 @@ import {
     TextField,
 } from '@heroui/react'
 import {useEffect, useState} from 'react'
-import {MSG_LIST} from '@/types/constant/MessageList.ts'
 import SysModuleSelect from '@/components/shared/app/select/SysModuleSelect.tsx'
 import MenuSelect from '@/components/shared/app/select/MenuSelect.tsx'
 import {IconSelect} from '@/components/ui/icon/IconSelect.tsx'
@@ -40,11 +39,18 @@ export default function MenuForm(props: MenuFromProps) {
         e.preventDefault()
         const response = await save(form)
         if (response && response.success) {
-            if(form.id == 0) {
+            if (form.id == 0) {
                 onResetSelected()
             }
             onRefresh()
         }
+    }
+    
+    const validateSysmodule = (value: string) => {
+        if (!form.isGroup && (!value || value === '')) {
+            return t('msg.required_field')
+        }
+        return null
     }
 
     useEffect(() => {
@@ -81,13 +87,15 @@ export default function MenuForm(props: MenuFromProps) {
                         className={'flex flex-col gap-3 p-0.5'}
                     >
                         <MenuSelect
-                            label={'Menu ' +  t('parent')}
+                            label={'Menu ' + t('parent')}
                             values={form.parentId || 0}
-                            onChange={(values) =>
+                            onChange={(values) => {
                                 setForm((prev) => ({
                                     ...prev,
                                     parentId: values as number,
                                 }))
+                            }
+
                             }
                             isRequired={false}
                             selectionMode={'single'}
@@ -99,16 +107,16 @@ export default function MenuForm(props: MenuFromProps) {
                             variant={'secondary'}
                             value={form.viName}
                             onChange={(value) => {
-                                setForm((prev) => ({...prev, name: value}))
+                                setForm((prev) => ({...prev, viName: value}))
                             }}
                             validate={(value) => {
                                 return value === '' || !value
-                                    ? MSG_LIST.REQUIRED_FIELD
+                                    ? t('msg.required_field')
                                     : null
                             }}
                         >
                             <Label>{t('vi_name')}</Label>
-                            <Input autoFocus placeholder={t('placeholder_input',{field: t('vi_name')})} tabIndex={1}/>
+                            <Input autoFocus placeholder={t('placeholder_input', {field: t('vi_name')})} tabIndex={1}/>
                             <FieldError/>
                         </TextField>
                         <TextField
@@ -118,16 +126,16 @@ export default function MenuForm(props: MenuFromProps) {
                             variant={'secondary'}
                             value={form.enName}
                             onChange={(value) => {
-                                setForm((prev) => ({...prev, name: value}))
+                                setForm((prev) => ({...prev, enName: value}))
                             }}
                             validate={(value) => {
                                 return value === '' || !value
-                                    ? MSG_LIST.REQUIRED_FIELD
+                                    ? t('msg.required_field')
                                     : null
                             }}
                         >
                             <Label>{t('en_name')}</Label>
-                            <Input autoFocus placeholder={t('placeholder_input',{field: t('en_name')})} tabIndex={1}/>
+                            <Input autoFocus placeholder={t('placeholder_input', {field: t('en_name')})} tabIndex={1}/>
                             <FieldError/>
                         </TextField>
                         <TextField
@@ -137,16 +145,16 @@ export default function MenuForm(props: MenuFromProps) {
                             variant={'secondary'}
                             value={form.path}
                             onChange={(value) => {
-                                setForm((prev) => ({...prev, url: value}))
+                                setForm((prev) => ({...prev, path: value}))
                             }}
                             validate={(value) => {
                                 return value === '' || !value
-                                    ? MSG_LIST.REQUIRED_FIELD
+                                    ? t('msg.required_field')
                                     : null
                             }}
                         >
                             <Label>{t('path')}</Label>
-                            <Input placeholder={t('placeholder_input',{field: t('path')})} tabIndex={2}/>
+                            <Input placeholder={t('placeholder_input', {field: t('path')})} tabIndex={2}/>
                             <FieldError/>
                         </TextField>
                         <IconSelect
@@ -157,34 +165,43 @@ export default function MenuForm(props: MenuFromProps) {
                             }
                         />
                         <SysModuleSelect
-                            isRequired={true}
+                            isRequired={!form.isGroup}
                             value={form.sysmodule}
                             onChange={(value) =>
                                 setForm((prev) => ({...prev, sysmodule: value}))
                             }
-                            validate={(value) => {
-                                return value === '' || !value
-                                    ? t('msg.required_field')
-                                    : null
-                            }}
+                            validate={validateSysmodule}
                         />
-                        <NumberField
-                            minValue={0}
-                            step={1}
-                            variant={'secondary'}
-                            value={form.displayOrder}
-                            onChange={(value) =>
-                                setForm((prev) => ({...prev, displayOrder: value}))
-                            }
-                        >
-                            <Label>{t('display_order')}</Label>
-                            <NumberField.Group>
-                                <NumberField.DecrementButton/>
-                                <NumberField.Input/>
-                                <NumberField.IncrementButton/>
-                            </NumberField.Group>
-                            <FieldError/>
-                        </NumberField>
+                        <div className="grid grid-cols-2 gap-8">
+                            <NumberField
+                                minValue={0}
+                                step={1}
+                                variant={'secondary'}
+                                value={form.displayOrder}
+                                onChange={(value) =>
+                                    setForm((prev) => ({...prev, displayOrder: value}))
+                                }
+                            >
+                                <Label>{t('display_order')}</Label>
+                                <NumberField.Group>
+                                    <NumberField.DecrementButton/>
+                                    <NumberField.Input/>
+                                    <NumberField.IncrementButton/>
+                                </NumberField.Group>
+                                <FieldError/>
+                            </NumberField>
+                            <Checkbox className="mt-8" isSelected={form.isGroup} 
+                                      onChange={(value) => setForm((prev) => ({...prev, isGroup: value}))
+                            }>
+                                <Checkbox.Content>
+                                    <Checkbox.Control>
+                                        <Checkbox.Indicator/>
+                                    </Checkbox.Control>
+                                    {t('menu_group')}
+                                </Checkbox.Content>
+                            </Checkbox>
+                        </div>
+
                     </Form>
                 )}
             </Card.Content>

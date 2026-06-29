@@ -47,7 +47,7 @@ public class UserTokenService : GenericService<UserToken, long>, IUserTokenServi
             signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
         );
         var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
-        if (string.IsNullOrEmpty(tokenString)) throw new Exception(SysMsg.Get(EMessage.Error500Msg));
+        if (string.IsNullOrEmpty(tokenString)) throw new Exception(Localizer.Get(MsgKey.Error.InternalServer));
         return new KeyValuePair<string, string>(tokenId, tokenString);
     }
 
@@ -96,7 +96,7 @@ public class UserTokenService : GenericService<UserToken, long>, IUserTokenServi
             success = id > 0;
         }
 
-        if (!success) throw new Exception(SysMsg.Get(EMessage.Error500Msg));
+        if (!success) throw new Exception(Localizer.Get(MsgKey.Error.InternalServer));
         return new KeyValuePair<string, DateTime>(userToken.RefreshToken, userToken.Expires);
     }
 }

@@ -36,7 +36,7 @@ public class RoleService : GenericService<Role, int>, IRoleService
         // Validate role name is unique
         var existingRole = await GetRoleByCodeAsync(model.Code);
         if (existingRole != null)
-            throw new BusinessException(SysMsg.Get(EMessage.RoleAlreadyExists), "ROLE_EXISTS");
+            throw new BusinessException(Localizer.Get(MsgKey.Role.Existed), "ROLE_EXISTS");
         var role = model.Adapt<Role>();
         var result = await CreateAsync(role);
         return result.Adapt<RoleDto>();
@@ -45,11 +45,11 @@ public class RoleService : GenericService<Role, int>, IRoleService
     public async Task<bool> UpdateRoleAsync(RoleDto roleDto)
     {
         var role = await GetByIdAsync<Role>(roleDto.Id);
-        if (role == null) throw new NotFoundException(SysMsg.Get(EMessage.RoleNotFound), "ROLE_NOT_FOUND");
+        if (role == null) throw new NotFoundException(Localizer.Get(MsgKey.Role.NotFound), "ROLE_NOT_FOUND");
 
         // Prevent modifying default roles
         if (role.IsProtected)
-            throw new BusinessException(SysMsg.Get(EMessage.CannotModifyProtectedRole),
+            throw new BusinessException(Localizer.Get(MsgKey.Role.Protected),
                 "CANNOT_MODIFY_PROTECTED_ROLE");
 
         // Check if new name conflicts with existing role
@@ -57,7 +57,7 @@ public class RoleService : GenericService<Role, int>, IRoleService
         {
             var existingRole = await GetRoleByCodeAsync(roleDto.Code);
             if (existingRole != null && existingRole.Id != roleDto.Id)
-                throw new BusinessException(SysMsg.Get(EMessage.RoleAlreadyExists), "ROLE_EXISTS");
+                throw new BusinessException(Localizer.Get(MsgKey.Role.Existed), "ROLE_EXISTS");
         }
         role = roleDto.Adapt<Role>();
         return await UpdateAsync(role);
@@ -72,7 +72,7 @@ public class RoleService : GenericService<Role, int>, IRoleService
     {
         var role = await GetByIdAsync<Role>(id);
         if (role.IsProtected)
-            throw new BusinessException(SysMsg.Get(EMessage.RoleNotFound), "CANNOT_MODIFY_PROTECTED_ROLE");
+            throw new BusinessException(Localizer.Get(MsgKey.Role.NotFound), "CANNOT_MODIFY_PROTECTED_ROLE");
 
         return await SoftDeleteAsync(id);
     }
@@ -110,7 +110,7 @@ public class RoleService : GenericService<Role, int>, IRoleService
         var role = await GetByIdAsync<Role>(roleId);
         if (role == null) throw new NotFoundException(Localizer.Get(MsgKey.Error.NotFound), "ROLE_NOT_FOUND");
         if (role.IsProtected)
-            throw new BusinessException(SysMsg.Get(EMessage.CannotModifyProtectedRole), "CANNOT_MODIFY_PROTECTED_ROLE");
+            throw new BusinessException(Localizer.Get(MsgKey.Role.Protected), "CANNOT_MODIFY_PROTECTED_ROLE");
 
         // Clear existing permissions
         await _roleRepository.DeleteRolePermissionAsync(roleId);
@@ -134,10 +134,10 @@ public class RoleService : GenericService<Role, int>, IRoleService
     public async Task<bool> AddMemberToRole(AddMemberRoleDto dto)
     {
         var role = await GetByIdAsync<Role>(dto.RoleId);
-        if (role == null) throw new NotFoundException(SysMsg.Get(EMessage.RoleNotFound), "ROLE_NOT_FOUND");
+        if (role == null) throw new NotFoundException(Localizer.Get(MsgKey.Role.NotFound), "ROLE_NOT_FOUND");
         
         if (!CurrentUser.RoleCodes.Split(';').Contains(DefaultRoles.SuperAdmin) && role.Code == DefaultRoles.SuperAdmin)
-            throw new BusinessException(SysMsg.Get(EMessage.NotPermissionModifyRole), "CANNOT_MODIFY_ROLE");
+            throw new BusinessException(Localizer.Get(MsgKey.Role.NotAllowEdit), "CANNOT_MODIFY_ROLE");
 
         var result = await _userRoleRepository.AddMemberAsync(dto, CurrentUser.UserName);
         if (result) CacheService.RemoveByPrefix(_cachePrefix);
@@ -147,10 +147,10 @@ public class RoleService : GenericService<Role, int>, IRoleService
     public async Task<bool> RemoveRoleMembers(int roleId, List<string> userIds)
     {
         var role = await GetByIdAsync<Role>(roleId);
-        if (role == null) throw new NotFoundException(SysMsg.Get(EMessage.RoleNotFound), "ROLE_NOT_FOUND");
+        if (role == null) throw new NotFoundException(Localizer.Get(MsgKey.Role.NotFound), "ROLE_NOT_FOUND");
         
         if (!CurrentUser.RoleCodes.Split(';').Contains(DefaultRoles.SuperAdmin) && role.Code == DefaultRoles.SuperAdmin)
-            throw new BusinessException(SysMsg.Get(EMessage.NotPermissionModifyRole), "CANNOT_MODIFY_ROLE");
+            throw new BusinessException(Localizer.Get(MsgKey.Role.NotAllowEdit), "CANNOT_MODIFY_ROLE");
 
         var result = await _userRoleRepository.RemoveMemberAsync(roleId, userIds);
         if (result) CacheService.RemoveByPrefix(_cachePrefix);

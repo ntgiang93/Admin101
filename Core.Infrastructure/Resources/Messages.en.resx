@@ -120,12 +120,6 @@
     <data name="Import.Success" xml:space="preserve">
         <value>Imported {0} records successfully.</value>
     </data>
-    <data name="Search.NoResult" xml:space="preserve">
-        <value>No records found matching your search criteria.</value>
-    </data>
-    <data name="Search.Result" xml:space="preserve">
-        <value>Found {0} records.</value>
-    </data>
     <data name="Status.Active" xml:space="preserve">
         <value>Active</value>
     </data>
@@ -252,22 +246,52 @@
     <data name="Auth.Password.Reseted" xml:space="preserve">
         <value>Password reset successfully.</value>
     </data>
-    <data name="Permission.View" xml:space="preserve">
-        <value>View</value>
+    <data name="Menu.PathExisted" xml:space="preserve">
+        <value>This menu path is already in use.</value>
     </data>
-    <data name="Permission.Edit" xml:space="preserve">
-        <value>Edit</value>
+    <data name="Validation.CodeExisted" xml:space="preserve">
+        <value>This code is already in use.</value>
     </data>
-    <data name="Permission.Create" xml:space="preserve">
-        <value>Create</value>
+    <data name="Role.Existed" xml:space="preserve">
+        <value>This Role is already in use.</value>
     </data>
-    <data name="Permission.Delete" xml:space="preserve">
-        <value>Delete</value>
+    <data name="Role.Protected" xml:space="preserve">
+        <value>The protected role cannot be modified.</value>
     </data>
-    <data name="Permission.Approve" xml:space="preserve">
-        <value>Approve</value>
+    <data name="Role.NotFound" xml:space="preserve">
+        <value>Role not found.</value>
     </data>
-    <data name="Permission.All" xml:space="preserve">
-        <value>All</value>
+    <data name="Role.NotAllowEdit" xml:space="preserve">
+        <value>You do not have permission to modify this role.</value>
+    </data>
+    <data name="User.NotFound" xml:space="preserve">
+        <value>This user not found.</value>
+    </data>
+    <data name="User.NotAllowEdit" xml:space="preserve">
+        <value>You do not have permission to modify this user.</value>
+    </data>
+    <data name="User.Existed" xml:space="preserve">
+        <value>This username is already in use.</value>
+    </data>
+    <data name="User.EmailExisted" xml:space="preserve">
+        <value>This email is already in use.</value>
+    </data>
+    <data name="User.PhoneExisted" xml:space="preserve">
+        <value>This phone number is already in use.</value>
+    </data>
+    <data name="Upload.NoFileUploaded" xml:space="preserve">
+        <value>No file was uploaded.</value>
+    </data>
+    <data name="Validation.IncorrectPassword" xml:space="preserve">
+        <value>Incorrect password.</value>
+    </data>
+    <data name="Validation.TokkenInValid" xml:space="preserve">
+        <value>The token is invalid or has expired.</value>
+    </data>
+    <data name="User.ChangeEmailSubject" xml:space="preserve">
+        <value>Confirm Your Email Address Change</value>
+    </data>
+    <data name="User.EmailChangedNotiSubject" xml:space="preserve">
+        <value>Security Alert: Your Account Email Has Been Changed</value>
     </data>
 </root>

@@ -393,74 +393,47 @@ namespace Core.Infrastructure.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tất cả.
+        ///   Looks up a localized string similar to Đường dẫn này đã được sử dụng bởi một menu khác..
         /// </summary>
-        internal static string Permission_All {
+        internal static string Menu_PathExisted {
             get {
-                return ResourceManager.GetString("Permission.All", resourceCulture);
+                return ResourceManager.GetString("Menu.PathExisted", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Phê duyệt.
+        ///   Looks up a localized string similar to Vai trò này đã được sử dụng..
         /// </summary>
-        internal static string Permission_Approve {
+        internal static string Role_Existed {
             get {
-                return ResourceManager.GetString("Permission.Approve", resourceCulture);
+                return ResourceManager.GetString("Role.Existed", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tạo mới.
+        ///   Looks up a localized string similar to Bạn không có quyền chỉnh sửa vai trò này..
         /// </summary>
-        internal static string Permission_Create {
+        internal static string Role_NotAllowEdit {
             get {
-                return ResourceManager.GetString("Permission.Create", resourceCulture);
+                return ResourceManager.GetString("Role.NotAllowEdit", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Xóa.
+        ///   Looks up a localized string similar to Không tìm thấy vai trò..
         /// </summary>
-        internal static string Permission_Delete {
+        internal static string Role_NotFound {
             get {
-                return ResourceManager.GetString("Permission.Delete", resourceCulture);
+                return ResourceManager.GetString("Role.NotFound", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Sửa.
+        ///   Looks up a localized string similar to Không thể chỉnh sửa vai trò được bảo vệ..
         /// </summary>
-        internal static string Permission_Edit {
+        internal static string Role_Protected {
             get {
-                return ResourceManager.GetString("Permission.Edit", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Xem.
-        /// </summary>
-        internal static string Permission_View {
-            get {
-                return ResourceManager.GetString("Permission.View", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Không tìm thấy bản ghi nào phù hợp với điều kiện tìm kiếm..
-        /// </summary>
-        internal static string Search_NoResult {
-            get {
-                return ResourceManager.GetString("Search.NoResult", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Tìm thấy {0} bản ghi..
-        /// </summary>
-        internal static string Search_Result {
-            get {
-                return ResourceManager.GetString("Search.Result", resourceCulture);
+                return ResourceManager.GetString("Role.Protected", resourceCulture);
             }
         }
         
@@ -582,6 +555,15 @@ namespace Core.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Không có tệp nào được tải lên..
+        /// </summary>
+        internal static string Upload_NoFileUploaded {
+            get {
+                return ResourceManager.GetString("Upload.NoFileUploaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Tải lên file thành công..
         /// </summary>
         internal static string Upload_Success {
@@ -600,6 +582,78 @@ namespace Core.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Xác nhận thay đổi địa chỉ email.
+        /// </summary>
+        internal static string User_ChangeEmailSubject {
+            get {
+                return ResourceManager.GetString("User.ChangeEmailSubject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cảnh báo: Địa chỉ email của tài khoản đã được thay đổi.
+        /// </summary>
+        internal static string User_EmailChangedNotiSubject {
+            get {
+                return ResourceManager.GetString("User.EmailChangedNotiSubject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email này đã được sử dụng..
+        /// </summary>
+        internal static string User_EmailExisted {
+            get {
+                return ResourceManager.GetString("User.EmailExisted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tài khoản này đã được sử dụng..
+        /// </summary>
+        internal static string User_Existed {
+            get {
+                return ResourceManager.GetString("User.Existed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bạn không có quyền chỉnh sửa người dùng này..
+        /// </summary>
+        internal static string User_NotAllowEdit {
+            get {
+                return ResourceManager.GetString("User.NotAllowEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Không tìm thấy người dùng này..
+        /// </summary>
+        internal static string User_NotFound {
+            get {
+                return ResourceManager.GetString("User.NotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Số điện thoại này đã được sử dụng..
+        /// </summary>
+        internal static string User_PhoneExisted {
+            get {
+                return ResourceManager.GetString("User.PhoneExisted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mã này đã được sử dụng..
+        /// </summary>
+        internal static string Validation_CodeExisted {
+            get {
+                return ResourceManager.GetString("Validation.CodeExisted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} phải nằm trong khoảng từ {1} đến {2}..
         /// </summary>
         internal static string Validation_DateRange {
@@ -614,6 +668,15 @@ namespace Core.Infrastructure.Resources {
         internal static string Validation_Duplicate {
             get {
                 return ResourceManager.GetString("Validation.Duplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mật khẩu không chính xác..
+        /// </summary>
+        internal static string Validation_IncorrectPassword {
+            get {
+                return ResourceManager.GetString("Validation.IncorrectPassword", resourceCulture);
             }
         }
         
@@ -749,6 +812,15 @@ namespace Core.Infrastructure.Resources {
         internal static string Validation_StartDateGreaterThanEndDate {
             get {
                 return ResourceManager.GetString("Validation.StartDateGreaterThanEndDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mã xác thực không hợp lệ hoặc đã hết hạn..
+        /// </summary>
+        internal static string Validation_TokkenInValid {
+            get {
+                return ResourceManager.GetString("Validation.TokkenInValid", resourceCulture);
             }
         }
         

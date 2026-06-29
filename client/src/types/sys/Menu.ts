@@ -8,6 +8,7 @@ export type MenuItem = {
   isActive: boolean
   parentId?: number
   sysmodule?: string
+  isGroup: boolean
   children?: MenuItem[]
   [key: string]: any
 }
@@ -22,6 +23,7 @@ export const defaultMenuItem: MenuItem = {
   isActive: true,
   parentId: undefined,
   sysmodule: undefined,
+  isGroup: false,
   children: [],
 }
 
@@ -35,6 +37,7 @@ export type SaveMenuDto = {
   isActive: boolean
   parentId?: number
   sysmodule: string
+  isGroup: boolean
 }
 
 export const defaultSaveMenuDto: SaveMenuDto = {
@@ -47,4 +50,5 @@ export const defaultSaveMenuDto: SaveMenuDto = {
   isActive: true,
   parentId: undefined,
   sysmodule: '',
+  isGroup: false,
 }

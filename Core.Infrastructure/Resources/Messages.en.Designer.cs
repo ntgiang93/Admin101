@@ -393,74 +393,47 @@ namespace Core.Infrastructure.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All.
+        ///   Looks up a localized string similar to This menu path is already in use..
         /// </summary>
-        internal static string Permission_All {
+        internal static string Menu_PathExisted {
             get {
-                return ResourceManager.GetString("Permission.All", resourceCulture);
+                return ResourceManager.GetString("Menu.PathExisted", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Approve.
+        ///   Looks up a localized string similar to This Role is already in use..
         /// </summary>
-        internal static string Permission_Approve {
+        internal static string Role_Existed {
             get {
-                return ResourceManager.GetString("Permission.Approve", resourceCulture);
+                return ResourceManager.GetString("Role.Existed", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Create.
+        ///   Looks up a localized string similar to You do not have permission to modify this role..
         /// </summary>
-        internal static string Permission_Create {
+        internal static string Role_NotAllowEdit {
             get {
-                return ResourceManager.GetString("Permission.Create", resourceCulture);
+                return ResourceManager.GetString("Role.NotAllowEdit", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete.
+        ///   Looks up a localized string similar to Role not found..
         /// </summary>
-        internal static string Permission_Delete {
+        internal static string Role_NotFound {
             get {
-                return ResourceManager.GetString("Permission.Delete", resourceCulture);
+                return ResourceManager.GetString("Role.NotFound", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Edit.
+        ///   Looks up a localized string similar to The protected role cannot be modified..
         /// </summary>
-        internal static string Permission_Edit {
+        internal static string Role_Protected {
             get {
-                return ResourceManager.GetString("Permission.Edit", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to View.
-        /// </summary>
-        internal static string Permission_View {
-            get {
-                return ResourceManager.GetString("Permission.View", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No records found matching your search criteria..
-        /// </summary>
-        internal static string Search_NoResult {
-            get {
-                return ResourceManager.GetString("Search.NoResult", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Found {0} records..
-        /// </summary>
-        internal static string Search_Result {
-            get {
-                return ResourceManager.GetString("Search.Result", resourceCulture);
+                return ResourceManager.GetString("Role.Protected", resourceCulture);
             }
         }
         
@@ -582,6 +555,15 @@ namespace Core.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No file was uploaded..
+        /// </summary>
+        internal static string Upload_NoFileUploaded {
+            get {
+                return ResourceManager.GetString("Upload.NoFileUploaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to File uploaded successfully..
         /// </summary>
         internal static string Upload_Success {
@@ -600,6 +582,78 @@ namespace Core.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Confirm Your Email Address Change.
+        /// </summary>
+        internal static string User_ChangeEmailSubject {
+            get {
+                return ResourceManager.GetString("User.ChangeEmailSubject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Security Alert: Your Account Email Has Been Changed.
+        /// </summary>
+        internal static string User_EmailChangedNotiSubject {
+            get {
+                return ResourceManager.GetString("User.EmailChangedNotiSubject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This email is already in use..
+        /// </summary>
+        internal static string User_EmailExisted {
+            get {
+                return ResourceManager.GetString("User.EmailExisted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This username is already in use..
+        /// </summary>
+        internal static string User_Existed {
+            get {
+                return ResourceManager.GetString("User.Existed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You do not have permission to modify this user..
+        /// </summary>
+        internal static string User_NotAllowEdit {
+            get {
+                return ResourceManager.GetString("User.NotAllowEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This user not found..
+        /// </summary>
+        internal static string User_NotFound {
+            get {
+                return ResourceManager.GetString("User.NotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This phone number is already in use..
+        /// </summary>
+        internal static string User_PhoneExisted {
+            get {
+                return ResourceManager.GetString("User.PhoneExisted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This code is already in use..
+        /// </summary>
+        internal static string Validation_CodeExisted {
+            get {
+                return ResourceManager.GetString("Validation.CodeExisted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} must be between {1} and {2}..
         /// </summary>
         internal static string Validation_DateRange {
@@ -614,6 +668,15 @@ namespace Core.Infrastructure.Resources {
         internal static string Validation_Duplicate {
             get {
                 return ResourceManager.GetString("Validation.Duplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Incorrect password..
+        /// </summary>
+        internal static string Validation_IncorrectPassword {
+            get {
+                return ResourceManager.GetString("Validation.IncorrectPassword", resourceCulture);
             }
         }
         
@@ -749,6 +812,15 @@ namespace Core.Infrastructure.Resources {
         internal static string Validation_StartDateGreaterThanEndDate {
             get {
                 return ResourceManager.GetString("Validation.StartDateGreaterThanEndDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The token is invalid or has expired..
+        /// </summary>
+        internal static string Validation_TokkenInValid {
+            get {
+                return ResourceManager.GetString("Validation.TokkenInValid", resourceCulture);
             }
         }
         
