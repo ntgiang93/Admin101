@@ -4,7 +4,7 @@ import { SearchInput } from '@/components/ui/input/SearchInput'
 import { useAuth } from '@/components/ui/layout/AuthProvider.tsx'
 import { DepartmentHook } from '@/hooks/orgazination/department'
 import { EPermission } from '@/types/base/Permission'
-import { ESysModule } from '@/types/constant/SysModule'
+import { SysModule } from '@/types/constant/SysModule.ts'
 import { type DepartmentDto } from '@/types/sys/Department'
 import { Button, Card, Tooltip } from '@heroui/react'
 import {
@@ -38,9 +38,9 @@ function DepartmentsPage() {
   >(undefined)
   const [searchValue, setSearchValue] = useState<string>('')
   const { hasPermission } = useAuth()
-  const canCreate = hasPermission(ESysModule.Department, EPermission.Create)
-  const canEdit = hasPermission(ESysModule.Department, EPermission.Edit)
-  const canDelete = hasPermission(ESysModule.Department, EPermission.Delete)
+  const canCreate = hasPermission(SysModule.Department, EPermission.Create)
+  const canEdit = hasPermission(SysModule.Department, EPermission.Edit)
+  const canDelete = hasPermission(SysModule.Department, EPermission.Delete)
 
   const columns = useMemo<ColumnDef<DepartmentDto>[]>(
     () => [

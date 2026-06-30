@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Core.Application.Contracts.Organization
 {
-    public class DepartmentDto
+    public class OrganizationUnitDto
     {
         public int Id { get; set; }
 
@@ -12,18 +12,18 @@ namespace Core.Application.Contracts.Organization
 
         public string? Description { get; set; }
 
-        public string DepartmentTypeCode { get; set; } = string.Empty;
+        public string OrganizationLevelCode { get; set; } = string.Empty;
 
-        public string DepartmentTypeName { get; set; } = string.Empty;
+        public string OrganizationLevelName { get; set; } = string.Empty;
 
         public int? ParentId { get; set; }
 
         public string? Address { get; set; }
 
-        public List<DepartmentDto>? Children { get; set; }
+        public List<OrganizationUnitDto>? Children { get; set; }
     }
 
-    public class DetailDepartmentDto
+    public class DetailOrganizationUnitDto
     {
         public int Id { get; set; }
         [Required]
@@ -39,7 +39,7 @@ namespace Core.Application.Contracts.Organization
 
         [Required]
         [StringLength(30)]
-        public required string DepartmentTypeCode { get; set; }
+        public required string OrganizationUnitTypeCode { get; set; }
 
         public int ParentId { get; set; }
 
@@ -49,9 +49,9 @@ namespace Core.Application.Contracts.Organization
 
     }
 
-    public class DepartmentTreeFilterDto
+    public class OrganizationUnitTreeFilterDto
     {
-        public string? DepartmentTypeCode { get; set; }
+        public string? OrganizationUnitTypeCode { get; set; }
         public string? SearchTerm { get; set; }
     }
 }

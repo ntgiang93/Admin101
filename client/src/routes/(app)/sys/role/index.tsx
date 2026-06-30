@@ -3,7 +3,7 @@ import {useAuth} from '@/components/ui/layout/AuthProvider.tsx'
 import {RoleHook} from '@/hooks/sys/role'
 import {StringHelper} from '@/libs/StringHelper.ts'
 import {EPermission} from '@/types/base/Permission'
-import {ESysModule} from '@/types/constant/SysModule'
+import {SysModule} from '@/types/constant/SysModule.ts'
 import {defaultRoleDto, type RoleDto} from '@/types/sys/Role'
 import {Button, Card, ListBox, Separator, Spinner, Tabs, Tooltip} from '@heroui/react'
 import {Add01Icon, Cancel01Icon, Delete02Icon, Refresh, SaveIcon, ShieldCheck,} from '@hugeicons/core-free-icons'
@@ -31,9 +31,9 @@ function Roles() {
     const [searchValue, setSearchValue] = useState<string>('')
     const [confirmOpen, setConfirmOpen] = useState(false)
     const {hasPermission} = useAuth()
-    const canCreate = hasPermission(ESysModule.Roles, EPermission.Create)
-    const canEdit = hasPermission(ESysModule.Roles, EPermission.Edit)
-    const canDelete = hasPermission(ESysModule.Roles, EPermission.Delete)
+    const canCreate = hasPermission(SysModule.Roles, EPermission.Create)
+    const canEdit = hasPermission(SysModule.Roles, EPermission.Edit)
+    const canDelete = hasPermission(SysModule.Roles, EPermission.Delete)
     const {mutateAsync: del, isPending} = RoleHook.useDelete(
         selectedRole?.id || 0,
     )

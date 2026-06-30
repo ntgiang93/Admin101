@@ -4,7 +4,7 @@ import { SearchInput } from '@/components/ui/input/SearchInput'
 import { useAuth } from '@/components/ui/layout/AuthProvider'
 import { JobScheduleHook } from '@/hooks/sys/jobSchedule'
 import { EPermission } from '@/types/base/Permission'
-import { ESysModule } from '@/types/constant/SysModule'
+import { SysModule } from '@/types/constant/SysModule.ts'
 import { type JobScheduleDto } from '@/types/sys/JobConfiguration'
 import { Button, Card, Tooltip } from '@heroui/react'
 import {
@@ -43,9 +43,9 @@ function JobSchedulePage() {
   )
   const [searchValue, setSearchValue] = useState('')
   const { hasPermission } = useAuth()
-  const canCreate = hasPermission(ESysModule.JobScheduler, EPermission.Create)
-  const canEdit = hasPermission(ESysModule.JobScheduler, EPermission.Edit)
-  const canDelete = hasPermission(ESysModule.JobScheduler, EPermission.Delete)
+  const canCreate = hasPermission(SysModule.JobScheduler, EPermission.Create)
+  const canEdit = hasPermission(SysModule.JobScheduler, EPermission.Edit)
+  const canDelete = hasPermission(SysModule.JobScheduler, EPermission.Delete)
 
   const columns = useMemo<ColumnDef<JobScheduleDto>[]>(
     () => [

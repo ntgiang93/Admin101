@@ -20,7 +20,7 @@ public class UserTableDto
     [JsonIgnore]
     public string? RolesString { get; set; }
 
-    public string? Department { get; set; }
+    public string? OrganizationUnit { get; set; }
     public DateTime? LastAccess { get; set; }
 }
 
@@ -42,5 +42,5 @@ public class UserTableRequestDto : PaginationRequest
     public bool? IsActive { get; set; }
     public bool? IsLocked { get; set; }
     public required List<string> Roles { get; set; }
-    public required List<int> Departments { get; set; }
+    public required List<int> OrganizationUnits { get; set; }
 }

@@ -69,24 +69,6 @@ namespace Core.Infrastructure.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Department management.
-        /// </summary>
-        internal static string Module_Department {
-            get {
-                return ResourceManager.GetString("Module.Department", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Department type management.
-        /// </summary>
-        internal static string Module_DepartmentType {
-            get {
-                return ResourceManager.GetString("Module.DepartmentType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Files management.
         /// </summary>
         internal static string Module_Files {
@@ -119,6 +101,24 @@ namespace Core.Infrastructure.Resources {
         internal static string Module_Menu {
             get {
                 return ResourceManager.GetString("Module.Menu", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Organization level management.
+        /// </summary>
+        internal static string Module_OrganizationLevel {
+            get {
+                return ResourceManager.GetString("Module.OrganizationLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Organization unit management.
+        /// </summary>
+        internal static string Module_OrganizationUnit {
+            get {
+                return ResourceManager.GetString("Module.OrganizationUnit", resourceCulture);
             }
         }
         

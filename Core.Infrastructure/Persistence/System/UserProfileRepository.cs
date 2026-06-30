@@ -12,8 +12,8 @@ namespace Core.Infrastructure.Persistence.System
     public class UserProfileRepository : GenericRepository<UserProfile, string>, IUserProfileRepository
     {
         private readonly string _table = StringHelper.GetTableName<UserProfile>();
-        private readonly string _userDepartment = StringHelper.GetTableName<UserDepartment>();
-        private readonly string _department = StringHelper.GetTableName<Department>();
+        private readonly string _userOrganizationUnit = StringHelper.GetTableName<UserOrganizationUnit>();
+        private readonly string _organizationUnit = StringHelper.GetTableName<OrganizationUnit>();
         public UserProfileRepository(IDbConnectionFactory factory) : base(factory)
         {
         }
@@ -27,11 +27,11 @@ namespace Core.Infrastructure.Persistence.System
                     $"{_table}.{nameof(UserProfile.DateOfBirth)}",
                     $"{_table}.{nameof(UserProfile.Gender)}",
                     $"{_table}.{nameof(UserProfile.JobTitleId)}",
-                    $"{_userDepartment}.{nameof(UserDepartment.DepartmentId)}",
-                    $"{_department}.{nameof(Department.Name)} as {nameof(UserProfileDto.DepartmentName)}"
+                    $"{_userOrganizationUnit}.{nameof(UserOrganizationUnit.OrganizationUnitId)}",
+                    $"{_organizationUnit}.{nameof(OrganizationUnit.Name)} as {nameof(UserProfileDto.DepartmentName)}"
                     )
-                .LeftJoin(_userDepartment,$"{_table}.{nameof(UserProfile.Id)}", $"{_userDepartment}.{nameof(UserDepartment.UserId)}")
-                .LeftJoin(_department,$"{_userDepartment}.{nameof(UserDepartment.DepartmentId)}", $"{_department}.{nameof(Department.Id)}")
+                .LeftJoin(_userOrganizationUnit,$"{_table}.{nameof(UserProfile.Id)}", $"{_userOrganizationUnit}.{nameof(UserOrganizationUnit.UserId)}")
+                .LeftJoin(_organizationUnit,$"{_userOrganizationUnit}.{nameof(UserOrganizationUnit.OrganizationUnitId)}", $"{_organizationUnit}.{nameof(OrganizationUnit.Id)}")
                 .Where($"{_table}.{nameof(UserProfile.Id)}", userId)
                 .Where($"{_table}.{nameof(UserProfile.IsDeleted)}", false);
 

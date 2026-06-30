@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Core.Domain.Entities.Organization;
 
-[Table("departments")]
-public class Department : BaseEntity<int>
+[Table("organization_unit")]
+public class OrganizationUnit : BaseEntity<int>
 {
     [MaxLength(100)] public required string TreePath { get; set; }
 
@@ -14,7 +14,7 @@ public class Department : BaseEntity<int>
 
     [MaxLength(1000)] public string? Description { get; set; }
 
-    [Required][MaxLength(50)] public required string DepartmentTypeCode { get; set; }
+    [Required][MaxLength(50)] public required int LevelId { get; set; }
 
     public int ParentId { get; set; }
 

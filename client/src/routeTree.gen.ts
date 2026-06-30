@@ -19,10 +19,11 @@ import { Route as appSysUserIndexRouteImport } from './routes/(app)/sys/user/ind
 import { Route as appSysRoleIndexRouteImport } from './routes/(app)/sys/role/index'
 import { Route as appSysMenuIndexRouteImport } from './routes/(app)/sys/menu/index'
 import { Route as appSysJobScheduleIndexRouteImport } from './routes/(app)/sys/job-schedule/index'
+import { Route as appOrganizationOrganizationLevelIndexRouteImport } from './routes/(app)/organization/organization-level/index'
 import { Route as appOrganizationJobTitleIndexRouteImport } from './routes/(app)/organization/job-title/index'
 import { Route as appOrganizationDepartmentIndexRouteImport } from './routes/(app)/organization/department/index'
-import { Route as appOrganizationDepartmentTypeIndexRouteImport } from './routes/(app)/organization/department-type/index'
 import { Route as appSysUserIdRouteImport } from './routes/(app)/sys/user/$id'
+import { Route as appSysJobScheduleComponentsPauseJobAlertRouteImport } from './routes/(app)/sys/job-schedule/components/PauseJobAlert'
 
 const ForbiddenRoute = ForbiddenRouteImport.update({
   id: '/forbidden',
@@ -73,6 +74,12 @@ const appSysJobScheduleIndexRoute = appSysJobScheduleIndexRouteImport.update({
   path: '/sys/job-schedule/',
   getParentRoute: () => appRouteRoute,
 } as any)
+const appOrganizationOrganizationLevelIndexRoute =
+  appOrganizationOrganizationLevelIndexRouteImport.update({
+    id: '/organization/organization-level/',
+    path: '/organization/organization-level/',
+    getParentRoute: () => appRouteRoute,
+  } as any)
 const appOrganizationJobTitleIndexRoute =
   appOrganizationJobTitleIndexRouteImport.update({
     id: '/organization/job-title/',
@@ -85,17 +92,17 @@ const appOrganizationDepartmentIndexRoute =
     path: '/organization/department/',
     getParentRoute: () => appRouteRoute,
   } as any)
-const appOrganizationDepartmentTypeIndexRoute =
-  appOrganizationDepartmentTypeIndexRouteImport.update({
-    id: '/organization/department-type/',
-    path: '/organization/department-type/',
-    getParentRoute: () => appRouteRoute,
-  } as any)
 const appSysUserIdRoute = appSysUserIdRouteImport.update({
   id: '/sys/user/$id',
   path: '/sys/user/$id',
   getParentRoute: () => appRouteRoute,
 } as any)
+const appSysJobScheduleComponentsPauseJobAlertRoute =
+  appSysJobScheduleComponentsPauseJobAlertRouteImport.update({
+    id: '/sys/job-schedule/components/PauseJobAlert',
+    path: '/sys/job-schedule/components/PauseJobAlert',
+    getParentRoute: () => appRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/forbidden': typeof ForbiddenRoute
@@ -104,13 +111,14 @@ export interface FileRoutesByFullPath {
   '/test/': typeof TestIndexRoute
   '/categories/': typeof appCategoriesIndexRoute
   '/sys/user/$id': typeof appSysUserIdRoute
-  '/organization/department-type/': typeof appOrganizationDepartmentTypeIndexRoute
   '/organization/department/': typeof appOrganizationDepartmentIndexRoute
   '/organization/job-title/': typeof appOrganizationJobTitleIndexRoute
+  '/organization/organization-level/': typeof appOrganizationOrganizationLevelIndexRoute
   '/sys/job-schedule/': typeof appSysJobScheduleIndexRoute
   '/sys/menu/': typeof appSysMenuIndexRoute
   '/sys/role/': typeof appSysRoleIndexRoute
   '/sys/user/': typeof appSysUserIndexRoute
+  '/sys/job-schedule/components/PauseJobAlert': typeof appSysJobScheduleComponentsPauseJobAlertRoute
 }
 export interface FileRoutesByTo {
   '/forbidden': typeof ForbiddenRoute
@@ -119,13 +127,14 @@ export interface FileRoutesByTo {
   '/test': typeof TestIndexRoute
   '/categories': typeof appCategoriesIndexRoute
   '/sys/user/$id': typeof appSysUserIdRoute
-  '/organization/department-type': typeof appOrganizationDepartmentTypeIndexRoute
   '/organization/department': typeof appOrganizationDepartmentIndexRoute
   '/organization/job-title': typeof appOrganizationJobTitleIndexRoute
+  '/organization/organization-level': typeof appOrganizationOrganizationLevelIndexRoute
   '/sys/job-schedule': typeof appSysJobScheduleIndexRoute
   '/sys/menu': typeof appSysMenuIndexRoute
   '/sys/role': typeof appSysRoleIndexRoute
   '/sys/user': typeof appSysUserIndexRoute
+  '/sys/job-schedule/components/PauseJobAlert': typeof appSysJobScheduleComponentsPauseJobAlertRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -136,13 +145,14 @@ export interface FileRoutesById {
   '/test/': typeof TestIndexRoute
   '/(app)/categories/': typeof appCategoriesIndexRoute
   '/(app)/sys/user/$id': typeof appSysUserIdRoute
-  '/(app)/organization/department-type/': typeof appOrganizationDepartmentTypeIndexRoute
   '/(app)/organization/department/': typeof appOrganizationDepartmentIndexRoute
   '/(app)/organization/job-title/': typeof appOrganizationJobTitleIndexRoute
+  '/(app)/organization/organization-level/': typeof appOrganizationOrganizationLevelIndexRoute
   '/(app)/sys/job-schedule/': typeof appSysJobScheduleIndexRoute
   '/(app)/sys/menu/': typeof appSysMenuIndexRoute
   '/(app)/sys/role/': typeof appSysRoleIndexRoute
   '/(app)/sys/user/': typeof appSysUserIndexRoute
+  '/(app)/sys/job-schedule/components/PauseJobAlert': typeof appSysJobScheduleComponentsPauseJobAlertRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -153,13 +163,14 @@ export interface FileRouteTypes {
     | '/test/'
     | '/categories/'
     | '/sys/user/$id'
-    | '/organization/department-type/'
     | '/organization/department/'
     | '/organization/job-title/'
+    | '/organization/organization-level/'
     | '/sys/job-schedule/'
     | '/sys/menu/'
     | '/sys/role/'
     | '/sys/user/'
+    | '/sys/job-schedule/components/PauseJobAlert'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/forbidden'
@@ -168,13 +179,14 @@ export interface FileRouteTypes {
     | '/test'
     | '/categories'
     | '/sys/user/$id'
-    | '/organization/department-type'
     | '/organization/department'
     | '/organization/job-title'
+    | '/organization/organization-level'
     | '/sys/job-schedule'
     | '/sys/menu'
     | '/sys/role'
     | '/sys/user'
+    | '/sys/job-schedule/components/PauseJobAlert'
   id:
     | '__root__'
     | '/(app)'
@@ -184,13 +196,14 @@ export interface FileRouteTypes {
     | '/test/'
     | '/(app)/categories/'
     | '/(app)/sys/user/$id'
-    | '/(app)/organization/department-type/'
     | '/(app)/organization/department/'
     | '/(app)/organization/job-title/'
+    | '/(app)/organization/organization-level/'
     | '/(app)/sys/job-schedule/'
     | '/(app)/sys/menu/'
     | '/(app)/sys/role/'
     | '/(app)/sys/user/'
+    | '/(app)/sys/job-schedule/components/PauseJobAlert'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -272,6 +285,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appSysJobScheduleIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
+    '/(app)/organization/organization-level/': {
+      id: '/(app)/organization/organization-level/'
+      path: '/organization/organization-level'
+      fullPath: '/organization/organization-level/'
+      preLoaderRoute: typeof appOrganizationOrganizationLevelIndexRouteImport
+      parentRoute: typeof appRouteRoute
+    }
     '/(app)/organization/job-title/': {
       id: '/(app)/organization/job-title/'
       path: '/organization/job-title'
@@ -286,18 +306,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appOrganizationDepartmentIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
-    '/(app)/organization/department-type/': {
-      id: '/(app)/organization/department-type/'
-      path: '/organization/department-type'
-      fullPath: '/organization/department-type/'
-      preLoaderRoute: typeof appOrganizationDepartmentTypeIndexRouteImport
-      parentRoute: typeof appRouteRoute
-    }
     '/(app)/sys/user/$id': {
       id: '/(app)/sys/user/$id'
       path: '/sys/user/$id'
       fullPath: '/sys/user/$id'
       preLoaderRoute: typeof appSysUserIdRouteImport
+      parentRoute: typeof appRouteRoute
+    }
+    '/(app)/sys/job-schedule/components/PauseJobAlert': {
+      id: '/(app)/sys/job-schedule/components/PauseJobAlert'
+      path: '/sys/job-schedule/components/PauseJobAlert'
+      fullPath: '/sys/job-schedule/components/PauseJobAlert'
+      preLoaderRoute: typeof appSysJobScheduleComponentsPauseJobAlertRouteImport
       parentRoute: typeof appRouteRoute
     }
   }
@@ -307,27 +327,30 @@ interface appRouteRouteChildren {
   appIndexRoute: typeof appIndexRoute
   appCategoriesIndexRoute: typeof appCategoriesIndexRoute
   appSysUserIdRoute: typeof appSysUserIdRoute
-  appOrganizationDepartmentTypeIndexRoute: typeof appOrganizationDepartmentTypeIndexRoute
   appOrganizationDepartmentIndexRoute: typeof appOrganizationDepartmentIndexRoute
   appOrganizationJobTitleIndexRoute: typeof appOrganizationJobTitleIndexRoute
+  appOrganizationOrganizationLevelIndexRoute: typeof appOrganizationOrganizationLevelIndexRoute
   appSysJobScheduleIndexRoute: typeof appSysJobScheduleIndexRoute
   appSysMenuIndexRoute: typeof appSysMenuIndexRoute
   appSysRoleIndexRoute: typeof appSysRoleIndexRoute
   appSysUserIndexRoute: typeof appSysUserIndexRoute
+  appSysJobScheduleComponentsPauseJobAlertRoute: typeof appSysJobScheduleComponentsPauseJobAlertRoute
 }
 
 const appRouteRouteChildren: appRouteRouteChildren = {
   appIndexRoute: appIndexRoute,
   appCategoriesIndexRoute: appCategoriesIndexRoute,
   appSysUserIdRoute: appSysUserIdRoute,
-  appOrganizationDepartmentTypeIndexRoute:
-    appOrganizationDepartmentTypeIndexRoute,
   appOrganizationDepartmentIndexRoute: appOrganizationDepartmentIndexRoute,
   appOrganizationJobTitleIndexRoute: appOrganizationJobTitleIndexRoute,
+  appOrganizationOrganizationLevelIndexRoute:
+    appOrganizationOrganizationLevelIndexRoute,
   appSysJobScheduleIndexRoute: appSysJobScheduleIndexRoute,
   appSysMenuIndexRoute: appSysMenuIndexRoute,
   appSysRoleIndexRoute: appSysRoleIndexRoute,
   appSysUserIndexRoute: appSysUserIndexRoute,
+  appSysJobScheduleComponentsPauseJobAlertRoute:
+    appSysJobScheduleComponentsPauseJobAlertRoute,
 }
 
 const appRouteRouteWithChildren = appRouteRoute._addFileChildren(

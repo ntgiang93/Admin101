@@ -5,8 +5,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Core.Domain.Entities.Organization;
 
-[Table("department_types")]
-public class DepartmentType : BaseEntity<int>
+[Table("organization_level")]
+public class OrganizationLevel : BaseEntity<int>
 {
     [Required][StringLength(50)] public string Code { get; set; } = string.Empty;
 
@@ -14,6 +14,7 @@ public class DepartmentType : BaseEntity<int>
 
     [StringLength(1000)] public string? Description { get; set; }
 
-    public int Level { get; set; }
-
+    public int Rank { get; set; }
+    public bool IsActive { get; set; }
+    public bool IsRoot { get; set; }
 }

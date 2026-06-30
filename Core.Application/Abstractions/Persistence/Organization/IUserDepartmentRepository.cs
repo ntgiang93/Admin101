@@ -5,23 +5,23 @@ using Core.Domain.Entities.Organization;
 
 namespace Core.Application.Abstractions.Persistence.Organization;
 
-public interface IUserDepartmentRepository : IGenericRepository<UserDepartment, int>
+public interface IUserOrganizationUnitRepository : IGenericRepository<UserOrganizationUnit, int>
 {
     /// <summary>
-    ///     Gets paginated list of user department assignments
+    ///     Gets paginated list of user organizationUnit assignments
     /// </summary>
-    Task<PaginatedResultDto<DepartmentMemberDto>> GetPaginatedAsync(UserDepartmentFilterDto filter);
+    Task<PaginatedResultDto<OrganizationUnitMemberDto>> GetPaginatedAsync(UserOrganizationUnitFilterDto filter);
 
     /// <summary>
-    ///     Gets paginated list of users that are not assigned to the specified department
+    ///     Gets paginated list of users that are not assigned to the specified organizationUnit
     /// </summary>
-    Task<PaginatedResultDto<UserSelectDto>> GetUserNotInDepartment(UserNotInDepartmentFilterDto filter);
+    Task<PaginatedResultDto<UserSelectDto>> GetUserNotInOrganizationUnit(UserNotInOrganizationUnitFilterDto filter);
     /// <summary>
-    ///     Adds members to a department use transaction
+    ///     Adds members to a organizationUnit use transaction
     /// </summary>
-    Task<bool> AddMemberAsync(AddMemberDepartmentDto dto, string createdBy);
+    Task<bool> AddMemberAsync(AddMemberOrganizationUnitDto dto, string createdBy);
     /// <summary>
-    ///     Removes members from a department use transaction
+    ///     Removes members from a organizationUnit use transaction
     /// </summary>
     Task<bool> RemoveMemberAsync(List<int> ids, string updatedBy);
 

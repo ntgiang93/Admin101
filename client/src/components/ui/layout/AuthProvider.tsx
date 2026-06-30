@@ -24,7 +24,7 @@ import {
   markSessionActive,
 } from './AuthHelper'
 import { useRouter } from '@tanstack/react-router'
-import { ESysModule } from '@/types/constant/SysModule.ts'
+import { SysModule } from '@/types/constant/SysModule.ts'
 import { EPermission } from '@/types/base/Permission.ts'
 import { SysRoles } from '@/types/constant/SysRoles.ts'
 import type { RolePermissionDto } from '@/types/sys/Role.ts'
@@ -36,7 +36,7 @@ interface AuthContextType {
   refreshToken: () => Promise<void>
   navigate: (url: string, target?: '_self' | '_blank') => void
   hasPermission: (
-    sysModule: string | ESysModule,
+    sysModule: string | SysModule,
     required: EPermission,
   ) => boolean
 }
@@ -160,7 +160,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const hasPermission = (
-    sysModule: string | ESysModule,
+    sysModule: string | SysModule,
     required: EPermission,
   ): boolean => {
     if (user) {

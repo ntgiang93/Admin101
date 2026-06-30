@@ -5,7 +5,7 @@ import TreeList from '@/components/ui/tree/TreeList'
 import TreeItem from '@/components/ui/tree/TreeItem'
 import { DepartmentHook } from '@/hooks/orgazination/department'
 import { EPermission } from '@/types/base/Permission'
-import { ESysModule } from '@/types/constant/SysModule'
+import { SysModule } from '@/types/constant/SysModule.ts'
 import {
   defaultDepartmentMemberFilter,
   type DepartmentDto,
@@ -59,7 +59,7 @@ export default function MemberModal(props: MemberModalProps) {
   const { data, isFetching, refetch } = DepartmentHook.useGetMembers(filter)
   const { mutateAsync: remove, isPending } = DepartmentHook.useRemoveMember()
   const { navigate, hasPermission } = useAuth()
-  const canEdit = hasPermission(ESysModule.Department, EPermission.Edit)
+  const canEdit = hasPermission(SysModule.Department, EPermission.Edit)
   const columns = useMemo<ColumnDef<DepartmentMemberDto>[]>(
     () => [
       {

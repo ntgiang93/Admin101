@@ -16,8 +16,8 @@ public class UserRepository : GenericRepository<User, string>, IUserRepository
     private static readonly Alias<User> U = new Alias<User>("u");
     private static readonly Alias<UserRole> Ur = new Alias<UserRole>("ur");
     private static readonly Alias<Role> R = new Alias<Role>("r");
-    private static readonly Alias<UserDepartment> Ud = new Alias<UserDepartment>("ud");
-    private static readonly Alias<Department> D = new Alias<Department>("d");
+    private static readonly Alias<UserOrganizationUnit> Ud = new Alias<UserOrganizationUnit>("ud");
+    private static readonly Alias<OrganizationUnit> D = new Alias<OrganizationUnit>("d");
     private static readonly Alias<UserToken> Ut = new Alias<UserToken>("ut");
 
     public UserRepository(IDbConnectionFactory factory) : base(factory)
@@ -112,7 +112,7 @@ public class UserRepository : GenericRepository<User, string>, IUserRepository
                 .On(U.Col(u => u.Id), Ud.Col(ud => ud.UserId))
                 .WhereTrue(Ud.Col(ud => ud.IsPrimary))
             )
-            .LeftJoin(D.Table, Ud.Col(ud => ud.DepartmentId), D.Col(d => d.Id))
+            .LeftJoin(D.Table, Ud.Col(ud => ud.OrganizationUnitId), D.Col(d => d.Id))
             .LeftJoin(Ut.Table, Ut.Col(ut => ut.UserId), U.Col(u => u.Id))
             .WhereFalse(U.Col(x => x.IsDeleted));
 
@@ -136,9 +136,9 @@ public class UserRepository : GenericRepository<User, string>, IUserRepository
             query.WhereIn(R.Col(x => x.Id), request.Roles);
         }
 
-        if (request.Departments.Any())
+        if (request.OrganizationUnits.Any())
         {
-            query.WhereIn(Ud.Col(x => x.DepartmentId), request.Departments);
+            query.WhereIn(Ud.Col(x => x.OrganizationUnitId), request.OrganizationUnits);
         }
 
         // Apply search filter
@@ -160,7 +160,7 @@ public class UserRepository : GenericRepository<User, string>, IUserRepository
                 U.Col(x => x.Avatar),
                 U.Col(x => x.IsActive),
                 U.Col(x => x.IsLocked),
-                $"{D.Col(x => x.Name)} AS Department"
+                $"{D.Col(x => x.Name)} AS OrganizationUnit"
             )
             .SelectRaw($"MAX({Ut.Col(u => u.UpdatedAt)}) as LastLogin")
             .SelectRaw($"STRING_AGG({R.Col(r => r.Name)}, ',') as RolesString")
@@ -198,7 +198,7 @@ public class UserRepository : GenericRepository<User, string>, IUserRepository
             Avatar = u.Avatar,
             IsActive = u.IsActive,
             IsLocked = u.IsLocked,
-            Department = u.Department,
+            OrganizationUnit = u.OrganizationUnit,
             LastAccess = u.LastAccess,
             Roles = string.IsNullOrEmpty(u.RolesString)
                 ? new List<string>()

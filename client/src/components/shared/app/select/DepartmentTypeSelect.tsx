@@ -1,4 +1,3 @@
-import { DepartmentTypeHook } from '@/hooks/orgazination/departmentType'
 import {
   Autocomplete,
   EmptyState,
@@ -9,6 +8,7 @@ import {
   useFilter,
 } from '@heroui/react'
 import { useMemo } from 'react'
+import {OrganizationLevelHook} from "@/hooks/orgazination/organization-level.ts";
 
 interface DepartmentTypeSelectProps {
   value?: string | string[]
@@ -33,7 +33,7 @@ export default function DepartmentTypeSelect({
   className,
   parentDepartmentType,
 }: DepartmentTypeSelectProps) {
-  const { data, isLoading } = DepartmentTypeHook.useGetAll()
+  const { data, isLoading } = OrganizationLevelHook.useGetAll()
   const { contains } = useFilter({ sensitivity: 'base' })
   const items = useMemo(() => {
     if (!data) return []

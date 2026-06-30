@@ -1,66 +1,65 @@
-import IconButton from '@/components/ui/button/IconButton.tsx';
-import ClientTable from '@/components/ui/data-table/DataTable';
-import {HugeIconByName} from '@/components/ui/icon/HugeIconByName';
-import {SearchInput} from '@/components/ui/input/SearchInput';
-import {useAuth} from '@/components/ui/layout/AuthProvider.tsx';
-import {MenuHook} from '@/hooks/sys/menu';
-import {defaultPaginationFilter, type PaginationFilter} from '@/types/base/PaginationFilter';
-import {EPermission} from '@/types/base/Permission';
-import {SysModule} from '@/types/constant/SysModule.ts';
-import {defaultMenuItem, type MenuItem} from '@/types/sys/Menu';
-import {Button, Card, Tooltip} from '@heroui/react';
-import {Add01Icon, Delete02Icon, Edit01Icon, Refresh} from '@hugeicons/core-free-icons';
-import {HugeiconsIcon} from '@hugeicons/react';
-import {createFileRoute} from '@tanstack/react-router';
-import {type ColumnDef} from '@tanstack/react-table';
-import {useEffect, useState} from 'react';
-import {useTranslation} from 'react-i18next';
+import { createFileRoute } from '@tanstack/react-router'
+import {useEffect, useState} from "react";
+import {useAuth} from "@/components/ui/layout/AuthProvider.tsx";
+import {SysModule} from "@/types/constant/SysModule.ts";
+import {EPermission} from "@/types/base/Permission.ts";
+import type {ColumnDef} from "@tanstack/react-table";
+import IconButton from "@/components/ui/button/IconButton.tsx";
+import {Add01Icon, Delete02Icon, Edit01Icon, Refresh} from "@hugeicons/core-free-icons";
+import {Button, Card, Tooltip} from "@heroui/react";
+import {SearchInput} from "@/components/ui/input/SearchInput.tsx";
+import {HugeiconsIcon} from "@hugeicons/react";
+import ClientTable from "@/components/ui/data-table/DataTable.tsx";
+import {MenuHook} from "@/hooks/sys/menu.ts";
+import {defaultMenuItem, type MenuItem} from "@/types/sys/Menu.ts";
+import {defaultPaginationFilter, type PaginationFilter} from "@/types/base/PaginationFilter.ts";
+import {useTranslation} from "react-i18next";
+import {HugeIconByName} from "@/components/ui/icon/HugeIconByName.tsx";
+import EmptyState from "@/assets/empty-state.png";
 import MenuForm from "@/routes/(app)/sys/menu/components/MenuForm.tsx";
-import EmptyState from '@/assets/empty-state.png';
 import ConfirmDeleteDialog from "@/components/ui/dialog/ConfirmDeleteDialog.tsx";
+import {OrganizationLevelHook} from "@/hooks/orgazination/organization-level.ts";
+import {defaultOrganizationLevelDto, type OrganizationLevelDto} from "@/types/sys/OrganizationLevel.ts";
+import OrganizationLevelForm from "@/routes/(app)/organization/organization-level/components/OrganizationLevelForm.tsx";
 
-export const Route = createFileRoute('/(app)/sys/menu/')({
-    component: Menu,
-});
+export const Route = createFileRoute('/(app)/organization/organization-level/')(
+  {
+    component: OrganizationLevel,
+  },
+)
 
-function Menu() {
-    const {data, refetch, isFetching} = MenuHook.useGetMenuTree();
-    const [selectedMenu, setSelectedMenu] = useState<MenuItem | undefined>(undefined);
-    const [selectedParent, setSelectedParent] = useState<MenuItem | undefined>(undefined);
+function OrganizationLevel() {
+    const {data, refetch, isFetching} = OrganizationLevelHook.useGetAll();
+    const [selectedItem, setSelectedItem] = useState<OrganizationLevelDto | undefined>(undefined);
     const [filter, setFilter] = useState<PaginationFilter>({...defaultPaginationFilter});
     const [detailOpen, setDetailOpen] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
     const {hasPermission} = useAuth();
-    const canCreate = hasPermission(SysModule.Menu, EPermission.Create);
-    const canEdit = hasPermission(SysModule.Menu, EPermission.Edit);
-    const canDelete = hasPermission(SysModule.Menu, EPermission.Delete);
+    const canCreate = hasPermission(SysModule.OrganizationLevel, EPermission.Create);
+    const canEdit = hasPermission(SysModule.OrganizationLevel, EPermission.Edit);
+    const canDelete = hasPermission(SysModule.OrganizationLevel, EPermission.Delete);
     const {t, i18n} = useTranslation();
-    const {mutateAsync: del, isPending} = MenuHook.useDelete()
-    
-    const lang = i18n.language;
+    const {mutateAsync: del, isPending} = OrganizationLevelHook.useDelete()
 
-    const columns: ColumnDef<MenuItem>[] = [
+    const columns: ColumnDef<OrganizationLevelDto>[] = [
+        {
+            id: 'code',
+            accessorKey: 'code',
+            header: () => t('code'),
+        },
         {
             id: 'name',
             accessorKey: 'name',
             header: () => t('name'),
-            cell: ({row}) => {
-                return (
-                    <div className="flex gap-2 items-center">
-                        <HugeIconByName name={row.original.icon || ''} size={20}/>
-                        <span>{row.original[`${lang}Name`]}</span>
-                    </div>
-                );
-            },
         },
         {
-            id: 'path',
-            accessorKey: 'path',
-            header: () => t('path'),
+            id: 'description',
+            accessorKey: 'description',
+            header: () => t('description'),
         },
         {
-            accessorKey: 'displayOrder',
-            header: () => t('display_order'),
+            accessorKey: 'rank',
+            header: () => t('rank'),
             meta: {
                 align: 'end',
             },
@@ -74,18 +73,9 @@ function Menu() {
                 return (
                     <div className="relative flex items-center gap-2">
                         <IconButton
-                            disabled={!canCreate}
-                            onPress={() => {
-                                setSelectedParent(row.original);
-                                setSelectedMenu({...defaultMenuItem})
-                            }}
-                            icon={Add01Icon}
-                            tooltip={t('create')}
-                        />
-                        <IconButton
                             disabled={!canEdit}
                             onPress={() => {
-                                setSelectedMenu(row.original);
+                                setSelectedItem(row.original);
                                 setDetailOpen(true);
                             }}
                             icon={Edit01Icon}
@@ -93,11 +83,9 @@ function Menu() {
                             color="accent"
                         />
                         <IconButton
-                            disabled={
-                                !((!row.original.children || row.original.children?.length === 0) && canDelete)
-                            }
+                            disabled={!canDelete}
                             onPress={() => {
-                                setSelectedMenu(row.original);
+                                setSelectedItem(row.original);
                                 setConfirmOpen(true);
                             }}
                             icon={Delete02Icon}
@@ -114,41 +102,11 @@ function Menu() {
         },
     ];
 
-    const filterNodes = (nodes: MenuItem[], keyword: string): MenuItem[] => {
-        return nodes.reduce<MenuItem[]>((acc, node) => {
-            const filteredChildren = node.children ? filterNodes(node.children, keyword) : [];
-            const nodeMatches = [node[`${lang}Name`],node.path, node.sysmodule].some((field) =>
-                field ? field.toLowerCase().includes(keyword) : false,
-            );
-
-            if (nodeMatches) {
-                acc.push({
-                    ...node,
-                    ...(node.children
-                        ? {
-                            children: filteredChildren.length > 0 ? filteredChildren : node.children,
-                        }
-                        : {}),
-                });
-                return acc;
-            }
-
-            if (filteredChildren.length > 0) {
-                acc.push({
-                    ...node,
-                    children: filteredChildren,
-                });
-            }
-
-            return acc;
-        }, []);
-    };
-
     const handleFilterData = () => {
         if (!data) return [] as MenuItem[];
         else {
             const keyword = filter.searchValue?.trim().toLowerCase() ?? '';
-            const filteredData = filterNodes(data, keyword);
+            const filteredData = data.filter(x => x.name.toLowerCase().includes(keyword) || x.code.toLowerCase().includes(keyword) || x.description?.toLowerCase().includes(keyword));
             const start = (filter.page - 1) * filter.pageSize;
             const end = filter.page * filter.pageSize;
             const result = filteredData.slice(start, end);
@@ -159,17 +117,11 @@ function Menu() {
     const filteredData = handleFilterData();
 
     const onResetSelected = () => {
-        setSelectedMenu(undefined);
-        setSelectedParent(undefined);
+        setSelectedItem(undefined);
     };
-    
-    const handleCreate = () => {
-        setSelectedMenu({...defaultMenuItem});
-        setSelectedParent(undefined);
-    }
 
     const handleDelete = async () => {
-        const success = await del(selectedMenu?.id || 0)
+        const success = await del(selectedItem?.id || 0)
         if (success) {
             refetch()
         }
@@ -186,9 +138,9 @@ function Menu() {
     return (
         <Card variant="transparent" className="h-full">
             <Card.Header className="flex-row justify-between w-full">
-                <Card.Title className="text-2xl text-accent w-fit">{t('menu_page_title')}</Card.Title>
+                <Card.Title className="text-2xl text-accent w-fit">{t('organization_level_page_title')}</Card.Title>
                 <div className="flex">
-                    <Button hidden={!canCreate} onPress={handleCreate}>
+                    <Button hidden={!canCreate} onPress={() => setSelectedItem({...defaultOrganizationLevelDto})} variant="primary">
                         <HugeiconsIcon icon={Add01Icon} stroke={'3'}/>
                         {t('create')}
                     </Button>
@@ -237,7 +189,7 @@ function Menu() {
                     </Card.Content>
                     <Card.Footer/>
                 </Card>
-                {(!selectedMenu || confirmOpen) && (
+                {(!selectedItem || confirmOpen) && (
                     <Card className="col-span-1">
                         <Card.Content>
                             <div className="flex items-center justify-center h-full w-full">
@@ -250,13 +202,12 @@ function Menu() {
                         </Card.Content>
                     </Card>
                 )}
-                {selectedMenu && !confirmOpen && (
-                    <MenuForm parent={selectedParent} id={selectedMenu?.id || 0} onRefresh={refetch}
-                              onResetSelected={onResetSelected}/>
+                {selectedItem && !confirmOpen && (
+                    <OrganizationLevelForm  id={selectedItem?.id || 0} onRefresh={refetch} onResetSelected={onResetSelected}/>
                 )}
             </Card.Content>
             <ConfirmDeleteDialog isOpen={confirmOpen} onOpenChange={setConfirmOpen} isPending={isPending}
-                                 onDelete={handleDelete} itemName={selectedMenu?.name}/>
+                                 onDelete={handleDelete} itemName={selectedItem?.name}/>
         </Card>
     );
 }

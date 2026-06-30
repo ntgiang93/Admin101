@@ -20,7 +20,7 @@ public class MenuDto
     public int? ParentId { get; set; }
 
     public string? Sysmodule { get; set; }
-
+    public bool IsGroup { get; set; }
     public List<MenuDto>? Children { get; set; }
 }
 

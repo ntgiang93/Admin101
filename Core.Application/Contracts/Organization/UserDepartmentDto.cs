@@ -3,7 +3,7 @@ using Core.Application.Common;
 
 namespace Core.Application.Contracts.Organization;
 
-public class DepartmentMemberDto
+public class OrganizationUnitMemberDto
 {
     public int Id { get; set; }
     public string UserId { get; set; }
@@ -12,26 +12,26 @@ public class DepartmentMemberDto
     public string? Avatar { get; set; }
 }
 
-public class AddMemberDepartmentDto
+public class AddMemberOrganizationUnitDto
 {
     [Required] public required List<string> UserIds { get; set; }
 
-    [Required] public int DepartmentId { get; set; }
+    [Required] public int OrganizationUnitId { get; set; }
 }
 
-public class RemoveDepartmentMemberDto
+public class RemoveOrganizationUnitMemberDto
 {
-    [Required] public int DepartmentId { get; set; }
+    [Required] public int OrganizationUnitId { get; set; }
     [Required] public List<string> UserIds { get; set; }
 }
 
-public class UserDepartmentFilterDto: PaginationRequest
+public class UserOrganizationUnitFilterDto: PaginationRequest
 {
-    public int DepartmentId { get; set; }
+    public int OrganizationUnitId { get; set; }
     public bool IsShowSubMembers { get; set; }
 }
 
-public class UserNotInDepartmentFilterDto : PaginationRequest
+public class UserNotInOrganizationUnitFilterDto : PaginationRequest
 {
-    public int DepartmentId { get; set; }
+    public int OrganizationUnitId { get; set; }
 }

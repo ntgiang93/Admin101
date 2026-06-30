@@ -60,16 +60,16 @@
     <data name="Module.BusinessCategory" xml:space="preserve">
         <value>Business Category management</value>
     </data>
-    <data name="Module.Department" xml:space="preserve">
-        <value>Department management</value>
-    </data>
-    <data name="Module.DepartmentType" xml:space="preserve">
-        <value>Department type management</value>
+    <data name="Module.OrganizationUnit" xml:space="preserve">
+        <value>Organization unit management</value>
     </data>
     <data name="Module.JobTitle" xml:space="preserve">
         <value>Job Title management</value>
     </data>
     <data name="Module.JobScheduler" xml:space="preserve">
         <value>Job Scheduler management</value>
+    </data>
+    <data name="Module.OrganizationLevel" xml:space="preserve">
+        <value>Organization level management</value>
     </data>
 </root>

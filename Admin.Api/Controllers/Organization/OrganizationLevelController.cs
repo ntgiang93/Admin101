@@ -10,37 +10,37 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Admin.Api.Controllers.Organization;
 
-[Route("api/organization/department-types")]
+[Route("api/organization/organization-level")]
 [ApiController]
 [Authorize]
-public class DepartmentTypeController : ControllerBase
+public class OrganizationLevelController : ControllerBase
 {
-    private readonly IDepartmentTypeService _departmentTypeService;
+    private readonly IOrganizationLevelService _organizationLevelService;
     private readonly ISysMessageService _sysMsg;
 
-    public DepartmentTypeController(
-        IDepartmentTypeService departmentTypeService,
+    public OrganizationLevelController(
+        IOrganizationLevelService organizationLevelService,
         ISysMessageService sysMsg)
     {
-        _departmentTypeService = departmentTypeService;
+        _organizationLevelService = organizationLevelService;
         _sysMsg = sysMsg;
     }
 
     // GET methods
     [HttpGet]
-    [Policy(ESysModule.DepartmentType, EPermission.View)]
+    [Policy(ESysModule.OrganizationLevel, EPermission.View)]
     public async Task<IActionResult> GetAll()
     {
-        var types = await _departmentTypeService.FindAsync<DepartmentTypeDto>(x => x.IsDeleted == false);
+        var types = await _organizationLevelService.FindAsync<OrganizationLevelDto>(x => x.IsDeleted == false);
         return Ok(ApiResponse<object>.Succeed(types, _sysMsg.Get(EMessage.SuccessMsg)));
     }
 
 
     [HttpGet("{id}")]
-    [Policy(ESysModule.DepartmentType, EPermission.View)]
+    [Policy(ESysModule.OrganizationLevel, EPermission.View)]
     public async Task<IActionResult> GetById(int id)
     {
-        var type = await _departmentTypeService.GetByIdAsync<DepartmentTypeDto>(id);
+        var type = await _organizationLevelService.GetByIdAsync<OrganizationLevelDto>(id);
         if (type == null)
             return NotFound(ApiResponse<object>.Fail(_sysMsg.Get(EMessage.Error404Msg)));
 
@@ -49,23 +49,23 @@ public class DepartmentTypeController : ControllerBase
 
     // POST methods
     [HttpPost]
-    [Policy(ESysModule.DepartmentType, EPermission.Create)]
-    public async Task<IActionResult> Create([FromBody] CreateDepartmentTypeDto dto)
+    [Policy(ESysModule.OrganizationLevel, EPermission.Create)]
+    public async Task<IActionResult> Create([FromBody] CreateOrganizationLevelDto dto)
     {
-        var newDepartmentType = await _departmentTypeService.CreateDepartmentTypeAsync(dto);
-        if (newDepartmentType == null)
+        var newOrganizationLevel = await _organizationLevelService.CreateAsync(dto);
+        if (newOrganizationLevel == null)
             return NotFound(ApiResponse<object>.Fail(_sysMsg.Get(EMessage.FailureMsg)));
 
-        return Ok(ApiResponse<DepartmentTypeDto>.Succeed(newDepartmentType,
+        return Ok(ApiResponse<OrganizationLevelDto>.Succeed(newOrganizationLevel,
             _sysMsg.Get(EMessage.SuccessMsg)));
     }
 
     // PUT methods
     [HttpPut]
-    [Policy(ESysModule.DepartmentType, EPermission.Edit)]
-    public async Task<IActionResult> Update([FromBody] UpdateDepartmentTypeDto dto)
+    [Policy(ESysModule.OrganizationLevel, EPermission.Edit)]
+    public async Task<IActionResult> Update([FromBody] UpdateOrganizationLevelDto dto)
     {
-        var success = await _departmentTypeService.UpdateDepartmentTypeAsync(dto);
+        var success = await _organizationLevelService.UpdateAsync(dto);
         if (!success)
             return NotFound(ApiResponse<object>.Fail(_sysMsg.Get(EMessage.FailureMsg)));
 
@@ -74,10 +74,10 @@ public class DepartmentTypeController : ControllerBase
 
     // DELETE methods
     [HttpDelete("{id}")]
-    [Policy(ESysModule.DepartmentType, EPermission.Delete)]
+    [Policy(ESysModule.OrganizationLevel, EPermission.Delete)]
     public async Task<IActionResult> Delete(int id)
     {
-        var success = await _departmentTypeService.SoftDeleteAsync(id);
+        var success = await _organizationLevelService.SoftDeleteAsync(id);
         if (!success)
             return Ok(ApiResponse<object>.Fail(_sysMsg.Get(EMessage.FailureMsg)));
 

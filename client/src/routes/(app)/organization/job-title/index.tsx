@@ -4,7 +4,7 @@ import { SearchInput } from '@/components/ui/input/SearchInput'
 import { useAuth } from '@/components/ui/layout/AuthProvider.tsx'
 import { JobTitleHook } from '@/hooks/orgazination/jobTitle'
 import { EPermission } from '@/types/base/Permission'
-import { ESysModule } from '@/types/constant/SysModule'
+import { SysModule } from '@/types/constant/SysModule.ts'
 import { type JobTitleDto } from '@/types/sys/JobTitle'
 import { Button, Card, Tooltip } from '@heroui/react'
 import {
@@ -31,9 +31,9 @@ function JobTitlePage() {
   const [selected, setSelected] = useState<JobTitleDto | undefined>(undefined)
   const [searchValue, setSearchValue] = useState<string>('')
   const { hasPermission } = useAuth()
-  const canCreate = hasPermission(ESysModule.JobTitle, EPermission.Create)
-  const canEdit = hasPermission(ESysModule.JobTitle, EPermission.Edit)
-  const canDelete = hasPermission(ESysModule.JobTitle, EPermission.Delete)
+  const canCreate = hasPermission(SysModule.JobTitle, EPermission.Create)
+  const canEdit = hasPermission(SysModule.JobTitle, EPermission.Edit)
+  const canDelete = hasPermission(SysModule.JobTitle, EPermission.Delete)
 
   const columns = useMemo<ColumnDef<JobTitleDto>[]>(
     () => [

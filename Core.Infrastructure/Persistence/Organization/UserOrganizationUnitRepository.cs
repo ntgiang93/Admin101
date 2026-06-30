@@ -11,49 +11,49 @@ using SqlKata;
 
 namespace Core.Infrastructure.Persistence.Organization;
 
-public class UserDepartmentRepository : GenericRepository<UserDepartment, int>, IUserDepartmentRepository
+public class UserOrganizationUnitRepository : GenericRepository<UserOrganizationUnit, int>, IUserOrganizationUnitRepository
 {
     private readonly string _tableName;
     private readonly string _userTable;
     private readonly string _departmemtTable;
 
-    public UserDepartmentRepository(IDbConnectionFactory factory) : base(factory)
+    public UserOrganizationUnitRepository(IDbConnectionFactory factory) : base(factory)
     {
-        _tableName = StringHelper.GetTableName<UserDepartment>();
+        _tableName = StringHelper.GetTableName<UserOrganizationUnit>();
         _userTable = StringHelper.GetTableName<User>();
-        _departmemtTable = StringHelper.GetTableName<Department>();
+        _departmemtTable = StringHelper.GetTableName<OrganizationUnit>();
     }
 
-    public async Task<PaginatedResultDto<DepartmentMemberDto>> GetPaginatedAsync(UserDepartmentFilterDto filter)
+    public async Task<PaginatedResultDto<OrganizationUnitMemberDto>> GetPaginatedAsync(UserOrganizationUnitFilterDto filter)
     {
-        var departmentIds = new List<int>() { filter.DepartmentId };
+        var organizationUnitIds = new List<int>() { filter.OrganizationUnitId };
         using var connection = _dbFactory.Connection;
         if (filter.IsShowSubMembers)
         {
-            var departmentQuery = new Query(_departmemtTable);
-            departmentQuery.Select(
-                    $"{nameof(Department.Id)}"
+            var organizationUnitQuery = new Query(_departmemtTable);
+            organizationUnitQuery.Select(
+                    $"{nameof(OrganizationUnit.Id)}"
                 )
-                .Where($"{_departmemtTable}.{nameof(Department.IsDeleted)}", false)
-                .WhereRaw($"CONCAT('.',{_departmemtTable}.{nameof(Department.TreePath)},'.') LIKE CONCAT('%.',?,'.%')",
-                    filter.DepartmentId);
-            var compiledDepartmentQuery = _compiler.Compile(departmentQuery);
-            var result = await connection.QueryAsync<int>(compiledDepartmentQuery.Sql,
-                compiledDepartmentQuery.NamedBindings);
-            departmentIds.AddRange(result);
+                .Where($"{_departmemtTable}.{nameof(OrganizationUnit.IsDeleted)}", false)
+                .WhereRaw($"CONCAT('.',{_departmemtTable}.{nameof(OrganizationUnit.TreePath)},'.') LIKE CONCAT('%.',?,'.%')",
+                    filter.OrganizationUnitId);
+            var compiledOrganizationUnitQuery = _compiler.Compile(organizationUnitQuery);
+            var result = await connection.QueryAsync<int>(compiledOrganizationUnitQuery.Sql,
+                compiledOrganizationUnitQuery.NamedBindings);
+            organizationUnitIds.AddRange(result);
         }
 
         var query = new Query(_tableName);
         query.Select([
-                $"{_tableName}.{nameof(UserDepartment.Id)}",
+                $"{_tableName}.{nameof(UserOrganizationUnit.Id)}",
                 $"{_userTable}.{nameof(User.Id)} as UserId",
                 $"{_userTable}.{nameof(User.FullName)}",
                 $"{_userTable}.{nameof(User.UserName)}",
                 $"{_userTable}.{nameof(User.Avatar)}"
             ])
-            .Join(_userTable, $"{_tableName}.{nameof(UserDepartment.UserId)}", $"{_userTable}.{nameof(User.Id)}")
-            .WhereIn($"{_tableName}.{nameof(UserDepartment.DepartmentId)}", departmentIds)
-            .Where($"{_tableName}.{nameof(UserDepartment.IsDeleted)}", false)
+            .Join(_userTable, $"{_tableName}.{nameof(UserOrganizationUnit.UserId)}", $"{_userTable}.{nameof(User.Id)}")
+            .WhereIn($"{_tableName}.{nameof(UserOrganizationUnit.OrganizationUnitId)}", organizationUnitIds)
+            .Where($"{_tableName}.{nameof(UserOrganizationUnit.IsDeleted)}", false)
             .Where($"{_userTable}.{nameof(User.IsDeleted)}", false);
 
         if (!string.IsNullOrWhiteSpace(filter.SearchValue))
@@ -72,9 +72,9 @@ public class UserDepartmentRepository : GenericRepository<UserDepartment, int>, 
             .Offset((filter.Page - 1) * filter.PageSize)
             .Limit(filter.PageSize);
         var compileQuery = _compiler.Compile(query);
-        var data = await connection.QueryAsync<DepartmentMemberDto>(compileQuery.Sql, compileQuery.NamedBindings);
+        var data = await connection.QueryAsync<OrganizationUnitMemberDto>(compileQuery.Sql, compileQuery.NamedBindings);
 
-        return new PaginatedResultDto<DepartmentMemberDto>
+        return new PaginatedResultDto<OrganizationUnitMemberDto>
         {
             Items = data.ToList(),
             TotalCount = totalCount,
@@ -83,27 +83,27 @@ public class UserDepartmentRepository : GenericRepository<UserDepartment, int>, 
         };
     }
 
-    public async Task<PaginatedResultDto<UserSelectDto>> GetUserNotInDepartment(
-        UserNotInDepartmentFilterDto filter)
+    public async Task<PaginatedResultDto<UserSelectDto>> GetUserNotInOrganizationUnit(
+        UserNotInOrganizationUnitFilterDto filter)
     {
         using var connection = _dbFactory.Connection;
         var page = Math.Max(1, filter.Page);
         var pageSize = Math.Max(1, filter.PageSize);
 
-        // 1) Collect department ids (self + subs)
-        var departmentIds = new List<int> { filter.DepartmentId };
-        var departmentQuery = new Query(_departmemtTable)
-            .Select($"{nameof(Department.Id)}")
-            .Where($"{_departmemtTable}.{nameof(Department.IsDeleted)}", false)
-            .WhereRaw($"CONCAT('.',{_departmemtTable}.{nameof(Department.TreePath)},'.') LIKE CONCAT('%.',?,'.%')",
-                filter.DepartmentId);
+        // 1) Collect organizationUnit ids (self + subs)
+        var organizationUnitIds = new List<int> { filter.OrganizationUnitId };
+        var organizationUnitQuery = new Query(_departmemtTable)
+            .Select($"{nameof(OrganizationUnit.Id)}")
+            .Where($"{_departmemtTable}.{nameof(OrganizationUnit.IsDeleted)}", false)
+            .WhereRaw($"CONCAT('.',{_departmemtTable}.{nameof(OrganizationUnit.TreePath)},'.') LIKE CONCAT('%.',?,'.%')",
+                filter.OrganizationUnitId);
 
-        var compiledDepartmentQuery = _compiler.Compile(departmentQuery);
+        var compiledOrganizationUnitQuery = _compiler.Compile(organizationUnitQuery);
         var subIds =
-            await connection.QueryAsync<int>(compiledDepartmentQuery.Sql, compiledDepartmentQuery.NamedBindings);
-        departmentIds.AddRange(subIds);
+            await connection.QueryAsync<int>(compiledOrganizationUnitQuery.Sql, compiledOrganizationUnitQuery.NamedBindings);
+        organizationUnitIds.AddRange(subIds);
 
-        // 2) Base query: users NOT EXISTS in UserDepartments for those departmentIds
+        // 2) Base query: users NOT EXISTS in UserOrganizationUnits for those organizationUnitIds
         var query = new Query(_userTable)
             .Select(new[]
             {
@@ -116,8 +116,8 @@ public class UserDepartmentRepository : GenericRepository<UserDepartment, int>, 
             })
             .WhereNotExists(q => q
                 .From(_tableName)
-                .WhereColumns($"{_tableName}.{nameof(UserDepartment.UserId)}", "=", $"{_userTable}.{nameof(User.Id)}")
-                .WhereIn($"{_tableName}.{nameof(UserDepartment.DepartmentId)}", departmentIds)
+                .WhereColumns($"{_tableName}.{nameof(UserOrganizationUnit.UserId)}", "=", $"{_userTable}.{nameof(User.Id)}")
+                .WhereIn($"{_tableName}.{nameof(UserOrganizationUnit.OrganizationUnitId)}", organizationUnitIds)
             )
             .Where($"{_userTable}.{nameof(User.IsDeleted)}", false);
 
@@ -150,7 +150,7 @@ public class UserDepartmentRepository : GenericRepository<UserDepartment, int>, 
         };
     }
 
-    public async Task<bool> AddMemberAsync(AddMemberDepartmentDto dto, string createdBy)
+    public async Task<bool> AddMemberAsync(AddMemberOrganizationUnitDto dto, string createdBy)
     {
         using var connection = _dbFactory.Connection;
         using var transaction = connection.BeginTransaction();
@@ -158,10 +158,10 @@ public class UserDepartmentRepository : GenericRepository<UserDepartment, int>, 
         {
             var cols = new[]
             {
-                nameof(UserDepartment.UserId), nameof(UserDepartment.DepartmentId), nameof(UserDepartment.IsDeleted),
-                nameof(UserDepartment.CreatedAt), nameof(UserDepartment.CreatedBy)
+                nameof(UserOrganizationUnit.UserId), nameof(UserOrganizationUnit.OrganizationUnitId), nameof(UserOrganizationUnit.IsDeleted),
+                nameof(UserOrganizationUnit.CreatedAt), nameof(UserOrganizationUnit.CreatedBy)
             };
-            var data = dto.UserIds.Select(userId => new object[] { userId, dto.DepartmentId, false, DateTime.Now, createdBy }).ToList();
+            var data = dto.UserIds.Select(userId => new object[] { userId, dto.OrganizationUnitId, false, DateTime.Now, createdBy }).ToList();
 
             var query = new Query(_tableName)
                 .AsInsert(cols, data);
@@ -190,7 +190,7 @@ public class UserDepartmentRepository : GenericRepository<UserDepartment, int>, 
         try
         {
             var query = new Query(_tableName)
-                .WhereIn(nameof(UserDepartment.Id), ids)
+                .WhereIn(nameof(UserOrganizationUnit.Id), ids)
                 .AsUpdate(new
                 {
                     IsDeleted = true,

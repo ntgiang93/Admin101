@@ -57,12 +57,6 @@
     <data name="Module.BusinessCategory" xml:space="preserve">
         <value>Quản lý danh mục nghiệp vụ</value>
     </data>
-    <data name="Module.Department" xml:space="preserve">
-        <value>Quản lý phòng ban</value>
-    </data>
-    <data name="Module.DepartmentType" xml:space="preserve">
-        <value>Quản lý loại phòng ban</value>
-    </data>
     <data name="Module.JobTitle" xml:space="preserve">
         <value>Quản lý chức danh</value>
     </data>
@@ -71,5 +65,11 @@
     </data>
     <data name="Module.Users" xml:space="preserve">
         <value>Quản lý người dùng</value>
+    </data>
+    <data name="Module.OrganizationUnit" xml:space="preserve">
+        <value>Quản lý đơn vị</value>
+    </data>
+    <data name="Module.OrganizationLevel" xml:space="preserve">
+        <value>Quản lý phân cấp đơn vị</value>
     </data>
 </root>

@@ -57,7 +57,6 @@ export const useGet = (id: number) => {
   return useQuery<MenuItem, Error>({
     queryKey: [endpoint, 'get', id],
     queryFn: async () => {
-      if(id == 0) return {...defaultMenuItem}
       const response = await apiService.get<ApiResponse<MenuItem>>(
         `${endpoint}/${id}`,
       )
@@ -66,7 +65,7 @@ export const useGet = (id: number) => {
       }
       return { ...defaultMenuItem }
     },
-    enabled: id >= 0,
+    enabled: id > 0,
   })
 }
 

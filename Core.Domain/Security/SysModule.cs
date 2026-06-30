@@ -10,8 +10,8 @@ public enum ESysModule
     Files,
     SysCategories,
     BusinessCategory,
-    Department,
-    DepartmentType,
+    OrganizationUnit,
+    OrganizationLevel,
     JobTitle,
     JobScheduler
 }

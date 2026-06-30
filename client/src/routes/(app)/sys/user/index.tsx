@@ -3,17 +3,13 @@ import {SearchInput} from '@/components/ui/input/SearchInput'
 import {useAuth} from '@/components/ui/layout/AuthProvider'
 import {UserHook} from '@/hooks/sys/user'
 import {EPermission} from '@/types/base/Permission'
-import {ESysModule} from '@/types/constant/SysModule'
-import {
-    defaultUserDto,
-    defaultUserTableRequest,
-    type UserTableDto,
-    type UserTableRequestDto,
-} from '@/types/sys/User'
-import {AlertDialog, Avatar, Button, Card, Chip, Tooltip} from '@heroui/react'
+import {SysModule} from '@/types/constant/SysModule.ts'
+import {defaultUserTableRequest, type UserTableDto, type UserTableRequestDto,} from '@/types/sys/User'
+import {Avatar, Button, Card, Chip, Tooltip} from '@heroui/react'
 import {
     Add01Icon,
-    Edit01Icon, Refresh,
+    Edit01Icon,
+    Refresh,
     UserAccountIcon,
     UserCheck01Icon,
     UserRemove01Icon,
@@ -25,12 +21,6 @@ import {useEffect, useState} from 'react'
 import UserDetailModal from './components/UserDetailModal'
 import ClientTable from "@/components/ui/data-table/DataTable.tsx";
 import {useTranslation} from "react-i18next";
-import {defaultMenuItem} from "@/types/sys/Menu.ts";
-import EmptyState from "@/assets/empty-state.png";
-import MenuForm from "@/routes/(app)/sys/menu/components/MenuForm.tsx";
-import ConfirmDeleteDialog from "@/components/ui/dialog/ConfirmDeleteDialog.tsx";
-import type {DateValue} from "@internationalized/date";
-import i18n from 'i18next'
 import dayjs from "dayjs";
 
 
@@ -53,9 +43,9 @@ function Users() {
         selectedUser?.id || '',
     )
     const {hasPermission} = useAuth()
-    const canCreate = hasPermission(ESysModule.Users, EPermission.Create)
-    const canEdit = hasPermission(ESysModule.Users, EPermission.Edit)
-    const canView = hasPermission(ESysModule.Users, EPermission.View)
+    const canCreate = hasPermission(SysModule.Users, EPermission.Create)
+    const canEdit = hasPermission(SysModule.Users, EPermission.Edit)
+    const canView = hasPermission(SysModule.Users, EPermission.View)
     const navigate = useNavigate()
     const {t} = useTranslation()
 
