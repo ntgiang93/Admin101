@@ -8,15 +8,16 @@ public class OrganizationUnit : BaseEntity<int>
 {
     [MaxLength(100)] public required string TreePath { get; set; }
 
-    [Required][MaxLength(255)] public required string Name { get; set; }
+    [Required] [MaxLength(255)] public required string Name { get; set; }
 
-    [Required][MaxLength(50)] public required string Code { get; set; }
+    [Required] [MaxLength(50)] public required string Code { get; set; }
 
     [MaxLength(1000)] public string? Description { get; set; }
 
-    [Required][MaxLength(50)] public required int LevelId { get; set; }
+    [Required] [MaxLength(50)] public required int LevelId { get; set; }
 
     public int ParentId { get; set; }
 
     [MaxLength(500)] public string? Address { get; set; }
+    public string HeadId { get; set; }
 }

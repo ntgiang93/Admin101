@@ -16,10 +16,14 @@ import {
 } from '@heroui/react'
 import { useEffect, useMemo, useState } from 'react'
 import {OrganizationUnitHook} from "@/hooks/orgazination/department.ts";
+import {useTranslation} from "react-i18next";
+import OrganizationUnitSelect from "@/components/shared/app/select/OrganizationUnitSelect.tsx";
+import OrganizationLevelSelect from "@/components/shared/app/select/OrganizationLevelSelect.tsx";
+import UserSelect from "@/components/shared/app/select/UserSelect.tsx";
 
 interface DetailProps {
   isOpen: boolean
-  onOpenChange: () => void
+  onOpenChange: (isOpen: boolean) => void
   id: number
   onRefresh: () => void
   onResetSelected: () => void
@@ -34,8 +38,8 @@ export default function DetailModal(props: DetailProps) {
   const { data, isFetching } = OrganizationUnitHook.useGet(isOpen ? id : 0)
   const { mutateAsync: save, isPending } = OrganizationUnitHook.useSave()
   const { data: allOrganizationUnits } = OrganizationUnitHook.useGetAll()
-
-  const parentOrganizationUnitType = useMemo(() => {
+  const {t} = useTranslation();
+  const parentLevel = useMemo(() => {
     if (!allOrganizationUnits || !form.parentId) return undefined
 
     const findInTree = (
@@ -51,14 +55,14 @@ export default function DetailModal(props: DetailProps) {
       }
       return undefined
     }
-    return findInTree(allOrganizationUnits, form.parentId)?.OrganizationUnitTypeCode
+    return findInTree(allOrganizationUnits, form.parentId)?.organizationLevelName
   }, [allOrganizationUnits, form.parentId])
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const response = await save(form)
     if (response && response.success) {
-      onOpenChange()
+      onOpenChange(false)
       onRefresh()
     }
   }
@@ -88,11 +92,11 @@ export default function DetailModal(props: DetailProps) {
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
       <Modal.Backdrop>
-        <Modal.Container>
+        <Modal.Container size={"lg"}>
           <Modal.Dialog>
             <Modal.CloseTrigger />
             <Modal.Header>
-              <Modal.Heading>{id > 0 ? 'Sửa' : 'Thêm'} phòng ban</Modal.Heading>
+              <Modal.Heading>{`${id > 0 ? t('edit') : t('create')} ${t('organization_unit')}`}</Modal.Heading>
             </Modal.Header>
             <Modal.Body>
               {isFetching && <Spinner />}
@@ -110,12 +114,12 @@ export default function DetailModal(props: DetailProps) {
                     onChange={(value) => setForm({ ...form, name: value })}
                     validate={(value) => {
                       return value === '' || !value
-                        ? 'Trường này là bắt buộc'
+                        ? t('msg.required_field')
                         : null
                     }}
                   >
-                    <Label>Tên</Label>
-                    <Input autoFocus placeholder="Nhập tên phòng ban" />
+                    <Label>{t('name')}</Label>
+                    <Input autoFocus placeholder={t('placeholder_input', {field: t('name')})} />
                     <FieldError />
                   </TextField>
 
@@ -129,15 +133,50 @@ export default function DetailModal(props: DetailProps) {
                     }
                     validate={(value) => {
                       return value === '' || !value
-                        ? 'Trường này là bắt buộc'
+                        ? t('msg.required_field')
                         : null
                     }}
                   >
-                    <Label>Mã</Label>
-                    <Input placeholder="Nhập mã phòng ban" />
+                    <Label>{t('code')}</Label>
+                    <Input placeholder={t('placeholder_input', {field: t('code')})} />
                     <FieldError />
                   </TextField>
-
+                  <OrganizationLevelSelect
+                      value={form.organizationLevelId}
+                      onChange={(value) => {
+                        setForm((prev) => ({
+                          ...prev,
+                          organizationLevelId: value as number,
+                        }))
+                      }}
+                      validate={(value) => {
+                        return value === '' || !value
+                            ? t('msg.required_field')
+                            : null
+                      }}
+                      isRequired
+                      parentLevel={0}
+                  />
+                  <OrganizationUnitSelect
+                      values={form.parentId ?? 0}
+                      onChange={(values) => {
+                        setForm((prev) => ({
+                          ...prev,
+                          parentId: values as number,
+                        }))
+                      }}
+                      anyLevel
+                  />
+                  <UserSelect 
+                      label={t('unit_head')}
+                      selectionMode={'single'}
+                      value={form.headId} 
+                              onChange={(values) => {
+                    setForm((prev) => ({
+                      ...prev,
+                      headId: values as string,
+                    }))
+                  }}/>
                   <TextField
                     name="description"
                     value={form.description}
@@ -146,40 +185,10 @@ export default function DetailModal(props: DetailProps) {
                       setForm((prev) => ({ ...prev, description: value }))
                     }
                   >
-                    <Label>Mô tả</Label>
-                    <Input placeholder="Nhập mô tả" />
+                    <Label>{t('description')}</Label>
+                    <Input placeholder={t('placeholder_input', {field: t('description')})} />
                     <FieldError />
                   </TextField>
-{/*
-                  <OrganizationUnitSelect
-                    values={form.parentId ? [form.parentId] : []}
-                    onChange={(values) => {
-                      setForm((prev) => ({
-                        ...prev,
-                        parentId: values as number,
-                      }))
-                    }}
-                    label="Phòng ban cha"
-                    anyLevel
-                  />
-
-                  <OrganizationUnitTypeSelect
-                    value={form.OrganizationUnitTypeCode || undefined}
-                    onChange={(value) => {
-                      setForm((prev) => ({
-                        ...prev,
-                        OrganizationUnitTypeCode: value as string,
-                      }))
-                    }}
-                    validate={(value) => {
-                      return value === '' || !value
-                        ? 'Trường này là bắt buộc'
-                        : null
-                    }}
-                    isRequired
-                    label="Loại phòng ban"
-                    parentOrganizationUnitType={parentOrganizationUnitType}
-                  />*/}
 
                   <TextField
                     name="address"
@@ -189,8 +198,8 @@ export default function DetailModal(props: DetailProps) {
                       setForm((prev) => ({ ...prev, address: value }))
                     }
                   >
-                    <Label>Địa chỉ</Label>
-                    <Input placeholder="Nhập địa chỉ" />
+                    <Label>{t('address')}</Label>
+                    <Input placeholder={t('placeholder_input', {field: t('address')})} />
                     <FieldError />
                   </TextField>
 

@@ -67,28 +67,16 @@ export const buildGridTemplate = <TData>(
 ): string => {
   return columns
     .map((column) => {
-      const { width, minWidth } = column.columnDef.meta ?? {}
-      const sizeDef = column.columnDef.size
-
-      // meta.width has highest priority
-      if (width !== undefined) {
-        return typeof width === 'number' ? `${width}px` : width
+      const size = column.columnDef.size
+        const minSize = column.columnDef.minSize
+        
+      if (size) {
+        return `${size}px`
       }
-
-      // size different from default (150) → treat as static width
-      if (sizeDef !== undefined && sizeDef !== 150) {
-        return `${sizeDef}px`
-      }
-
-      // Auto-expand with minWidth lower bound
-      const minW =
-        minWidth === undefined
-          ? '0px'
-          : typeof minWidth === 'number'
-            ? `${minWidth}px`
-            : minWidth
-
-      return `minmax(${minW}, 1fr)`
+      else if(minSize) {
+          return `minmax(${minSize}, 1fr)`
+        }
+      else return '1fr'
     })
     .join(' ')
 }

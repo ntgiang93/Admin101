@@ -10,14 +10,14 @@ import {
   type PaginatedResultDto,
 } from '@/types/base/PaginatedResultDto'
 import {
-  type AddDepartmentMemberDto,
-  defaultDetailDepartmentDto,
-  type DepartmentDto,
-  type DepartmentMemberDto,
-  type DepartmentMemberFilter,
-  type DetailDepartmentDto,
-  type UserDepartmentCursorFilterDto,
-} from '@/types/sys/Department'
+  type AddOrganizationUnitMemberDto,
+  defaultDetailOrganizationUnitDto,
+  type OrganizationUnitDto,
+  type OrganizationUnitMemberDto,
+  type OrganizationUnitMemberFilter,
+  type DetailOrganizationUnitDto,
+  type UserOrganizationUnitCursorFilterDto,
+} from '@/types/sys/OrganizationUnit'
 import { type UserSelectDto } from '@/types/sys/User'
 import {
   keepPreviousData,
@@ -26,18 +26,18 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 
-const endpoint = 'organization/departments'
+const endpoint = 'organization/organization-units'
 
 export const useGetAll = () => {
   var queryClient = useQueryClient()
-  var cachedData = queryClient.getQueryData<DepartmentDto[]>([
+  var cachedData = queryClient.getQueryData<OrganizationUnitDto[]>([
     endpoint,
     'getAll',
   ])
-  return useQuery<DepartmentDto[], Error>({
+  return useQuery<OrganizationUnitDto[], Error>({
     queryKey: [endpoint, 'getAll'],
     queryFn: async () => {
-      const response = await apiService.get<ApiResponse<DepartmentDto[]>>(
+      const response = await apiService.get<ApiResponse<OrganizationUnitDto[]>>(
         `${endpoint}`,
       )
       if (response.success && response.data) {
@@ -52,20 +52,20 @@ export const useGetAll = () => {
 
 export const useGetSingleTree = (id: number) => {
   var queryClient = useQueryClient()
-  var cachedData = queryClient.getQueryData<DepartmentDto>([
+  var cachedData = queryClient.getQueryData<OrganizationUnitDto>([
     endpoint,
     'getSingleTree',
   ])
-  return useQuery<DepartmentDto, Error>({
+  return useQuery<OrganizationUnitDto, Error>({
     queryKey: [endpoint, 'getSingleTree', id],
     queryFn: async () => {
-      const response = await apiService.get<ApiResponse<DepartmentDto>>(
+      const response = await apiService.get<ApiResponse<OrganizationUnitDto>>(
         `${endpoint}/${id}/tree`,
       )
       if (response.success && response.data) {
         return response.data
       }
-      return {} as DepartmentDto
+      return {} as OrganizationUnitDto
     },
     enabled: !cachedData,
     placeholderData: keepPreviousData,
@@ -73,16 +73,16 @@ export const useGetSingleTree = (id: number) => {
 }
 
 export const useGet = (id: number) => {
-  return useQuery<DetailDepartmentDto, Error>({
+  return useQuery<DetailOrganizationUnitDto, Error>({
     queryKey: [endpoint, 'get', id],
     queryFn: async () => {
-      const response = await apiService.get<ApiResponse<DetailDepartmentDto>>(
+      const response = await apiService.get<ApiResponse<DetailOrganizationUnitDto>>(
         `${endpoint}/${id}`,
       )
       if (response.success && response.data) {
         return response.data
       }
-      return { ...defaultDetailDepartmentDto }
+      return { ...defaultDetailOrganizationUnitDto }
     },
     enabled: id > 0,
   })
@@ -90,14 +90,14 @@ export const useGet = (id: number) => {
 
 export const useSave = () => {
   return useMutation({
-    mutationFn: async (payload: DetailDepartmentDto) => {
+    mutationFn: async (payload: DetailOrganizationUnitDto) => {
       if (!payload.id || payload.id < 1) {
-        return apiService.post<ApiResponse<DepartmentDto>>(
+        return apiService.post<ApiResponse<OrganizationUnitDto>>(
           `${endpoint}`,
           payload,
         )
       }
-      return apiService.put<ApiResponse<DepartmentDto>>(`${endpoint}`, payload)
+      return apiService.put<ApiResponse<OrganizationUnitDto>>(`${endpoint}`, payload)
     },
   })
 }
@@ -113,26 +113,26 @@ export const useDelete = () => {
   })
 }
 
-export const useGetMembers = (filter: DepartmentMemberFilter) => {
-  return useQuery<PaginatedResultDto<DepartmentMemberDto>, Error>({
+export const useGetMembers = (filter: OrganizationUnitMemberFilter) => {
+  return useQuery<PaginatedResultDto<OrganizationUnitMemberDto>, Error>({
     queryKey: [endpoint, 'getMembers', filter],
     queryFn: async () => {
       const response = await apiService.get<
-        ApiResponse<PaginatedResultDto<DepartmentMemberDto>>
+        ApiResponse<PaginatedResultDto<OrganizationUnitMemberDto>>
       >(`${endpoint}/get-members?${StringHelper.objectToUrlParams(filter)}`)
       if (response.success && response.data) {
         return response.data
       }
       return { ...defualtPaginatedResult }
     },
-    enabled: filter.departmentId > 0,
+    enabled: filter.OrganizationUnitId > 0,
     placeholderData: keepPreviousData,
   })
 }
 
 export const useAddMember = () => {
   return useMutation({
-    mutationFn: async (payload: AddDepartmentMemberDto) => {
+    mutationFn: async (payload: AddOrganizationUnitMemberDto) => {
       const response = await apiService.post<ApiResponse<boolean>>(
         `${endpoint}/add-members`,
         payload,
@@ -142,16 +142,16 @@ export const useAddMember = () => {
   })
 }
 
-export const useGetUsersNotInDepartment = (
-  filter: UserDepartmentCursorFilterDto,
+export const useGetUsersNotInOrganizationUnit = (
+  filter: UserOrganizationUnitCursorFilterDto,
 ) => {
   return useQuery<CursorPaginatedResultDto<UserSelectDto, string>, Error>({
-    queryKey: [endpoint, 'usersNotInDepartment', filter],
+    queryKey: [endpoint, 'usersNotInOrganizationUnit', filter],
     queryFn: async () => {
       const query = StringHelper.objectToUrlParams({ ...filter })
       const url = query
-        ? `${endpoint}/users-not-in-department?${query}`
-        : `${endpoint}/users-not-in-department`
+        ? `${endpoint}/users-not-in-OrganizationUnit?${query}`
+        : `${endpoint}/users-not-in-OrganizationUnit`
       const response =
         await apiService.get<
           ApiResponse<CursorPaginatedResultDto<UserSelectDto, string>>
@@ -161,7 +161,7 @@ export const useGetUsersNotInDepartment = (
       }
       return { ...defaultCursorPaginatedResult }
     },
-    enabled: filter.departmentId > 0,
+    enabled: filter.OrganizationUnitId > 0,
     placeholderData: keepPreviousData,
   })
 }
@@ -178,13 +178,13 @@ export const useRemoveMember = () => {
   })
 }
 
-export const DepartmentHook = {
+export const OrganizationUnitHook = {
   useGetAll,
   useGet,
   useSave,
   useDelete,
   useGetMembers,
   useAddMember,
-  useGetUsersNotInDepartment,
+  useGetUsersNotInOrganizationUnit,
   useRemoveMember,
 }

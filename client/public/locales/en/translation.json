@@ -46,6 +46,8 @@
   "description": "Description",
   "rank": "Rank",
   "root_level": "Root level",
+  "address": "Address",
+  "unit_head": "Unit Head",
 
   "_menu_region": "Menu region",
   "menu": "Menu",
@@ -78,7 +80,7 @@
   "organization_region": "Organization region",
   "organization": "Organization",
   "organization_level": "Organization Level",
-  "organization_level_page_title": "Organization Level Manage",
+  "parent_unit": "Parent Unit",
   "organization_unit": "Organization Unit",
   "organization_unit_page_title": "Organization Unit Manage",
   "organization_page_title": "Organization Manage",

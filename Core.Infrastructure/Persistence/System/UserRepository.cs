@@ -13,12 +13,12 @@ namespace Core.Infrastructure.Persistence.System;
 
 public class UserRepository : GenericRepository<User, string>, IUserRepository
 {
-    private static readonly Alias<User> U = new Alias<User>("u");
-    private static readonly Alias<UserRole> Ur = new Alias<UserRole>("ur");
-    private static readonly Alias<Role> R = new Alias<Role>("r");
-    private static readonly Alias<UserOrganizationUnit> Ud = new Alias<UserOrganizationUnit>("ud");
-    private static readonly Alias<OrganizationUnit> D = new Alias<OrganizationUnit>("d");
-    private static readonly Alias<UserToken> Ut = new Alias<UserToken>("ut");
+    private static readonly Alias<User> U = new ("u");
+    private static readonly Alias<UserRole> Ur = new ("ur");
+    private static readonly Alias<Role> R = new ("r");
+    private static readonly Alias<UserOrganizationUnit> Ud = new ("ud");
+    private static readonly Alias<OrganizationUnit> D = new ("d");
+    private static readonly Alias<UserToken> Ut = new ("ut");
 
     public UserRepository(IDbConnectionFactory factory) : base(factory)
     {
@@ -208,7 +208,7 @@ public class UserRepository : GenericRepository<User, string>, IUserRepository
         return (result, total); // Return 0 for total count as requested
     }
 
-    public async Task<(List<UserSelectDto> Items, int TotalCount)> GetPaginatedUser2SelectAsync(
+    public async Task<(List<UserTableSelectDto> Items, int TotalCount)> GetPaginatedUser2SelectAsync(
         PaginationRequest request)
     {
         // Base query for active, non-deleted users
@@ -246,7 +246,7 @@ public class UserRepository : GenericRepository<User, string>, IUserRepository
         var selectCompiled = _compiler.Compile(selectQuery);
         var users = await connection.QueryAsync<User>(selectCompiled.Sql, selectCompiled.NamedBindings);
 
-        var result = users.Select(user => new UserSelectDto
+        var result = users.Select(user => new UserTableSelectDto
         {
             Id = user.Id.ToString(),
             UserName = user.UserName,
@@ -256,5 +256,39 @@ public class UserRepository : GenericRepository<User, string>, IUserRepository
         }).ToList();
 
         return (result, totalCount);
+    }
+    
+    public async Task<List<UserSelectDto>> GetUserSelectOptionsAsync(string searchValue)
+    {
+        // Base query for active, non-deleted users
+        var query = new Query(U.Table)
+            .Where(U.Col(x => x.IsDeleted), false);
+
+        // Apply search filter
+        if (!string.IsNullOrEmpty(searchValue))
+        {
+            query.Where(q => q
+                .WhereLike(U.Col(x => x.UserName), $"%{searchValue}%")
+                .OrWhereLike(U.Col(x => x.Email), $"%{searchValue}%")
+                .OrWhereLike(U.Col(x => x.FullName), $"%{searchValue}%"));
+        }
+
+        using var connection = _dbFactory.Connection;
+        
+        // Get paginated results
+        var selectQuery = query
+            .Select(U.Col(x => x.Id),
+                U.Col(x => x.UserName),
+                U.Col(x => x.EmployeeCode),
+                U.Col(x => x.FullName),
+                U.Col(x => x.IsActive),
+                U.Col(x => x.Avatar))
+            .OrderBy(U.Col(x => x.UserName))
+            .Limit(100);
+
+        var selectCompiled = _compiler.Compile(selectQuery);
+        var users = await connection.QueryAsync<UserSelectDto>(selectCompiled.Sql, selectCompiled.NamedBindings);
+        
+        return users.ToList();
     }
 }

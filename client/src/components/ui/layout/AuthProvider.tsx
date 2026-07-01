@@ -13,7 +13,7 @@ import {
   type ReactNode,
   useContext,
   useEffect,
-  useLayoutEffect,
+  useLayoutEffect, useRef,
   useState,
 } from 'react'
 import { useStore } from 'zustand'
@@ -57,7 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   )
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
   const [isAppLoading, setIsAppLoading] = useState<boolean>(true)
-  const [refreshTimer, setRefreshTimer] = useState<NodeJS.Timeout | null>(null)
+  const refreshTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const { token, setToken, setUser, user, permissions } = useStore(
     useAuthStore,
     (state) => state,
@@ -71,9 +71,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setExpiredAt(undefined)
     setIsAuthenticated(false)
     setUser(defaultUserClaim)
-    if (refreshTimer) {
-      clearTimeout(refreshTimer)
-      setRefreshTimer(null)
+    if (refreshTimer.current) {
+      clearTimeout(refreshTimer.current)
     }
   }
 
@@ -194,7 +193,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await refreshToken()
       } else {
         console.log('miss jti')
-        router.navigate({ to: '/login' })
+        await router.navigate({ to: '/login' })
       }
       setIsAppLoading(false)
     }
@@ -203,38 +202,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // useEffect để quản lý refresh token tự động
+  // useEffect handle refresh token
   useEffect(() => {
-    // Kiểm tra nếu có token và thời gian hết hạn
+    // Check if token and tokenExpireTime are available
     if (token && tokenExpireTime) {
-      // Tính thời gian hết hạn trong milliseconds
+      // computes expireTime in millisecond
       const expireTime = tokenExpireTime * 1000
       const currentTime = Date.now()
 
-      // Tính thời gian còn lại (ms)
+      // compute remaining time (ms)
       const timeRemaining = expireTime - currentTime
-      const refreshBuffer = 60 * 1000 // Refresh trước 1 phút
+      const refreshBuffer = 60 * 1000 // refresh before 1 min
 
-      // Tính thời gian cần refresh token (sớm hơn thời gian hết hạn)
+      // computed time until next refresh
       const timeUntilRefresh = Math.max(0, timeRemaining - refreshBuffer)
 
-      // Clear timer cũ nếu có
-      if (refreshTimer) {
-        clearTimeout(refreshTimer)
+      // Clear old timer if exist
+      if (refreshTimer.current) {
+        clearTimeout(refreshTimer.current)
       }
 
-      // Tạo timer mới cho refresh token
-      const timer = setTimeout(async () => {
-        // Chỉ refresh nếu còn token hợp lệ
+      // Create new timer
+      refreshTimer.current = setTimeout(async () => {
+        // Check if token is still valid before refreshing
         if (token && Date.now() < expireTime) {
           await refreshToken()
         }
       }, timeUntilRefresh)
-
-      setRefreshTimer(timer)
       // Cleanup function
       return () => {
-        if (timer) clearTimeout(timer)
+        if ( refreshTimer.current) clearTimeout( refreshTimer.current)
       }
     } else {
       setIsAuthenticated(false)

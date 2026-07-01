@@ -109,7 +109,6 @@ function Menu() {
             },
             meta: {
                 align: 'center',
-                width: 150,
             },
         },
     ];
@@ -151,8 +150,7 @@ function Menu() {
             const filteredData = filterNodes(data, keyword);
             const start = (filter.page - 1) * filter.pageSize;
             const end = filter.page * filter.pageSize;
-            const result = filteredData.slice(start, end);
-            return result;
+            return filteredData.slice(start, end);
         }
     };
 

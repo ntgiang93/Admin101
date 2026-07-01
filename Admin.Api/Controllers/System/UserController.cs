@@ -64,8 +64,16 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetPaginationToSelect([FromQuery] PaginationRequest filter)
     {
         var paginatedResult = await _userService.GetPagination2SelectAsync(filter);
-        return Ok(ApiResponse<PaginatedResultDto<UserSelectDto>>.Succeed(paginatedResult,
+        return Ok(ApiResponse<PaginatedResultDto<UserTableSelectDto>>.Succeed(paginatedResult,
             _sysMsg.Get(EMessage.SuccessMsg)));
+    }
+
+    [HttpGet("select-options")]
+    [Policy(ESysModule.Users, EPermission.View)]
+    public async Task<IActionResult> GetUserSelectOptions([FromQuery] string searchValue = "")
+    {
+        var result = await _userService.GetUserSelectOptionsAsync(searchValue);
+        return Ok(ApiResponse<List<UserSelectDto>>.Succeed(result, _sysMsg.Get(EMessage.SuccessMsg)));
     }
 
     [HttpGet("permission/{id}")]

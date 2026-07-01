@@ -40,6 +40,12 @@ public interface IUserRepository : IGenericRepository<User, string>
     /// </summary>
     /// <param name="request">The pagination request parameters</param>
     /// <returns>A tuple containing the list of user selection DTOs and the total count of matching records</returns>
-    Task<(List<UserSelectDto> Items, int TotalCount)> GetPaginatedUser2SelectAsync(PaginationRequest request);
-}
+    Task<(List<UserTableSelectDto> Items, int TotalCount)> GetPaginatedUser2SelectAsync(PaginationRequest request);
 
+    /// <summary>
+    ///     Retrieves user select options by search keyword
+    /// </summary>
+    /// <param name="searchValue">Search keyword for username, email or full name</param>
+    /// <returns>List of users for select options</returns>
+    Task<List<UserSelectDto>> GetUserSelectOptionsAsync(string searchValue);
+}

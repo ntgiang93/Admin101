@@ -2,6 +2,7 @@ using Core.Application.Abstractions.Persistence;
 using Core.Application.Abstractions.Persistence.Organization;
 using Core.Application.Contracts.Organization;
 using Core.Domain.Entities.Organization;
+using Core.Domain.Entities.System;
 using Dapper;
 using Shared.Common.Extensions;
 using SqlKata;
@@ -12,6 +13,7 @@ public class OrganizationUnitRepository : GenericRepository<OrganizationUnit, in
 {
     private static readonly Alias<OrganizationUnit> Ou = new("ou");
     private static readonly Alias<OrganizationLevel> Ol = new("ol");
+    private static readonly Alias<User> U = new("u");
 
     public OrganizationUnitRepository(IDbConnectionFactory factory) : base(factory)   
     {
@@ -29,9 +31,11 @@ public class OrganizationUnitRepository : GenericRepository<OrganizationUnit, in
                 Ou.Col(x => x.LevelId),
                 $"{Ol.Col(x => x.Name)} AS LevelName",
                 Ou.Col(x => x.Address),
-                Ou.Col(x => x.TreePath)
+                Ou.Col(x => x.TreePath),
+                $"{U.Col(x => x.FullName)} AS HeadName"
             )
             .LeftJoin(Ol.Table, Ol.Col(x => x.Id), Ou.Col(x => x.LevelId))
+            .LeftJoin(U.Table, Ou.Col(x => x.HeadId), U.Col(x => x.Id))
             .WhereFalse(Ou.Col(x => x.IsDeleted));
         var compiledQuery = _compiler.Compile(query);
 

@@ -19,9 +19,9 @@ export function buildColumns<TData>(
 
   if (childrenProperty) {
     cloneColumns.unshift({
-      id: 'select',
+      id: 'expanded',
       size:50,
-      meta: { align: 'start' },
+      meta: { align: 'start', pinned: 'left' },
             cell: ({ row }) => {
               if(row.getCanExpand()) {
               return (
@@ -76,3 +76,4 @@ export function buildColumns<TData>(
 
   return cloneColumns
 }
+

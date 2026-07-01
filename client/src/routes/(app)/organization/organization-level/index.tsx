@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import {createFileRoute} from '@tanstack/react-router'
 import {useEffect, useState} from "react";
 import {useAuth} from "@/components/ui/layout/AuthProvider.tsx";
 import {SysModule} from "@/types/constant/SysModule.ts";
@@ -10,13 +10,10 @@ import {Button, Card, Tooltip} from "@heroui/react";
 import {SearchInput} from "@/components/ui/input/SearchInput.tsx";
 import {HugeiconsIcon} from "@hugeicons/react";
 import ClientTable from "@/components/ui/data-table/DataTable.tsx";
-import {MenuHook} from "@/hooks/sys/menu.ts";
-import {defaultMenuItem, type MenuItem} from "@/types/sys/Menu.ts";
+import {type MenuItem} from "@/types/sys/Menu.ts";
 import {defaultPaginationFilter, type PaginationFilter} from "@/types/base/PaginationFilter.ts";
 import {useTranslation} from "react-i18next";
-import {HugeIconByName} from "@/components/ui/icon/HugeIconByName.tsx";
 import EmptyState from "@/assets/empty-state.png";
-import MenuForm from "@/routes/(app)/sys/menu/components/MenuForm.tsx";
 import ConfirmDeleteDialog from "@/components/ui/dialog/ConfirmDeleteDialog.tsx";
 import {OrganizationLevelHook} from "@/hooks/orgazination/organization-level.ts";
 import {defaultOrganizationLevelDto, type OrganizationLevelDto} from "@/types/sys/OrganizationLevel.ts";
@@ -38,7 +35,7 @@ function OrganizationLevel() {
     const canCreate = hasPermission(SysModule.OrganizationLevel, EPermission.Create);
     const canEdit = hasPermission(SysModule.OrganizationLevel, EPermission.Edit);
     const canDelete = hasPermission(SysModule.OrganizationLevel, EPermission.Delete);
-    const {t, i18n} = useTranslation();
+    const {t} = useTranslation();
     const {mutateAsync: del, isPending} = OrganizationLevelHook.useDelete()
 
     const columns: ColumnDef<OrganizationLevelDto>[] = [
@@ -109,8 +106,7 @@ function OrganizationLevel() {
             const filteredData = data.filter(x => x.name.toLowerCase().includes(keyword) || x.code.toLowerCase().includes(keyword) || x.description?.toLowerCase().includes(keyword));
             const start = (filter.page - 1) * filter.pageSize;
             const end = filter.page * filter.pageSize;
-            const result = filteredData.slice(start, end);
-            return result;
+            return filteredData.slice(start, end);
         }
     };
 

@@ -12,13 +12,14 @@ namespace Core.Application.Contracts.Organization
 
         public string? Description { get; set; }
 
-        public string OrganizationLevelCode { get; set; } = string.Empty;
+        public string OrganizationLevelId { get; set; } = string.Empty;
 
-        public string OrganizationLevelName { get; set; } = string.Empty;
+        public string LevelName { get; set; } = string.Empty;
 
         public int? ParentId { get; set; }
 
         public string? Address { get; set; }
+        public string HeadName { get; set; } = string.Empty;
 
         public List<OrganizationUnitDto>? Children { get; set; }
     }

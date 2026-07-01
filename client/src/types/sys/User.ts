@@ -81,6 +81,19 @@ export type UserSelectDto = {
   fullName: string
 }
 
+export type UserSelectOptions = {
+  id: string
+  userName: string
+  avatar?: string
+  employeeCode: string
+  fullName: string
+  isActive: boolean
+}
+
+export type UserSelectOptionsParams = {
+  searchValue?: string
+}
+
 // Based on UserTableRequestDto
 export type UserTableRequestDto = PaginationFilter & {
   roles: string[]

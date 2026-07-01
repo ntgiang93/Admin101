@@ -19,9 +19,9 @@ import { Route as appSysUserIndexRouteImport } from './routes/(app)/sys/user/ind
 import { Route as appSysRoleIndexRouteImport } from './routes/(app)/sys/role/index'
 import { Route as appSysMenuIndexRouteImport } from './routes/(app)/sys/menu/index'
 import { Route as appSysJobScheduleIndexRouteImport } from './routes/(app)/sys/job-schedule/index'
+import { Route as appOrganizationOrganizationUnitIndexRouteImport } from './routes/(app)/organization/organization-unit/index'
 import { Route as appOrganizationOrganizationLevelIndexRouteImport } from './routes/(app)/organization/organization-level/index'
 import { Route as appOrganizationJobTitleIndexRouteImport } from './routes/(app)/organization/job-title/index'
-import { Route as appOrganizationDepartmentIndexRouteImport } from './routes/(app)/organization/department/index'
 import { Route as appSysUserIdRouteImport } from './routes/(app)/sys/user/$id'
 import { Route as appSysJobScheduleComponentsPauseJobAlertRouteImport } from './routes/(app)/sys/job-schedule/components/PauseJobAlert'
 
@@ -74,6 +74,12 @@ const appSysJobScheduleIndexRoute = appSysJobScheduleIndexRouteImport.update({
   path: '/sys/job-schedule/',
   getParentRoute: () => appRouteRoute,
 } as any)
+const appOrganizationOrganizationUnitIndexRoute =
+  appOrganizationOrganizationUnitIndexRouteImport.update({
+    id: '/organization/organization-unit/',
+    path: '/organization/organization-unit/',
+    getParentRoute: () => appRouteRoute,
+  } as any)
 const appOrganizationOrganizationLevelIndexRoute =
   appOrganizationOrganizationLevelIndexRouteImport.update({
     id: '/organization/organization-level/',
@@ -84,12 +90,6 @@ const appOrganizationJobTitleIndexRoute =
   appOrganizationJobTitleIndexRouteImport.update({
     id: '/organization/job-title/',
     path: '/organization/job-title/',
-    getParentRoute: () => appRouteRoute,
-  } as any)
-const appOrganizationDepartmentIndexRoute =
-  appOrganizationDepartmentIndexRouteImport.update({
-    id: '/organization/department/',
-    path: '/organization/department/',
     getParentRoute: () => appRouteRoute,
   } as any)
 const appSysUserIdRoute = appSysUserIdRouteImport.update({
@@ -111,9 +111,9 @@ export interface FileRoutesByFullPath {
   '/test/': typeof TestIndexRoute
   '/categories/': typeof appCategoriesIndexRoute
   '/sys/user/$id': typeof appSysUserIdRoute
-  '/organization/department/': typeof appOrganizationDepartmentIndexRoute
   '/organization/job-title/': typeof appOrganizationJobTitleIndexRoute
   '/organization/organization-level/': typeof appOrganizationOrganizationLevelIndexRoute
+  '/organization/organization-unit/': typeof appOrganizationOrganizationUnitIndexRoute
   '/sys/job-schedule/': typeof appSysJobScheduleIndexRoute
   '/sys/menu/': typeof appSysMenuIndexRoute
   '/sys/role/': typeof appSysRoleIndexRoute
@@ -127,9 +127,9 @@ export interface FileRoutesByTo {
   '/test': typeof TestIndexRoute
   '/categories': typeof appCategoriesIndexRoute
   '/sys/user/$id': typeof appSysUserIdRoute
-  '/organization/department': typeof appOrganizationDepartmentIndexRoute
   '/organization/job-title': typeof appOrganizationJobTitleIndexRoute
   '/organization/organization-level': typeof appOrganizationOrganizationLevelIndexRoute
+  '/organization/organization-unit': typeof appOrganizationOrganizationUnitIndexRoute
   '/sys/job-schedule': typeof appSysJobScheduleIndexRoute
   '/sys/menu': typeof appSysMenuIndexRoute
   '/sys/role': typeof appSysRoleIndexRoute
@@ -145,9 +145,9 @@ export interface FileRoutesById {
   '/test/': typeof TestIndexRoute
   '/(app)/categories/': typeof appCategoriesIndexRoute
   '/(app)/sys/user/$id': typeof appSysUserIdRoute
-  '/(app)/organization/department/': typeof appOrganizationDepartmentIndexRoute
   '/(app)/organization/job-title/': typeof appOrganizationJobTitleIndexRoute
   '/(app)/organization/organization-level/': typeof appOrganizationOrganizationLevelIndexRoute
+  '/(app)/organization/organization-unit/': typeof appOrganizationOrganizationUnitIndexRoute
   '/(app)/sys/job-schedule/': typeof appSysJobScheduleIndexRoute
   '/(app)/sys/menu/': typeof appSysMenuIndexRoute
   '/(app)/sys/role/': typeof appSysRoleIndexRoute
@@ -163,9 +163,9 @@ export interface FileRouteTypes {
     | '/test/'
     | '/categories/'
     | '/sys/user/$id'
-    | '/organization/department/'
     | '/organization/job-title/'
     | '/organization/organization-level/'
+    | '/organization/organization-unit/'
     | '/sys/job-schedule/'
     | '/sys/menu/'
     | '/sys/role/'
@@ -179,9 +179,9 @@ export interface FileRouteTypes {
     | '/test'
     | '/categories'
     | '/sys/user/$id'
-    | '/organization/department'
     | '/organization/job-title'
     | '/organization/organization-level'
+    | '/organization/organization-unit'
     | '/sys/job-schedule'
     | '/sys/menu'
     | '/sys/role'
@@ -196,9 +196,9 @@ export interface FileRouteTypes {
     | '/test/'
     | '/(app)/categories/'
     | '/(app)/sys/user/$id'
-    | '/(app)/organization/department/'
     | '/(app)/organization/job-title/'
     | '/(app)/organization/organization-level/'
+    | '/(app)/organization/organization-unit/'
     | '/(app)/sys/job-schedule/'
     | '/(app)/sys/menu/'
     | '/(app)/sys/role/'
@@ -285,6 +285,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appSysJobScheduleIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
+    '/(app)/organization/organization-unit/': {
+      id: '/(app)/organization/organization-unit/'
+      path: '/organization/organization-unit'
+      fullPath: '/organization/organization-unit/'
+      preLoaderRoute: typeof appOrganizationOrganizationUnitIndexRouteImport
+      parentRoute: typeof appRouteRoute
+    }
     '/(app)/organization/organization-level/': {
       id: '/(app)/organization/organization-level/'
       path: '/organization/organization-level'
@@ -297,13 +304,6 @@ declare module '@tanstack/react-router' {
       path: '/organization/job-title'
       fullPath: '/organization/job-title/'
       preLoaderRoute: typeof appOrganizationJobTitleIndexRouteImport
-      parentRoute: typeof appRouteRoute
-    }
-    '/(app)/organization/department/': {
-      id: '/(app)/organization/department/'
-      path: '/organization/department'
-      fullPath: '/organization/department/'
-      preLoaderRoute: typeof appOrganizationDepartmentIndexRouteImport
       parentRoute: typeof appRouteRoute
     }
     '/(app)/sys/user/$id': {
@@ -327,9 +327,9 @@ interface appRouteRouteChildren {
   appIndexRoute: typeof appIndexRoute
   appCategoriesIndexRoute: typeof appCategoriesIndexRoute
   appSysUserIdRoute: typeof appSysUserIdRoute
-  appOrganizationDepartmentIndexRoute: typeof appOrganizationDepartmentIndexRoute
   appOrganizationJobTitleIndexRoute: typeof appOrganizationJobTitleIndexRoute
   appOrganizationOrganizationLevelIndexRoute: typeof appOrganizationOrganizationLevelIndexRoute
+  appOrganizationOrganizationUnitIndexRoute: typeof appOrganizationOrganizationUnitIndexRoute
   appSysJobScheduleIndexRoute: typeof appSysJobScheduleIndexRoute
   appSysMenuIndexRoute: typeof appSysMenuIndexRoute
   appSysRoleIndexRoute: typeof appSysRoleIndexRoute
@@ -341,10 +341,11 @@ const appRouteRouteChildren: appRouteRouteChildren = {
   appIndexRoute: appIndexRoute,
   appCategoriesIndexRoute: appCategoriesIndexRoute,
   appSysUserIdRoute: appSysUserIdRoute,
-  appOrganizationDepartmentIndexRoute: appOrganizationDepartmentIndexRoute,
   appOrganizationJobTitleIndexRoute: appOrganizationJobTitleIndexRoute,
   appOrganizationOrganizationLevelIndexRoute:
     appOrganizationOrganizationLevelIndexRoute,
+  appOrganizationOrganizationUnitIndexRoute:
+    appOrganizationOrganizationUnitIndexRoute,
   appSysJobScheduleIndexRoute: appSysJobScheduleIndexRoute,
   appSysMenuIndexRoute: appSysMenuIndexRoute,
   appSysRoleIndexRoute: appSysRoleIndexRoute,

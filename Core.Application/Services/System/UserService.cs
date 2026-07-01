@@ -72,19 +72,28 @@ public class UserService : GenericService<User, string>, IUserService
         return user;
     }
 
-    public async Task<PaginatedResultDto<UserSelectDto>> GetPagination2SelectAsync(PaginationRequest request)
+    public async Task<PaginatedResultDto<UserTableSelectDto>> GetPagination2SelectAsync(PaginationRequest request)
     {
         var cacheKey = CacheKeyHelper.Generate($"{_cachePrefix}GetPagination2SelectAsync", request);
-        return await CacheService.GetOrCreateAsync<PaginatedResultDto<UserSelectDto>>(cacheKey, async () =>
+        return await CacheService.GetOrCreateAsync<PaginatedResultDto<UserTableSelectDto>>(cacheKey, async () =>
         {
             var result = await _userRepository.GetPaginatedUser2SelectAsync(request);
-            return new PaginatedResultDto<UserSelectDto>
+            return new PaginatedResultDto<UserTableSelectDto>
             {
                 Items = result.Items,
                 TotalCount = result.TotalCount,
                 PageIndex = request.Page,
                 PageSize = request.PageSize
             };
+        });
+    }
+
+    public async Task<List<UserSelectDto>> GetUserSelectOptionsAsync(string searchValue)
+    {
+        var cacheKey = CacheKeyHelper.Generate($"{_cachePrefix}GetUserSelectOptionsAsync", searchValue);
+        return await CacheService.GetOrCreateAsync(cacheKey, async () =>
+        {
+            return await _userRepository.GetUserSelectOptionsAsync(searchValue);
         });
     }
 

@@ -24,7 +24,7 @@ public class UserTableDto
     public DateTime? LastAccess { get; set; }
 }
 
-public class UserSelectDto
+public class UserTableSelectDto
 {
     public string Id { get; set; }
     public string UserName { get; set; }
@@ -33,6 +33,18 @@ public class UserSelectDto
     public string FullName { get; set; }
     public string Department { get; set; }
     public DateTime? LastLogin { get; set; }
+    [JsonIgnore]
+    public DateTime CreatedAt { get; set; }
+}
+
+public class UserSelectDto
+{
+    public required string Id { get; set; }
+    public required string UserName { get; set; }
+    public required string Avatar { get; set; }
+    public required string FullName { get; set; }
+    public required string EmployeeCode { get; set; }
+    public bool IsActive { get; set; }
     [JsonIgnore]
     public DateTime CreatedAt { get; set; }
 }

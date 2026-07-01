@@ -3,15 +3,14 @@ import { SearchInput } from '@/components/ui/input/SearchInput'
 import { useAuth } from '@/components/ui/layout/AuthProvider'
 import TreeList from '@/components/ui/tree/TreeList'
 import TreeItem from '@/components/ui/tree/TreeItem'
-import { DepartmentHook } from '@/hooks/orgazination/department'
 import { EPermission } from '@/types/base/Permission'
 import { SysModule } from '@/types/constant/SysModule.ts'
 import {
-  defaultDepartmentMemberFilter,
-  type DepartmentDto,
-  type DepartmentMemberDto,
-  type DepartmentMemberFilter,
-} from '@/types/sys/Department'
+  defaultOrganizationUnitMemberFilter,
+  type OrganizationUnitDto,
+  type OrganizationUnitMemberDto,
+  type OrganizationUnitMemberFilter,
+} from '@/types/sys/OrganizationUnit'
 import {
   AlertDialog,
   Avatar,
@@ -35,32 +34,32 @@ import {
 } from '@hugeicons/core-free-icons'
 import { type JSX, useEffect, useMemo, useState } from 'react'
 import { HugeiconsIcon } from '@hugeicons/react'
-import AddMemberModal from '@/routes/(app)/organization/department/components/AddMemberModal.tsx'
 import { StringHelper } from '@/libs/StringHelper'
+import {OrganizationUnitHook} from "@/hooks/orgazination/organization-unit.ts";
 
 interface MemberModalProps {
-  department?: DepartmentDto
+  OrganizationUnit?: OrganizationUnitDto
   isOpen: boolean
   onOpenChange: () => void
   onRefresh: () => void
 }
 
 export default function MemberModal(props: MemberModalProps) {
-  const { department, isOpen, onOpenChange } = props
-  const departmentId = department?.id || 0
+  const { OrganizationUnit, isOpen, onOpenChange } = props
+  const OrganizationUnitId = OrganizationUnit?.id || 0
   const [selectedRow, setSelectedRow] = useState<number[]>([])
-  const [selectedDepartment, setSelectedDepartment] = useState<number[]>([])
-  const [filter, setFilter] = useState<DepartmentMemberFilter>({
-    ...defaultDepartmentMemberFilter,
+  const [selectedOrganizationUnit, setSelectedOrganizationUnit] = useState<number[]>([])
+  const [filter, setFilter] = useState<OrganizationUnitMemberFilter>({
+    ...defaultOrganizationUnitMemberFilter,
   })
   const [isOpenDel, setIsOpenDel] = useState(false)
   const [isOpenAddMember, setIsOpenAddMember] = useState(false)
 
-  const { data, isFetching, refetch } = DepartmentHook.useGetMembers(filter)
-  const { mutateAsync: remove, isPending } = DepartmentHook.useRemoveMember()
+  const { data, isFetching, refetch } = OrganizationUnitHook.useGetMembers(filter)
+  const { mutateAsync: remove, isPending } = OrganizationUnitHook.useRemoveMember()
   const { navigate, hasPermission } = useAuth()
-  const canEdit = hasPermission(SysModule.Department, EPermission.Edit)
-  const columns = useMemo<ColumnDef<DepartmentMemberDto>[]>(
+  const canEdit = hasPermission(SysModule.OrganizationUnit, EPermission.Edit)
+  const columns = useMemo<ColumnDef<OrganizationUnitMemberDto>[]>(
     () => [
       {
         id: 'fullName',
@@ -164,8 +163,8 @@ export default function MemberModal(props: MemberModalProps) {
 
   const findDept = (
     id: number,
-    depts: DepartmentDto[],
-  ): DepartmentDto | undefined => {
+    depts: OrganizationUnitDto[],
+  ): OrganizationUnitDto | undefined => {
     for (const dept of depts) {
       if (dept.id === id) return dept
       const found = findDept(id, dept.children || [])
@@ -173,13 +172,13 @@ export default function MemberModal(props: MemberModalProps) {
     }
   }
 
-  const currentDepartment = useMemo(() => {
-    if (!department?.children || department.children.length === 0) {
-      return department
+  const currentOrganizationUnit = useMemo(() => {
+    if (!OrganizationUnit?.children || OrganizationUnit.children.length === 0) {
+      return OrganizationUnit
     } else {
-      return findDept(selectedDepartment[0], department.children) || department
+      return findDept(selectedOrganizationUnit[0], OrganizationUnit.children) || OrganizationUnit
     }
-  }, [selectedDepartment, department])
+  }, [selectedOrganizationUnit, OrganizationUnit])
 
   const handleDelete = async () => {
     if (selectedRow.length === 0) return
@@ -191,31 +190,31 @@ export default function MemberModal(props: MemberModalProps) {
     }
   }
 
-  const renderDepartmentTree = (dept: DepartmentDto): JSX.Element => {
+  const renderOrganizationUnitTree = (dept: OrganizationUnitDto): JSX.Element => {
     const hasChildren = dept.children && dept.children.length > 0
     return (
       <TreeItem key={dept.id} id={dept.id} content={<Label>{dept.name}</Label>}>
         {hasChildren &&
-          dept.children?.map((child) => renderDepartmentTree(child))}
+          dept.children?.map((child) => renderOrganizationUnitTree(child))}
       </TreeItem>
     )
   }
 
   const hasChildren = useMemo(() => {
-    if (!department) return false
-    return department.children && department.children.length > 0
-  }, [department])
+    if (!OrganizationUnit) return false
+    return OrganizationUnit.children && OrganizationUnit.children.length > 0
+  }, [OrganizationUnit])
 
   useEffect(() => {
-    if (isOpen && department) {
-      setFilter((prev) => ({ ...prev, departmentId: department.id, page: 1 }))
+    if (isOpen && OrganizationUnit) {
+      setFilter((prev) => ({ ...prev, OrganizationUnitId: OrganizationUnit.id, page: 1 }))
     }
-  }, [isOpen, department])
+  }, [isOpen, OrganizationUnit])
 
   useEffect(() => {
     if (!isOpen) {
       setSelectedRow([])
-      setSelectedDepartment([])
+      setSelectedOrganizationUnit([])
     }
   }, [isOpen])
 
@@ -227,7 +226,7 @@ export default function MemberModal(props: MemberModalProps) {
             <Modal.CloseTrigger />
             <Modal.Header>
               <Modal.Heading>
-                {`Quản lý thành viên ${department?.name ?? ''}`}
+                {`Quản lý thành viên ${OrganizationUnit?.name ?? ''}`}
               </Modal.Heading>
             </Modal.Header>
             <Modal.Body>
@@ -246,30 +245,30 @@ export default function MemberModal(props: MemberModalProps) {
                       <TreeList
                         selectionStrategy="all"
                         selectionMode="single"
-                        values={selectedDepartment}
+                        values={selectedOrganizationUnit}
                         onChange={(value) => {
                           const selected = Array.isArray(value)
                             ? value
                             : [value]
-                          setSelectedDepartment(selected as number[])
+                          setSelectedOrganizationUnit(selected as number[])
                           setFilter((prev) => ({
                             ...prev,
-                            departmentId:
+                            OrganizationUnitId:
                               selected.length > 0
                                 ? (selected[0] as number)
-                                : department?.id || 0,
+                                : OrganizationUnit?.id || 0,
                             page: 1,
                           }))
                         }}
                       >
-                        {department && renderDepartmentTree(department)}
+                        {OrganizationUnit && renderOrganizationUnitTree(OrganizationUnit)}
                       </TreeList>
                     </Card.Content>
                   </Card>
                 )}
                 <Card className="w-full col-span-2" variant="transparent">
                   <Card.Header className="font-semibold">
-                    <Card.Title>{currentDepartment?.name}</Card.Title>
+                    <Card.Title>{currentOrganizationUnit?.name}</Card.Title>
                     <div className="flex justify-between items-center">
                       <SearchInput
                         value={filter.searchValue}
@@ -383,12 +382,12 @@ export default function MemberModal(props: MemberModalProps) {
           </AlertDialog.Container>
         </AlertDialog.Backdrop>
       </AlertDialog>
-      <AddMemberModal
+{/*      <AddMemberModal
         refetch={refetch}
-        department={currentDepartment}
+        OrganizationUnit={currentOrganizationUnit}
         isOpen={isOpenAddMember}
         onOpenChange={(open) => setIsOpenAddMember(open)}
-      />
+      />*/}
     </Modal>
   )
 }

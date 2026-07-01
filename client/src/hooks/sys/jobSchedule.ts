@@ -10,11 +10,11 @@ import {
   type PaginatedResultDto,
 } from '@/types/base/PaginatedResultDto'
 import {
-  type AddDepartmentMemberDto,
-  type DepartmentMemberDto,
-  type DepartmentMemberFilter,
-  type UserDepartmentCursorFilterDto,
-} from '@/types/sys/Department'
+  type AddOrganizationUnitMemberDto,
+  type OrganizationUnitMemberDto,
+  type OrganizationUnitMemberFilter,
+  type UserOrganizationUnitCursorFilterDto,
+} from '@/types/sys/OrganizationUnit'
 import {
   defaultJobConfiguration,
   type DetailJobConfigurationDto,
@@ -157,26 +157,26 @@ export const useResume = () => {
   })
 }
 
-export const useGetMembers = (filter: DepartmentMemberFilter) => {
-  return useQuery<PaginatedResultDto<DepartmentMemberDto>, Error>({
+export const useGetMembers = (filter: OrganizationUnitMemberFilter) => {
+  return useQuery<PaginatedResultDto<OrganizationUnitMemberDto>, Error>({
     queryKey: [endpoint, 'getMembers', filter],
     queryFn: async () => {
       const response = await apiService.get<
-        ApiResponse<PaginatedResultDto<DepartmentMemberDto>>
+        ApiResponse<PaginatedResultDto<OrganizationUnitMemberDto>>
       >(`${endpoint}/get-members?${StringHelper.objectToUrlParams(filter)}`)
       if (response.success && response.data) {
         return response.data
       }
       return { ...defualtPaginatedResult }
     },
-    enabled: filter.departmentId > 0,
+    enabled: filter.OrganizationUnitId > 0,
     placeholderData: keepPreviousData,
   })
 }
 
 export const useAddMember = () => {
   return useMutation({
-    mutationFn: async (payload: AddDepartmentMemberDto) => {
+    mutationFn: async (payload: AddOrganizationUnitMemberDto) => {
       const response = await apiService.post<ApiResponse<boolean>>(
         `${endpoint}/add-members`,
         payload,
@@ -186,16 +186,16 @@ export const useAddMember = () => {
   })
 }
 
-export const useGetUsersNotInDepartment = (
-  filter: UserDepartmentCursorFilterDto,
+export const useGetUsersNotInOrganizationUnit = (
+  filter: UserOrganizationUnitCursorFilterDto,
 ) => {
   return useQuery<CursorPaginatedResultDto<UserSelectDto, string>, Error>({
-    queryKey: [endpoint, 'usersNotInDepartment', filter],
+    queryKey: [endpoint, 'usersNotInOrganizationUnit', filter],
     queryFn: async () => {
       const query = StringHelper.objectToUrlParams({ ...filter })
       const url = query
-        ? `${endpoint}/users-not-in-department?${query}`
-        : `${endpoint}/users-not-in-department`
+        ? `${endpoint}/users-not-in-OrganizationUnit?${query}`
+        : `${endpoint}/users-not-in-OrganizationUnit`
       const response =
         await apiService.get<
           ApiResponse<CursorPaginatedResultDto<UserSelectDto, string>>
@@ -205,7 +205,7 @@ export const useGetUsersNotInDepartment = (
       }
       return { ...defaultCursorPaginatedResult }
     },
-    enabled: filter.departmentId > 0,
+    enabled: filter.OrganizationUnitId > 0,
     placeholderData: keepPreviousData,
   })
 }
@@ -233,6 +233,6 @@ export const JobScheduleHook = {
   useResume,
   useGetMembers,
   useAddMember,
-  useGetUsersNotInDepartment,
+  useGetUsersNotInOrganizationUnit,
   useRemoveMember,
 }

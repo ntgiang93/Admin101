@@ -9,7 +9,7 @@ import {Button, Card, ListBox, Separator, Spinner, Tabs, Tooltip} from '@heroui/
 import {Add01Icon, Cancel01Icon, Delete02Icon, Refresh, SaveIcon, ShieldCheck,} from '@hugeicons/core-free-icons'
 import {HugeiconsIcon} from '@hugeicons/react'
 import {createFileRoute} from '@tanstack/react-router'
-import {useEffect, useState} from 'react'
+import {useState} from 'react'
 import EmptyState from "@/assets/empty-state.png";
 import ConfirmDeleteDialog from "@/components/ui/dialog/ConfirmDeleteDialog.tsx";
 import {useTranslation} from "react-i18next";
@@ -24,7 +24,7 @@ export const Route = createFileRoute('/(app)/sys/role/')({
 })
 
 function Roles() {
-    const {data: roles, refetch, isFetching} = RoleHook.useGetAll()
+    const {data: roles, refetch} = RoleHook.useGetAll()
     const [selectedRole, setSelectedRole] = useState<RoleDto | undefined>(
         undefined,
     )

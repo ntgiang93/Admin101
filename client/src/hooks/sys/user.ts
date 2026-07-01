@@ -13,9 +13,10 @@ import {
   defaultUserDto,
   type SaveUserDto,
   type UserDto,
+  type UserSelectOptionsParams,
   type UserSelectDto,
   type UserTableDto,
-  type UserTableRequestDto,
+  type UserTableRequestDto, type UserSelectOptions,
 } from '@/types/sys/User'
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query'
 import { apiService } from '@/services/api'
@@ -53,6 +54,22 @@ export const useGetPaginationToSelect = (params: PaginationFilter) => {
       return defualtPaginatedResult
     },
     placeholderData: keepPreviousData || defualtPaginatedResult,
+  })
+}
+
+export const useGetUserSelectOptions = (params: UserSelectOptionsParams = {}) => {
+  return useQuery<UserSelectOptions[], Error>({
+    queryKey: [endpoint, 'useGetUserSelectOptions', params],
+    queryFn: async () => {
+      const response = await apiService.get<ApiResponse<UserSelectOptions[]>>(
+        `${endpoint}/select-options?${StringHelper.objectToUrlParams(params)}`,
+      )
+      if (response.success && response.data) {
+        return response.data || []
+      }
+      return []
+    },
+    placeholderData: keepPreviousData || [],
   })
 }
 
@@ -156,6 +173,7 @@ export const useUpdateAvatar = () => {
 export const UserHook = {
   useGetPagination,
   useGetPaginationToSelect,
+  useGetUserSelectOptions,
   useGet,
   useSaveUser,
   useChangeActive,

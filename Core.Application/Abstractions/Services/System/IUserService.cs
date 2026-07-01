@@ -47,7 +47,14 @@ public interface IUserService : IGenericService<User, string>
     /// </summary>
     /// <param name="request">Filter and pagination parameters</param>
     /// <returns>Paginated result containing user data</returns>
-    Task<PaginatedResultDto<UserSelectDto>> GetPagination2SelectAsync(PaginationRequest request);
+    Task<PaginatedResultDto<UserTableSelectDto>> GetPagination2SelectAsync(PaginationRequest request);
+
+    /// <summary>
+    ///     Gets user select options by keyword
+    /// </summary>
+    /// <param name="searchValue">Search keyword for username, email or full name</param>
+    /// <returns>List of users for select options</returns>
+    Task<List<UserSelectDto>> GetUserSelectOptionsAsync(string searchValue);
 
 
     /// <summary>
